@@ -255601,6 +255601,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let availableSpace = 0;
   let guessedWordCount = 0;
   let lettersToIgnore = [];
+  let greenLetters = [];
   
   CreateGrid();
   AddKeyListeners();
@@ -255616,7 +255617,7 @@ document.addEventListener("DOMContentLoaded", () => {
     var dateDiff = currentDate - startDate;
     var hourDiff = Math.floor(dateDiff / (1000 * 60 * 60));
     indexToUse = Math.floor(hourDiff / 8);
-    console.log(dailyWords[indexToUse]);
+    document.title = "Pajglanje - " + indexToUse;
     return dailyWords[indexToUse];
   }
 
@@ -255630,8 +255631,6 @@ document.addEventListener("DOMContentLoaded", () => {
         splitWordToGuess.push(letter);
       }
     }
-
-    console.log(splitWordToGuess);
   }
 
     function CreateGrid()
@@ -255721,20 +255720,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const triedWord = currentWordArr.join("");
       const firstLetterId = guessedWordCount * 6 ;
       const interval = 300;
-      
-      // for (let i = 0; i < 6; ++i)
-      // {
-      //   setTimeout(() => {
-      //     let letter = GetLetterAtIndex(currentWordArr.join(""), i);
-      //     console.log("Letter I got: " + letter);
-      //     const tileColor = getTileColor(letter, i);
-      //     const letterId = firstLetterId + i;
-      //     const letterEl = document.getElementById(letterId);
-      //     letterEl.classList.add("animate__flipInX");
-      //     letterEl.style =  `background-color:${tileColor};border-color:${tileColor}`;
-      //   }, interval * i);
-      // }
-
+      loop1:
       for (let i = 0; i < currentWordArr.length; ++i)
       {
         let filteredString = currentWordArr.join("");
@@ -255747,6 +255733,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
           for (let j = 0; j < currentWordArr.length; ++j)
           {
+            if (lettersToIgnore.includes(j))
+            {
+              continue loop1;
+            }
+
             if (currentWordArr[j] == currentWordArr[i])
             {
               thisLetterIndexes.push(j);
@@ -255775,13 +255766,17 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           let amountOfLettersToIgnore = letterCount - greenLetters;
+          if (amountOfLettersToIgnore === letterCount)
+          {
+            amountOfLettersToIgnore -= letterCountInWordToGuess;
+          }
+          
           for (var o = yellowLetters.length - 1; o >= 0; --o)
           {
             if (amountOfLettersToIgnore > 0)
             {
               if (!lettersToIgnore.includes(yellowLetters[o]))
               {
-                console.log("Pushing letter");
                 lettersToIgnore.push(yellowLetters[o]);
                 amountOfLettersToIgnore--;
               }
@@ -255790,7 +255785,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      console.log(lettersToIgnore);
       currentWordArr.forEach((letter, index) => {
         setTimeout(() => {
           let tileColor;
@@ -255813,6 +255807,20 @@ document.addEventListener("DOMContentLoaded", () => {
           const letterEl = document.getElementById(letterId);
           letterEl.classList.add("animate__flipInX");
           letterEl.style = `background-color:${tileColor};border-color:${tileColor}`;
+
+          //Color the keyboard
+          for (let i = 0; i < keys.length; i++) {
+            if (keys[i].getAttribute("data-key") == letter && !greenLetters.includes(letter))
+            {
+              keys[i].style = `background-color:${tileColor};border-color:${tileColor};`;
+            }
+          }
+
+          //Fill green letter indexes
+          if (tileColor === "rgb(83, 141, 78)")
+          {
+            greenLetters.push(letter);
+          }
         }, interval * index);
       });
   
@@ -255848,7 +255856,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    function getTileColor(letter, index, ignoreIgnored) {
+    function getTileColor(letter, index) {
       const isCorrectLetter = splitWordToGuess.includes(letter);
       if (!isCorrectLetter) {
         return "rgb(58, 58, 60)";
@@ -255856,8 +255864,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const letterInThatPosition = splitWordToGuess[index];
       const isCorrectPosition = letter === letterInThatPosition;
-      console.log(splitWordToGuess);
-      console.log("Letter asked for: " + letter + " / letter in that position: " + letterInThatPosition);
+      
       if (isCorrectPosition) {
         return "rgb(83, 141, 78)";
       }
@@ -255867,7 +255874,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function GetLetterAtIndex(word, index)
     {
-      console.log("Got index: " + index);
       for (var i = 0; i < word.length; ++i)
       {
         if (i === index)
@@ -255877,7 +255883,6 @@ document.addEventListener("DOMContentLoaded", () => {
           {
             if (word.charAt(i+1) == 'ž')
             {
-              console.log("Merging d with z");
               return 'dž';
             }
           }
@@ -255885,7 +255890,6 @@ document.addEventListener("DOMContentLoaded", () => {
           {
             if (word.charAt(i + 1) == 'j')
             {
-              console.log("Merging l with j");
               return 'lj';
             }
           }
@@ -255893,7 +255897,6 @@ document.addEventListener("DOMContentLoaded", () => {
           {
             if (word.charAt(i + 1) == 'j')
             {
-              console.log("Merging n with j");
               return 'nj';
             }
           }
@@ -255901,7 +255904,6 @@ document.addEventListener("DOMContentLoaded", () => {
           {
             if (word.charAt(i - 1) == 'd')
             {
-              console.log("Skipping this letter because previous was d");
               return null;
             }
           }
@@ -255909,11 +255911,10 @@ document.addEventListener("DOMContentLoaded", () => {
           {
             if (word.charAt(i - 1) == 'l' || word.charAt(i - 1) == 'n')
             {
-              console.log("Skipping this letter because previous was l or n");
               return null;
             }
           }
-          console.log("Returning unmodified letter: " + word.charAt(i));
+          
           return word.charAt(i);
         }
       }
