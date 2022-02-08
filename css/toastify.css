@@ -10,7 +10,6 @@
     padding: 12px 20px;
     color: #000000;
     display: inline-block;
-    box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12), 0 10px 36px -4px rgba(77, 96, 232, 0.3);
     background: -webkit-linear-gradient(315deg, #ccc, #c0c0c0);
     background: linear-gradient(135deg, #ccc, #c0c0c0);
     position: fixed;
