@@ -255637,6 +255637,7 @@ document.addEventListener("DOMContentLoaded", () => {
     var hourDiff = Math.floor(dateDiff / (1000 * 60 * 60));
     indexToUse = Math.floor(hourDiff / 8);
     document.title = "Pajglanje - " + indexToUse;
+    console.log(dailyWords[indexToUse]);
     return dailyWords[indexToUse];
   }
 
@@ -255843,7 +255844,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (index === currentWordArr.length - 1)
           {
-            setTimeout(function() { WinNotify() }, 300);
+            if (triedWord === wordToGuess)
+            {
+              setTimeout(function() { WinNotify() }, 300);
+            }
           }
         }, interval * index);
       });
