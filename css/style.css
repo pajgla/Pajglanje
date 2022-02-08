@@ -98,6 +98,7 @@ header
     justify-content: center;
     align-items: center;
     aspect-ratio: 1/1;
+    animation-duration: 0.5s;
 }
 
 #keyboard-container

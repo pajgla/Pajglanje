@@ -255600,6 +255600,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let guessedWordCount = 0;
   let lettersToIgnore = [];
   let greenLetters = [];
+  let isWordGuessed = false;
+
+  CreateGrid();
+  AddKeyListeners();
+  SplitWordToGuess();
+  OnViewportResize();
+
+  window.onresize = OnViewportResize;
 
   function IsDefeated()
   {
@@ -255607,7 +255615,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //Notification
-  
 function CreateNewToastPopup(message, duration)
 {
   var toastPopup = Toastify({
@@ -255619,31 +255626,29 @@ function CreateNewToastPopup(message, duration)
   return toastPopup;
 }
 
+function OnWordGuessed()
+{
+  isWordGuessed = true;
+  setTimeout(function() { CreateNewToastPopup('Ispajglao si!', 2000).showToast(); }, 300);
+}
 
-  CreateGrid();
-  AddKeyListeners();
-  SplitWordToGuess();
-  OnViewportResize();
+function OnViewportResize()
+{
+  var boardEl = document.getElementById("board");
+  var height = getComputedStyle(boardEl).height;
+  boardEl.style = `width:${height}`;
 
-  window.onresize = OnViewportResize;
-
-  function OnViewportResize()
+  if (window.screen.height <= 600)
   {
-    var boardEl = document.getElementById("board");
-    var height = getComputedStyle(boardEl).height;
-    boardEl.style = `width:${height}`;
-
-    if (window.screen.height <= 600)
-    {
-      boardEl.classList.remove("BigFontSize");
-      boardEl.classList.add("SmallFontSize");
-    }
-    else
-    {
-      boardEl.classList.remove("SmallFontSize");
-      boardEl.classList.add("BigFontSize");
-    }
+    boardEl.classList.remove("BigFontSize");
+    boardEl.classList.add("SmallFontSize");
   }
+  else
+  {
+    boardEl.classList.remove("SmallFontSize");
+    boardEl.classList.add("BigFontSize");
+  }
+}
 
   function GetWordToGuess() {
     var indexToUse = 0;
@@ -255674,15 +255679,15 @@ function CreateNewToastPopup(message, duration)
 
     function CreateGrid()
     {
-        const gameBoard = document.getElementById("board");
+      const gameBoard = document.getElementById("board");
 
-        for (let index = 0; index < 36; index++) {
-            let square = document.createElement("div");
-            square.classList.add("square");
-            square.classList.add("animate__animated");
-            square.setAttribute("id", index);
-            gameBoard.appendChild(square);
-        }
+      for (let index = 0; index < 36; index++) {
+          let square = document.createElement("div");
+          square.classList.add("square");
+          square.classList.add("animate__animated");
+          square.setAttribute("id", index);
+          gameBoard.appendChild(square);
+      }
     }
 
     function AddKeyListeners()
@@ -255721,9 +255726,28 @@ function CreateNewToastPopup(message, duration)
       availableSpace = availableSpace - 1;
     }
 
+  const AnimateElementAndClean = (element, animation, animationDuration = 1, prefix = 'animate__') =>
+    new Promise((resolve, reject) =>
+    {
+      const animationName = `${prefix}${animation}`;
+      element.classList.add(`${prefix}animated`, animationName);
+      element.style.setProperty('--animate-duration', `${animationDuration}s`);
+
+      //Remove animation classes and resolve the promise
+      function HandleAnimationEnd(event)
+      {
+        event.stopPropagation();
+        element.classList.remove(`${prefix}animated`, animationName);
+        element.style.removeProperty('--animate-duration');
+        resolve('Animation ended');
+      }
+
+      element.addEventListener('animationend', HandleAnimationEnd, {once: true});
+    })
+
     function UpdateGuessedWords(letter) 
     {
-      if (IsDefeated())
+      if (IsDefeated() || isWordGuessed)
       {
         return;
       }
@@ -255737,6 +255761,7 @@ function CreateNewToastPopup(message, duration)
   
         availableSpace = availableSpace + 1;
         availableSpaceEl.textContent = letter;
+        AnimateElementAndClean(availableSpaceEl, 'zoomIn', 0.4);
       }
     }
 
@@ -255850,7 +255875,7 @@ function CreateNewToastPopup(message, duration)
           }
           const letterId = firstLetterId + index;
           const letterEl = document.getElementById(letterId);
-          letterEl.classList.add("animate__flipInX");
+          AnimateElementAndClean(letterEl, 'flipInX', 0.8);
           letterEl.style = `background-color:${tileColor};border-color:${tileColor}`;
 
           //Color the keyboard
@@ -255871,7 +255896,7 @@ function CreateNewToastPopup(message, duration)
           {
             if (triedWord === wordToGuess)
             {
-              setTimeout(function() { CreateNewToastPopup('Pajglo si !', 2000).showToast(); }, 300);
+              OnWordGuessed();
             }
           }
         }, interval * index);
