@@ -255840,14 +255840,15 @@ document.addEventListener("DOMContentLoaded", () => {
           {
             greenLetters.push(letter);
           }
+
+          if (index === currentWordArr.length - 1)
+          {
+            setTimeout(function() { WinNotify() }, 300);
+          }
         }, interval * index);
       });
   
         guessedWordCount += 1;
-
-        if (triedWord === wordToGuess) {
-          window.alert("Congratulations!");
-        }
 
         if (guessedWords.length === 6) {
           window.alert(`Sorry, you have no more guesses! The word is ${currentWord}.`);
@@ -255856,6 +255857,10 @@ document.addEventListener("DOMContentLoaded", () => {
         guessedWords.push([]);
     }
 
+    function WinNotify()
+    {
+      alert("Pajglo si !");
+    }
 
     function GetTilePriority(index)
     {
