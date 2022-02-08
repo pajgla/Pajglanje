@@ -20,7 +20,7 @@ html {
 
 body
 {
-    background-color: black !important;
+    background-color:rgb(18, 18, 19) !important;
     height: 100%;
     margin: 0;
 }
@@ -28,6 +28,7 @@ body
 #container
 {
     display: flex;
+    width: 100%;
     height: 100%;
     align-items: center;
     flex-direction: column;
@@ -45,12 +46,52 @@ body
 header
 {
     border-bottom: 1px solid rgb(58, 58, 60);
+    display: flex;
+    justify-content: space-between;
+    height: 50px;
+}
+
+.overlay
+{
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    color:black;
+    z-index: 3000;
+}
+
+.overlayContent
+{
+    position: relative;
+    border-radius: 10px;
+    border: 1px solid black;
+    background-color: black;
+    color: white;
+    max-width: 500px;
+    box-sizing: border-box;
+}
+
+#centralHeaderSpace
+{
+    color: gainsboro;
+    font-size: 36px;
+    font-weight: bold;
+    margin: 0.4rem 0 0.4rem 0;
+    text-align: center;
+    left:0;
+    right: 0;
+    position: absolute;
 }
 
 .title
 {
     color: gainsboro;
-    font-size: 2.5rem;
+    font-size: 36px;
     font-weight: bold;
     margin: 0.4rem 0 0.4rem 0;
     text-align: center;
@@ -74,7 +115,7 @@ header
     box-sizing: border-box;
     height: 100%;
     max-width: 450px;
-    max-height: 500px;
+    max-height: 450px;
 }
 
 .BigFontSize

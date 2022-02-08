@@ -255648,6 +255648,18 @@ function OnViewportResize()
     boardEl.classList.remove("SmallFontSize");
     boardEl.classList.add("BigFontSize");
   }
+
+  var headerEl = document.getElementById("centralHeaderSpace");
+  if (window.screen.width <= 450)
+  {
+    headerEl.style.fontSize = "25px";
+    headerEl.style.marginTop = "1.5vh";
+  }
+  else
+  {
+    headerEl.style.fontSize = "36px";
+    headerEl.style.marginTop = null;
+  }
 }
 
   function GetWordToGuess() {
@@ -255771,6 +255783,11 @@ function OnViewportResize()
     }
 
     function HandleSubmitWord() {
+      if (IsDefeated() || isWordGuessed)
+      {
+        return;
+      }
+
       const currentWordArr = GetGuessedWordsSplitted();
 
       //Do nothing if the word is too short
