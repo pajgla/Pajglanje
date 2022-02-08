@@ -105,8 +105,9 @@ header
     height: 200px;
     max-width: 500px;
     min-height: 200px;
-    margin: 0 5px 5px 10px;
     justify-content: center;
+    align-items: center;
+    margin: 0 0 0 5px;
 }
 
 .keyboard-row
