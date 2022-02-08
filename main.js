@@ -254365,7 +254365,6 @@ document.addEventListener("DOMContentLoaded", () => {
   'krivac',
   'šaliti',
   'zverke',
-  'pegice',
   'signal',
   'jezero',
   'paketi',
@@ -254757,7 +254756,6 @@ document.addEventListener("DOMContentLoaded", () => {
   'indija',
   'zabrđe',
   'ćutati',
-  'badnjih',
   'pokret',
   'gajdaš',
   'cipele',
@@ -255606,6 +255604,27 @@ document.addEventListener("DOMContentLoaded", () => {
   CreateGrid();
   AddKeyListeners();
   SplitWordToGuess();
+  OnViewportResize();
+
+  window.onresize = OnViewportResize;
+
+  function OnViewportResize()
+  {
+    var boardEl = document.getElementById("board");
+    var height = getComputedStyle(boardEl).height;
+    boardEl.style = `width:${height}`;
+
+    if (window.screen.height <= 600)
+    {
+      boardEl.classList.remove("BigFontSize");
+      boardEl.classList.add("SmallFontSize");
+    }
+    else
+    {
+      boardEl.classList.remove("SmallFontSize");
+      boardEl.classList.add("BigFontSize");
+    }
+  }
 
   function GetWordToGuess() {
     var indexToUse = 0;

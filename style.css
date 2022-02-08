@@ -3,15 +3,21 @@
     padding: 0;
 }
 
-html, body {
+html {
     height: 100%;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+body
+{
+    background-color: black !important;
+    height: 100%;
+    margin: 0;
 }
 
 #container
 {
     display: flex;
-    background-color: black;
     height: 100%;
     align-items: center;
     flex-direction: column;
@@ -47,6 +53,7 @@ header
     justify-content: center;
     align-items: center;
     flex-grow: 1;
+    overflow: hidden;
 }
 
 #board
@@ -56,26 +63,41 @@ header
     gap: 5px;
     padding: 10px;
     box-sizing: border-box;
+    height: 100%;
+    max-width: 450px;
+    max-height: 500px;
+}
+
+.BigFontSize
+{
+    font-size: 2em;
+}
+
+.SmallFontSize
+{
+    font-size: 1em;
 }
 
 .square
 {
     border: 2px solid rgb(58, 58, 60);
-    min-width: 60px;
-    min-height: 60px;
-    font-size: 35px;
+    line-height: 2rem;
     font-weight: bold;
     color: gainsboro;
     text-transform: uppercase;
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
+    aspect-ratio: 1/1;
 }
 
 #keyboard-container
 {
     height: 200px;
-    margin: 0 10px 5px 10px;
+    max-width: 500px;
+    min-height: 200px;
+    margin: 0 5px 5px 10px;
+    justify-content: center;
 }
 
 .keyboard-row
