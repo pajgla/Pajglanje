@@ -255600,7 +255600,26 @@ document.addEventListener("DOMContentLoaded", () => {
   let guessedWordCount = 0;
   let lettersToIgnore = [];
   let greenLetters = [];
+
+  function IsDefeated()
+  {
+    return guessedWordCount === 6;
+  }
+
+  //Notification
   
+function CreateNewToastPopup(message, duration)
+{
+  var toastPopup = Toastify({
+    text: message,
+    className: "toastify-center",
+    duration: duration
+  });
+
+  return toastPopup;
+}
+
+
   CreateGrid();
   AddKeyListeners();
   SplitWordToGuess();
@@ -255702,7 +255721,13 @@ document.addEventListener("DOMContentLoaded", () => {
       availableSpace = availableSpace - 1;
     }
 
-    function UpdateGuessedWords(letter) {
+    function UpdateGuessedWords(letter) 
+    {
+      if (IsDefeated())
+      {
+        return;
+      }
+
       const currentWordArr = GetGuessedWordsSplitted();
   
       if (currentWordArr && currentWordArr.length < 6) {
@@ -255726,14 +255751,14 @@ document.addEventListener("DOMContentLoaded", () => {
       //Do nothing if the word is too short
       if (currentWordArr.join("").length < 6)
       {
-        window.alert("Uneta reč je prekratka");
+        CreateNewToastPopup("Uneta reč je prekratka", 2000).showToast();
         return;
       }
       
       //Do nothing if the word doesn't exist
       if (!allWords.includes(currentWordArr.join("")))
       {
-          window.alert("Uneta reč nije u bazi");
+          CreateNewToastPopup("Uneta reč nije u bazi", 2000).showToast();
           return;
       }
       
@@ -255846,7 +255871,7 @@ document.addEventListener("DOMContentLoaded", () => {
           {
             if (triedWord === wordToGuess)
             {
-              setTimeout(function() { WinNotify() }, 300);
+              setTimeout(function() { CreateNewToastPopup('Pajglo si !', 2000).showToast(); }, 300);
             }
           }
         }, interval * index);
@@ -255854,16 +255879,11 @@ document.addEventListener("DOMContentLoaded", () => {
   
         guessedWordCount += 1;
 
-        if (guessedWords.length === 6) {
-          window.alert(`Sorry, you have no more guesses! The word is ${currentWord}.`);
+        if (IsDefeated()) {
+          CreateNewToastPopup(`Nisi pajglao :( Reč je: ${wordToGuess}`).showToast();
         }
 
         guessedWords.push([]);
-    }
-
-    function WinNotify()
-    {
-      alert("Pajglo si !");
     }
 
     function GetTilePriority(index)
