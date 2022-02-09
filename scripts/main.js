@@ -254371,7 +254371,6 @@ document.addEventListener("DOMContentLoaded", () => {
   'kanali',
   'vrebao',
   'malina',
-  'gučevo',
   'muzika',
   'zavist',
   'salama',
@@ -255597,29 +255596,81 @@ const LETTER_COLOR_GRAY = "rgb(58, 58, 60)";
 const LETTER_COLOR_GREEN = "rgb(83, 141, 78)";
 const LETTER_COLOR_YELLOW = "rgb(181, 159, 59)";
 
-  let wordToGuess = GetWordToGuess();
-  var splitWordToGuess = [];
-  const keys = document.querySelectorAll(".keyboard-row button");
-  let guessedWords = [[]];
-  let availableSpace = 0;
-  let guessedWordCount = 0;
-  let lettersToIgnore = [];
-  let greenLetters = [];
-  let isWordGuessed = false;
-  let yellowLetters = [];
+let wordToGuess = GetWordToGuess();
+var splitWordToGuess = [];
+const keys = document.querySelectorAll(".keyboard-row button");
+let guessedWords = [[]];
+let availableSpace = 0;
+let guessedWordCount = 0;
+let lettersToIgnore = [];
+let greenLetters = [];
+let isWordGuessed = false;
+let yellowLetters = [];
 
-  CreateGrid();
-  AddKeyListeners();
-  SplitWordToGuess();
-  //Init font size
-  OnViewportResize();
+//Leave above other methods calls
+const AnimateElementAndClean = (element, animation, animationDuration = 1, prefix = 'animate__') =>
+new Promise((resolve, reject) =>
+{
+  const animationName = `${prefix}${animation}`;
+  element.classList.add(`${prefix}animated`, animationName);
+  element.style.setProperty('--animate-duration', `${animationDuration}s`);
 
-  window.onresize = OnViewportResize;
-
-  function IsDefeated()
+  //Remove animation classes and resolve the promise
+  function HandleAnimationEnd(event)
   {
-    return guessedWordCount === 6 && !isWordGuessed;
+    event.stopPropagation();
+    element.classList.remove(`${prefix}animated`, animationName);
+    element.style.removeProperty('--animate-duration');
+    resolve('Animation ended');
   }
+
+  element.addEventListener('animationend', HandleAnimationEnd, {once: true});
+})
+
+CreateGrid();
+AddKeyListeners();
+SplitWordToGuess();
+//Init font size
+OnViewportResize();
+InitUserData();
+
+window.onresize = OnViewportResize;
+
+//Methods
+function InitUserData()
+{
+  let wordToGuessIndex = LoadData('WordToGuessIndex');
+  if (wordToGuessIndex && GetWordToGuessIndex() != wordToGuessIndex)
+  {
+    console.log("No word to guess index");
+    SaveData("GuessedWords", null);
+    return;
+  }
+
+  let guessedWordsCookie = LoadData('GuessedWords');
+  if (guessedWordsCookie === null)
+  {
+    console.log("Cookie not found");
+    return;
+  }
+  console.log(guessedWordsCookie.split(','));
+  let guessedWordsSplitted = guessedWordsCookie.split(',');
+  for (let i = 0; i < guessedWordsSplitted.length; ++i)
+  {
+    UpdateGuessedWords(guessedWordsSplitted[i]);
+    if (i > 0 && (i + 1) % 6 === 0)
+    {
+      HandleSubmitWord();
+    }
+  }
+
+  SaveData('WordToGuessIndex', GetWordToGuessIndex());
+}
+
+function IsDefeated()
+{
+  return guessedWordCount === 6 && !isWordGuessed;
+}
 
   //Notification
 function CreateNewToastPopup(message, duration)
@@ -255639,35 +255690,14 @@ function OnWordGuessed()
   setTimeout(function() { CreateNewToastPopup('Ispajglao si!', 3000).showToast(); }, 2000);
 }
 
-function SetCookie(name, value, expire = 365)
+function SaveData(name, value)
 {
-  const date = new Date();
-  date.setTime(date.getTime() + expire * 24 * 60 * 60 * 1000);
-  console.log(date);
-  let expires = 'expires=' + date.toUTCString();
-  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+  localStorage.setItem(name, value);
 }
 
-function GetCookie(name)
+function LoadData(name)
 {
-  let nameString = name + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let cookieArray = decodedCookie.split(';');
-  console.log(cookieArray);
-  for (let i = 0; i < cookieArray.length; ++i)
-  {
-    let cookie = cookieArray[i];
-    while (cookie.charAt(0) == ' ')
-    {
-      cookie = cookie.substring(1);
-    }
-    if (cookie.indexOf(nameString) === 0)
-    {
-      return cookie.substring(nameString.length, cookie.length);
-    }
-  }
-
-  return null;
+  return localStorage.getItem(name);
 }
 
 function OnViewportResize()
@@ -255700,20 +255730,26 @@ function OnViewportResize()
   }
 }
 
-  function GetWordToGuess() {
-    //#TODO : use server time
-    var indexToUse = 0;
-    var currentDate = new Date();
-    var startDate = new Date('2/6/2022');
-    startDate.setHours(0);
-    startDate.setMinutes(0);
-    startDate.setSeconds(0);
-    var dateDiff = currentDate - startDate;
-    var hourDiff = Math.floor(dateDiff / (1000 * 60 * 60));
-    indexToUse = Math.floor(hourDiff / 8);
-    document.title = "Pajglanje - " + indexToUse;
-    return dailyWords[indexToUse];
-  }
+function GetWordToGuessIndex()
+{
+  let indexToUse = 0;
+  var currentDate = new Date();
+  var startDate = new Date('2/6/2022');
+  startDate.setHours(0);
+  startDate.setMinutes(0);
+  startDate.setSeconds(0);
+  var dateDiff = currentDate - startDate;
+  var hourDiff = Math.floor(dateDiff / (1000 * 60 * 60));
+  indexToUse = Math.floor(hourDiff / 8);
+  return indexToUse;
+}
+
+function GetWordToGuess() {
+  //#TODO : use server time
+  var indexToUse = GetWordToGuessIndex();
+  document.title = "Pajglanje - " + indexToUse;
+  return dailyWords[indexToUse];
+}
 
   function SplitWordToGuess()
   {
@@ -255775,25 +255811,6 @@ function OnViewportResize()
       lastLetterEl.textContent = "";
       availableSpace = availableSpace - 1;
     }
-
-  const AnimateElementAndClean = (element, animation, animationDuration = 1, prefix = 'animate__') =>
-    new Promise((resolve, reject) =>
-    {
-      const animationName = `${prefix}${animation}`;
-      element.classList.add(`${prefix}animated`, animationName);
-      element.style.setProperty('--animate-duration', `${animationDuration}s`);
-
-      //Remove animation classes and resolve the promise
-      function HandleAnimationEnd(event)
-      {
-        event.stopPropagation();
-        element.classList.remove(`${prefix}animated`, animationName);
-        element.style.removeProperty('--animate-duration');
-        resolve('Animation ended');
-      }
-
-      element.addEventListener('animationend', HandleAnimationEnd, {once: true});
-    })
 
     function UpdateGuessedWords(letter) 
     {
@@ -255898,7 +255915,7 @@ function OnViewportResize()
         CreateNewToastPopup(`Nisi ispajglao :( Reč je: ${wordToGuess}`, 3000).showToast();
       }
 
-        SetCookie('GuessedWords', guessedWords);
+        SaveData('GuessedWords', guessedWords);
 
         guessedWords.push([]);
     }
