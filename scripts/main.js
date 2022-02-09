@@ -255592,6 +255592,11 @@ document.addEventListener("DOMContentLoaded", () => {
   'klompe',
   ]
   
+//Color consts
+const LETTER_COLOR_GRAY = "rgb(58, 58, 60)";
+const LETTER_COLOR_GREEN = "rgb(83, 141, 78)";
+const LETTER_COLOR_YELLOW = "rgb(181, 159, 59)";
+
   let wordToGuess = GetWordToGuess();
   var splitWordToGuess = [];
   const keys = document.querySelectorAll(".keyboard-row button");
@@ -255601,17 +255606,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let lettersToIgnore = [];
   let greenLetters = [];
   let isWordGuessed = false;
+  let yellowLetters = [];
 
   CreateGrid();
   AddKeyListeners();
   SplitWordToGuess();
+  //Init font size
   OnViewportResize();
 
   window.onresize = OnViewportResize;
 
   function IsDefeated()
   {
-    return guessedWordCount === 6;
+    return guessedWordCount === 6 && !isWordGuessed;
   }
 
   //Notification
@@ -255629,7 +255636,38 @@ function CreateNewToastPopup(message, duration)
 function OnWordGuessed()
 {
   isWordGuessed = true;
-  setTimeout(function() { CreateNewToastPopup('Ispajglao si!', 2000).showToast(); }, 300);
+  setTimeout(function() { CreateNewToastPopup('Ispajglao si!', 3000).showToast(); }, 2000);
+}
+
+function SetCookie(name, value, expire = 365)
+{
+  const date = new Date();
+  date.setTime(date.getTime() + expire * 24 * 60 * 60 * 1000);
+  console.log(date);
+  let expires = 'expires=' + date.toUTCString();
+  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+function GetCookie(name)
+{
+  let nameString = name + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let cookieArray = decodedCookie.split(';');
+  console.log(cookieArray);
+  for (let i = 0; i < cookieArray.length; ++i)
+  {
+    let cookie = cookieArray[i];
+    while (cookie.charAt(0) == ' ')
+    {
+      cookie = cookie.substring(1);
+    }
+    if (cookie.indexOf(nameString) === 0)
+    {
+      return cookie.substring(nameString.length, cookie.length);
+    }
+  }
+
+  return null;
 }
 
 function OnViewportResize()
@@ -255663,6 +255701,7 @@ function OnViewportResize()
 }
 
   function GetWordToGuess() {
+    //#TODO : use server time
     var indexToUse = 0;
     var currentDate = new Date();
     var startDate = new Date('2/6/2022');
@@ -255673,7 +255712,6 @@ function OnViewportResize()
     var hourDiff = Math.floor(dateDiff / (1000 * 60 * 60));
     indexToUse = Math.floor(hourDiff / 8);
     document.title = "Pajglanje - " + indexToUse;
-    console.log(dailyWords[indexToUse]);
     return dailyWords[indexToUse];
   }
 
@@ -255788,44 +255826,104 @@ function OnViewportResize()
         return;
       }
 
-      const currentWordArr = GetGuessedWordsSplitted();
+      const guessedWordSplitted = GetGuessedWordsSplitted();
 
       //Do nothing if the word is too short
-      if (currentWordArr.join("").length < 6)
+      if (guessedWordSplitted.join("").length < 6)
       {
         CreateNewToastPopup("Uneta reč je prekratka", 2000).showToast();
         return;
       }
       
       //Do nothing if the word doesn't exist
-      if (!allWords.includes(currentWordArr.join("")))
+      if (!allWords.includes(guessedWordSplitted.join("")))
       {
           CreateNewToastPopup("Uneta reč nije u bazi", 2000).showToast();
           return;
       }
       
-      const triedWord = currentWordArr.join("");
+      const triedWord = guessedWordSplitted.join("");
       const firstLetterId = guessedWordCount * 6 ;
       const interval = 300;
-      loop1:
-      for (let i = 0; i < currentWordArr.length; ++i)
+
+      //Pretty fucked up method, just leave it as it is
+      //Pray first if you need to change/fix something (mandatory)
+      //Used to paint letters if there are more of them then in the word to guess
+      IgnoreExcessLetters(guessedWordSplitted);
+
+      guessedWordSplitted.forEach((letter, index) => {
+        setTimeout(() => {
+          let tileColor;
+          if (!lettersToIgnore.includes(index))
+          {
+            tileColor = getTileColor(letter, index);
+          }
+          else
+          {
+            tileColor = LETTER_COLOR_GRAY;
+            for (let i = 0; i < lettersToIgnore.length; ++i)
+            {
+              if (lettersToIgnore[i] === index)
+              {
+                lettersToIgnore.splice(i, 1);
+              }
+            }
+          }
+          const letterId = firstLetterId + index;
+          const letterEl = document.getElementById(letterId);
+          AnimateElementAndClean(letterEl, 'flipInX', 0.8);
+          letterEl.style = `background-color:${tileColor};border-color:${tileColor}`;
+
+          PaintKeyboardLetter(letter, tileColor);
+
+          //Fill green letters
+          if (tileColor === LETTER_COLOR_GREEN)
+          {
+            greenLetters.push(letter);
+          }
+          else if (tileColor === LETTER_COLOR_YELLOW)
+          {
+            yellowLetters.push(letter);
+          }
+
+        }, interval * index);
+      });
+      
+      guessedWordCount += 1;
+      if (triedWord === wordToGuess)
       {
-        let filteredString = currentWordArr.join("");
-        let letterCount = filteredString.split(currentWordArr[i]).length - 1;
-        let letterCountInWordToGuess = wordToGuess.split(currentWordArr[i]).length - 1;
+        OnWordGuessed();
+      }
+      else if (IsDefeated()) {
+        CreateNewToastPopup(`Nisi ispajglao :( Reč je: ${wordToGuess}`, 3000).showToast();
+      }
+
+        SetCookie('GuessedWords', guessedWords);
+
+        guessedWords.push([]);
+    }
+
+    function IgnoreExcessLetters(guessedWordSplitted)
+    {
+      loop1:
+      for (let i = 0; i < guessedWordSplitted.length; ++i)
+      {
+        let filteredString = guessedWordSplitted.join("");
+        let letterCount = filteredString.split(guessedWordSplitted[i]).length - 1;
+        let letterCountInWordToGuess = wordToGuess.split(guessedWordSplitted[i]).length - 1;
 
         if (letterCount > letterCountInWordToGuess)
         {
           let thisLetterIndexes = [];
 
-          for (let j = 0; j < currentWordArr.length; ++j)
+          for (let j = 0; j < guessedWordSplitted.length; ++j)
           {
             if (lettersToIgnore.includes(j))
             {
               continue loop1;
             }
 
-            if (currentWordArr[j] == currentWordArr[i])
+            if (guessedWordSplitted[j] == guessedWordSplitted[i])
             {
               thisLetterIndexes.push(j);
             }
@@ -255871,72 +255969,50 @@ function OnViewportResize()
           }
         }
       }
+    }
 
-      currentWordArr.forEach((letter, index) => {
-        setTimeout(() => {
-          let tileColor;
-          if (!lettersToIgnore.includes(index))
+    function PaintKeyboardLetter(letter, color)
+    {
+      //Color the keyboard
+      let shouldPaint = false;
+
+      if (color === LETTER_COLOR_GRAY)
+      {
+        shouldPaint = !yellowLetters.includes(letter) && !greenLetters.includes(letter);
+      }
+      else if (color === LETTER_COLOR_YELLOW)
+      {
+        shouldPaint = !greenLetters.includes(letter);
+      }
+      else if (color === LETTER_COLOR_GREEN)
+      {
+        shouldPaint = true;
+      }
+      else
+      {
+        console.error("Undefined letter color.");
+      }
+
+      if (shouldPaint)
+      {
+        for (let i = 0; i < keys.length; i++) {
+          if (keys[i].getAttribute("data-key") == letter)
           {
-            tileColor = getTileColor(letter, index);
+            keys[i].style = `background-color:${color};border-color:${color};`;
           }
-          else
-          {
-            tileColor = "rgb(58, 58, 60)";
-            for (let i = 0; i < lettersToIgnore.length; ++i)
-            {
-              if (lettersToIgnore[i] === index)
-              {
-                lettersToIgnore.splice(i, 1);
-              }
-            }
-          }
-          const letterId = firstLetterId + index;
-          const letterEl = document.getElementById(letterId);
-          AnimateElementAndClean(letterEl, 'flipInX', 0.8);
-          letterEl.style = `background-color:${tileColor};border-color:${tileColor}`;
-
-          //Color the keyboard
-          for (let i = 0; i < keys.length; i++) {
-            if (keys[i].getAttribute("data-key") == letter && !greenLetters.includes(letter))
-            {
-              keys[i].style = `background-color:${tileColor};border-color:${tileColor};`;
-            }
-          }
-
-          //Fill green letter indexes
-          if (tileColor === "rgb(83, 141, 78)")
-          {
-            greenLetters.push(letter);
-          }
-
-          if (index === currentWordArr.length - 1)
-          {
-            if (triedWord === wordToGuess)
-            {
-              OnWordGuessed();
-            }
-          }
-        }, interval * index);
-      });
-  
-        guessedWordCount += 1;
-
-        if (IsDefeated()) {
-          CreateNewToastPopup(`Nisi pajglao :( Reč je: ${wordToGuess}`).showToast();
         }
-
-        guessedWords.push([]);
+      }
     }
 
     function GetTilePriority(index)
     {
       let letter = GetGuessedWordsSplitted()[index];
       let color = getTileColor(letter, index);
-      if (color === "rgb(58, 58, 60)")
+      if (color === LETTER_COLOR_GRAY)
       {
         return 0;
       }
-      else if(color === "rgb(83, 141, 78)")
+      else if(color === LETTER_COLOR_GREEN)
       {
         return 2;
       }
@@ -255949,17 +256025,17 @@ function OnViewportResize()
     function getTileColor(letter, index) {
       const isCorrectLetter = splitWordToGuess.includes(letter);
       if (!isCorrectLetter) {
-        return "rgb(58, 58, 60)";
+        return LETTER_COLOR_GRAY;
       }
 
       const letterInThatPosition = splitWordToGuess[index];
       const isCorrectPosition = letter === letterInThatPosition;
       
       if (isCorrectPosition) {
-        return "rgb(83, 141, 78)";
+        return LETTER_COLOR_GREEN;
       }
   
-      return "rgb(181, 159, 59)";
+      return LETTER_COLOR_YELLOW;
     }
 
     function GetLetterAtIndex(word, index)
