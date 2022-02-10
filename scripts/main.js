@@ -255630,6 +255630,7 @@ new Promise((resolve, reject) =>
 CreateGrid();
 AddKeyListeners();
 SplitWordToGuess();
+
 //Init font size
 OnViewportResize();
 InitUserData();
