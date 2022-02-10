@@ -255641,7 +255641,7 @@ window.onresize = OnViewportResize;
 function InitUserData()
 {
   let wordToGuessIndex = LoadData('WordToGuessIndex');
-  if (wordToGuessIndex !== null && GetWordToGuessIndex() != wordToGuessIndex)
+  if (wordToGuessIndex === null || GetWordToGuessIndex() != wordToGuessIndex)
   {
     console.log("No word to guess index");
     SaveData("GuessedWords", null);
