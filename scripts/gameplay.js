@@ -1,19 +1,33 @@
 
 import { DICT_DAILY_WORDS } from './dict_daily_words.js';
 import { DICT_GUESS_WORDS } from './dict_guess_words.js';
-import {LetterStatus, match_words, consolidate_digraphs, valueToLetterStatus} from "./core_logic.js";
-import {break_apart, pprint} from "./funk_pack.js";
+import {consolidate_digraphs, LetterStatus, match_words, valueToLetterStatus} from "./core_logic.js";
+import {ajax} from "./ajax.js"
 
-function getLocalPajglaTime() {
-    let currentDate = new Date();
-    let startDate = new Date('2/6/2022');
-    startDate.setHours(0);
-    startDate.setMinutes(0);
-    startDate.setSeconds(0);
-    let dateDiff = currentDate - startDate;
+function dateToPajglaTime(end) {
+    let start = new Date('2/6/2022');
+    start.setHours(0);
+    start.setMinutes(0);
+    start.setSeconds(0);
+    let dateDiff = end - start;
     let hourDiff = Math.floor(dateDiff / (1000 * 60 * 60));
     return Math.floor(hourDiff / 8);
 }
+
+function getLocalPajglaTime() {
+    let currentDate = new Date();
+    return dateToPajglaTime(currentDate);
+}
+
+function getServerPajglaTime() {
+    let [status, data] = ajax.sync.get("http://worldtimeapi.org/api/timezone/Europe/Belgrade", []);
+    if (status !== 200) {
+        console.warn(`World Time API status returned ${status}!`);
+    }
+    let currentDate = new Date(JSON.parse(data).utc_datetime);
+    return dateToPajglaTime(currentDate);
+}
+
 
 export class GuessProblem {
     static WordTooShort = new GuessProblem("word too short")
@@ -104,6 +118,7 @@ export class GameOptions {
         this.clearSavedIfOld = true;
         this.wordLength = 6;
         this.attemptOptions = 6;
+        this.useServerTime = true;
     }
 }
 
@@ -164,7 +179,7 @@ export class GameInstance {
     }
 
     guessIsProblematic(guess) {
-        if (guess.length < this.options.wordLength) {
+        if (consolidate_digraphs(guess).length < this.options.wordLength) {
             for (let problematicGuessHandler of this.problematicGuessEvent) {
                 problematicGuessHandler(guess, GuessProblem.WordTooShort);
             }
@@ -188,7 +203,7 @@ export class GameInstance {
                 this.state.update(guess, [ success, matches ]);
 
                 for (let guessMadeHandler of this.guessMadeEvent) {
-                    guessMadeHandler(success, matches);
+                    guessMadeHandler(success, this.state.letters, matches);
                 }
 
                 if (success) {
@@ -218,9 +233,9 @@ export class GameInstance {
 }
 
 export class GameplayController {
-    constructor(options = new GameOptions(), getTimeFunc = getLocalPajglaTime) {
+    constructor(options = new GameOptions()) {
         this.options = options;
-        this.getTimeFunc = getTimeFunc;
+        this.getTimeFunc = this.options.useServerTime ? getServerPajglaTime : getLocalPajglaTime;
         this.currentGameInstance = null;
         this.gameInstanceConnection = null;
         this.pajglaChangedEvent = [];

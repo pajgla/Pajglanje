@@ -6,6 +6,18 @@ export const Digraphs = [
     { input: [ 'n', 'j' ], output: 'њ' },
 ];
 
+export function reverse_to_digraph(letter, digraphs_to_use = Digraphs) {
+    let changed = digraphs_to_use.reduce((result, e) => {
+        if (letter === e.output) {
+            return e.input.join('');
+        } else {
+            return result;
+        }
+    }, letter);
+
+    return changed;
+}
+
 export function consolidate_digraphs(word, digraphs_to_use = Digraphs) {
     let match_digraphs = function(letters, predicate) {
         return letters.reduce((all, e_) => {

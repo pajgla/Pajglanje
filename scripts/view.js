@@ -1,6 +1,6 @@
 
 import { simpleAnimateFlipAndClear } from "./animation.js";
-import {LetterStatus} from "./core_logic.js";
+import {LetterStatus, reverse_to_digraph} from "./core_logic.js";
 
 export function popup(message, duration = 3000) {
     return Toastify({ text: message, className: "toastify-center", duration: duration }).showToast();
@@ -101,7 +101,7 @@ export class Board {
     updateFieldLetter(guessAttempt, letterIndex, letter) {
         let id = getIdForField(guessAttempt, letterIndex);
         let letterElement = document.getElementById(id);
-        letterElement.textContent = letter.toUpperCase();
+        letterElement.textContent = `${reverse_to_digraph(letter)}`.toUpperCase();
         letterElement.setAttribute("data-key", letter);
     }
 
@@ -189,8 +189,9 @@ export class Keyboard {
     }
 
     updateKeyColor(key, fieldStatus) {
+        Object.setPrototypeOf(fieldStatus, LetterStatus.prototype);
         let color = this.statusToColorConverter(fieldStatus);
-        this.keys[key].style = getStyleForColoring(color);
+        this.keys[reverse_to_digraph(key)].style = getStyleForColoring(color);
     }
 
     toggle(status) {

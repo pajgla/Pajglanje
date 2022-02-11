@@ -18,13 +18,17 @@ document.addEventListener("DOMContentLoaded", () => {
     game.connectToGameInstance(function(instance) {
         instance.replayEvent.push((state, image) => {
             for (let guessAttempt in image) {
-                let { guess, result } = image[guessAttempt];
+                let { _, result } = image[guessAttempt];
                 for (let letterIndex in result) {
                     let [ letter, status ] = result[letterIndex];
 
                     board.updateFieldLetter(guessAttempt, letterIndex, letter);
                     board.updateFieldColor(guessAttempt, letterIndex, status, false);
                 }
+            }
+
+            for (const key in state.letters) {
+                keyboard.updateKeyColor(key, state.letters[key]);
             }
 
             board.currentPosition = [ image.length, 0 ];
@@ -54,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        instance.guessMadeEvent.push((success, matches) => {
+        instance.guessMadeEvent.push((success, letters, matches) => {
             let [ guessAttempt, _ ] = board.currentPosition;
             let full_length = matches.length * FLIP_ANIMATION_SPEED;
 
@@ -67,6 +71,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             delay(() => {
                 board.nextGuess();
+                for (const key in letters) {
+                    keyboard.updateKeyColor(key, letters[key]);
+                }
                 keyboard.toggle(true);
             }, full_length);
         });
