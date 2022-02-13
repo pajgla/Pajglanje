@@ -1,5 +1,6 @@
 
 export const DICT_GUESS_WORDS = [
+  'rusija',
   'abažur',
   'abažura',
   'abažure',
