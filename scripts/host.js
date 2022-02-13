@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let keyboard = new Keyboard();
 
     let FLIP_ANIMATION_SPEED = 0.25;
-    let WIN_MESSAGE = "BRAVO! PAJGLA!";
+    let WIN_MESSAGE = "ISPAJGLANO!";
     let LOSE_MESSAGE = (correct) => `Reč je bila: ${correct.toUpperCase()}!`;
-    let WORD_TOO_SHORT_MESSAGE = "Prekratko!";
-    let WORD_NOT_KNOWN_MESSAGE = "Nepoznato!";
+    let WORD_TOO_SHORT_MESSAGE = "Uneta reč je prekratka";
+    let WORD_NOT_KNOWN_MESSAGE = "Uneta reč nije u bazi";
 
     game.connectToGameInstance(function(instance) {
         instance.replayEvent.push((state, image) => {
