@@ -43,7 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         instance.gameWonEvent.push(() => {
             keyboard.toggle(false);
-            popup(WIN_MESSAGE);
+            delay(() => {
+                popup(WIN_MESSAGE);
+            }, 6000);
         });
 
         instance.gameLostEvent.push((correct) => {
