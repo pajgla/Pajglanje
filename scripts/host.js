@@ -112,5 +112,19 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('centralHeaderSpace').textContent = `PAJGLANJE #${pajgla.time}`;
     });
 
+    game.statisticsChangedEvent.push((stats) => {
+        /* stats have the following format:
+        { 
+            won: 0, 
+            lost: 0, 
+            currentStreak: 0, 
+            longestStreak: 0, 
+            totalPlayed: 0 
+        };
+        */
+        
+        // #Todo: StatisticsWindow gets updated....
+    });
+
     game.triggerPajglaChanged();
 });
