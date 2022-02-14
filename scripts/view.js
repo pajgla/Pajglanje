@@ -164,6 +164,21 @@ export class Keyboard {
         this.keys = new Map();
     }
 
+    commonLayoutsToSerbianLatin(req) {
+        switch (req) {
+            case 'q': return 'lj';
+            case 'w': return 'nj';
+            case 'x': return 'dž';
+            case 'y': return 'z';
+            case '\\': case '#': return 'ž';
+            case '[': case 'ü': return 'š';
+            case ']': case '+': return 'đ';
+            case '\'': case 'ä': return 'ć';
+            case ';': case 'ö': return 'č';
+            default: return req;
+        }
+    }
+
     onConnect() {
         for (let key of document.querySelectorAll(this.keyButtonQuerySelector)) {
             let dataKey = key.getAttribute("data-key");
@@ -207,22 +222,8 @@ export class Keyboard {
                         deleteKeyHandler();
                     }
                 } else {
-                    navigator.keyboard.getLayoutMap().then(keyMap => {
-                        let req = keyMap.get(key);
-                        let resp = (function(req) {
-                            switch (req) {
-                                case 'q': return 'lj';
-                                case 'w': return 'nj';
-                                case 'x': return 'dž';
-                                case 'y': return 'z';
-                                case '\\': case '#': return 'ž';
-                                case '[': case 'ü': return 'š';
-                                case ']': case '+': return 'đ';
-                                case '\'': case 'ä': return 'ć';
-                                case ';': case 'ö': return 'č';
-                                default: return req;
-                            }
-                        })(req);
+                    let triggerKeyEvents = function(req) {
+                        let resp = self.commonLayoutsToSerbianLatin(req);
 
                         if (isLetter(resp)) {
                             let keyboardKey = self.keys[resp];
@@ -231,8 +232,16 @@ export class Keyboard {
                                     letterKeyHandler(keyboardKey);
                                 }
                             }
-                        }
-                    });
+                        }                        
+                    };
+                    if (navigator !== undefined && navigator.keyboard !== undefined) { 
+                        navigator.keyboard.getLayoutMap().then(keyMap => {
+                            let req = keyMap.get(key);
+                            triggerKeyEvents(req);
+                        });
+                    } else {
+                        triggerKeyEvents(event.key);
+                    }
                 }
             }
         });
