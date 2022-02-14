@@ -118,7 +118,8 @@ export class GameOptions {
         this.clearSavedIfOld = true;
         this.wordLength = 6;
         this.attemptOptions = 6;
-        this.useServerTime = true;
+        //#TODO : fix a bug caused by API and use server time
+        this.useServerTime = false;
     }
 }
 
