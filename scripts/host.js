@@ -44,13 +44,15 @@ document.addEventListener("DOMContentLoaded", () => {
         instance.gameWonEvent.push(() => {
             keyboard.toggle(false);
             delay(() => {
-                popup(WIN_MESSAGE);
-            }, 6000);
+                popup(WIN_MESSAGE, 5000);
+            }, options.wordLength * FLIP_ANIMATION_SPEED);
         });
 
         instance.gameLostEvent.push((correct) => {
             keyboard.toggle(false);
-            popup(LOSE_MESSAGE(correct), 5000);
+            delay(() => {
+                popup(LOSE_MESSAGE(correct), 5000);
+            }, options.wordLength * FLIP_ANIMATION_SPEED);
         });
 
         instance.problematicGuessEvent.push((guess, reason) => {

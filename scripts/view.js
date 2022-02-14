@@ -140,6 +140,12 @@ export class Board {
     }
 }
 
+function isLetter(c) {
+    if (c === null) return false;
+    if (c === undefined) return false;
+    return c.toLowerCase() != c.toUpperCase();
+}
+
 export class Keyboard {
     constructor(statusToColorConverter = simpleStatusToColor,
                 keyButtonQuerySelector = ".keyboard-row button",
@@ -186,6 +192,48 @@ export class Keyboard {
 
             this.keys[dataKey] = key;
         }
+
+        let self = this;
+        document.addEventListener('keyup', function(event) {
+            let key = event.code;
+
+            if (key === 'Enter') {
+                for (let confirmKeyHandler of self.confirmKeyPressedEvent) {
+                    confirmKeyHandler();
+                }
+            } else if (key === 'Backspace') {
+                for (let deleteKeyHandler of self.deleteKeyPressedEvent) {
+                    deleteKeyHandler();
+                }
+            } else {
+                navigator.keyboard.getLayoutMap().then(keyMap => {
+                    let req = keyMap.get(key);
+                    let resp = (function(req) {
+                        switch (req) {
+                            case 'q': return 'lj';
+                            case 'w': return 'nj';
+                            case 'x': return 'dž';
+                            case 'y': return 'z';
+                            case '\\': case '#': return 'ž';
+                            case '[': case 'ü': return 'š';
+                            case ']': case '+': return 'đ';
+                            case '\'': case 'ä': return 'ć';
+                            case ';': case 'ö': return 'č';
+                            default: return req;
+                        }
+                    })(req);
+
+                    if (isLetter(resp)) {
+                        let keyboardKey = self.keys[resp];
+                        if (keyboardKey !== undefined) {
+                            for (let letterKeyHandler of self.letterKeyPressedEvent) {
+                                letterKeyHandler(keyboardKey);
+                            }
+                        }
+                    }
+                });
+            }
+        });
     }
 
     updateKeyColor(key, fieldStatus) {
