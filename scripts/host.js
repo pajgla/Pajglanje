@@ -68,16 +68,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             keyboard.toggle(false);
             for (let index in matches) {
-                let [ _, status ] = matches[index];
-                delay(() => board.updateFieldColor(guessAttempt, index, status),
-                    index * FLIP_ANIMATION_SPEED);
+                let [ key, status ] = matches[index];
+                delay(() => {
+                    board.updateFieldColor(guessAttempt, index, status);
+                    keyboard.updateKeyColor(key, status);
+
+                }, index * FLIP_ANIMATION_SPEED);
             }
 
             delay(() => {
                 board.nextGuess();
-                for (const key in letters) {
-                    keyboard.updateKeyColor(key, letters[key]);
-                }
                 keyboard.toggle(true);
             }, full_length);
         });
@@ -110,6 +110,20 @@ document.addEventListener("DOMContentLoaded", () => {
     game.pajglaChangedEvent.push((pajgla) => {
         document.title = `Pajglanje #${pajgla.time}`;
         document.getElementById('centralHeaderSpace').textContent = `PAJGLANJE #${pajgla.time}`;
+    });
+
+    game.statisticsChangedEvent.push((stats) => {
+        /* stats have the following format:
+        { 
+            won: 0, 
+            lost: 0, 
+            currentStreak: 0, 
+            longestStreak: 0, 
+            totalPlayed: 0 
+        };
+        */
+        
+        // #Todo: StatisticsWindow gets updated....
     });
 
     game.triggerPajglaChanged();

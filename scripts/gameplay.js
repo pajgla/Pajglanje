@@ -28,7 +28,6 @@ function getServerPajglaTime() {
     return dateToPajglaTime(currentDate);
 }
 
-
 export class GuessProblem {
     static WordTooShort = new GuessProblem("word too short")
     static WordNotKnown = new GuessProblem("word not in dictionary")
@@ -43,6 +42,16 @@ export class GameStatus {
     static Active = new GameStatus("active")
     static Solved = new GameStatus("solved")
     static Failed = new GameStatus("failed")
+
+    constructor(name) {
+        this.name = name
+    }
+}
+
+export class GameStatistics {
+    static RegisterWin = new GameStatus("win")
+    static RegisterLose = new GameStatus("lose")
+    static Check = new GameStatus("check")
 
     constructor(name) {
         this.name = name
@@ -124,10 +133,11 @@ export class GameOptions {
 }
 
 export class GameInstance {
-    static SavedGameStorageKey = "saved_game";
+    static SavedGameStorageKey = "pajgla_saved_game";
 
-    constructor(pairTimeWord, options) {
-        this.options = options;
+    constructor(gameplayController, pairTimeWord) {
+        this.gameplayController = gameplayController;
+        this.options = this.gameplayController.options;
         console.assert(pairTimeWord.word.length === this.options.wordLength, "Any pajgla has to have 6 letters");
         this.state = new GameState(GameStatus.Active, pairTimeWord.time, pairTimeWord.word, []);
 
@@ -209,12 +219,14 @@ export class GameInstance {
 
                 if (success) {
                     this.state.status = GameStatus.Solved;
+                    this.gameplayController.updateStatistics(GameStatistics.RegisterWin);
                     for (let gameWonHandler of this.gameWonEvent) {
                         gameWonHandler(matches);
                     }
                 } else {
                     if (this.state.guesses.length === this.options.attemptOptions) {
                         this.state.status = GameStatus.Failed;
+                        this.gameplayController.updateStatistics(GameStatistics.RegisterLose);
                         for (let gameLostHandler of this.gameLostEvent) {
                             gameLostHandler(this.currentWord, matches);
                         }
@@ -234,12 +246,15 @@ export class GameInstance {
 }
 
 export class GameplayController {
+    static StatisticsStorageKey = "pajgla_statistics";
+
     constructor(options = new GameOptions()) {
         this.options = options;
         this.getTimeFunc = this.options.useServerTime ? getServerPajglaTime : getLocalPajglaTime;
         this.currentGameInstance = null;
         this.gameInstanceConnection = null;
         this.pajglaChangedEvent = [];
+        this.statisticsChangedEvent = [];
     }
 
     triggerPajglaChanged(pajglaTime = this.getTimeFunc()) {
@@ -256,12 +271,53 @@ export class GameplayController {
             pajglaChangedHandler(pairTimeWord);
         }
 
-        this.currentGameInstance = new GameInstance(pairTimeWord, this.options);
+        this.currentGameInstance = new GameInstance(this, pairTimeWord);
         this.gameInstanceConnection(this.currentGameInstance);
         this.currentGameInstance.onConnect();
     }
 
     connectToGameInstance(gameCallback) {
         this.gameInstanceConnection = gameCallback;
+    }
+
+    createFreshStatistics() {
+        return { 
+            won: 0, 
+            lost: 0, 
+            currentStreak: 0, 
+            longestStreak: 0, 
+            totalPlayed: 0 
+        };
+    }
+
+    updateStatistics(stat) {
+        let stats = window.localStorage.getItem(GameplayController.StatisticsStorageKey);
+        if (stats === null) {
+            stats = this.createFreshStatistics();
+        }
+
+        if (stat !== GameStatistics.Check) {
+            stats.totalPlayed++;
+
+            if (stat === GameStatistics.RegisterWin) {
+                stats.won++;
+                stats.currentStreak++;
+            } else if (stat === GameStatistics.RegisterLose) {
+                stats.lost++;
+                stats.currentStreak = 0;
+            }
+
+            if (stats.currentStreak > stats.longestStreak) {
+                stats.longestStreak = stats.currentStreak;
+            }
+        }
+
+        for (let statisticsHandler of this.statisticsChangedEvent) {
+            statisticsHandler(stats);
+        }
+    }
+
+    triggerStatistics() {
+        this.updateStatistics(GameStatistics.Check);
     }
 }
