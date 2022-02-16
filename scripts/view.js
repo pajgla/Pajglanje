@@ -267,6 +267,8 @@ export class StatisticsWindow
     static currentWinStreakElementID = 'currentWinStreakStatistics';
     static bestWinStreakElementID = 'bestWinStreakStatistics';
     static gamesWonPercentageElementID = 'gamesWonPercentageStatistics'
+    static currentGuessHistogramColor = 'rgb(0, 153, 51)';
+    static minGraphWidth = 7;
 
     updateStatisticsWindow(stats)
     {
@@ -291,22 +293,107 @@ export class StatisticsWindow
 
         let bestWinStreakElement = document.getElementById(StatisticsWindow.bestWinStreakElementID);
         bestWinStreakElement.textContent = stats.longestStreak;
+
+        let savedHistogramData = stats.histogram;
+        if (typeof savedHistogramData !== 'undefined')
+        {
+            for (let i = 1; i <= Object.keys(savedHistogramData).length; ++i)
+            {
+                let graphElementID = this.numToGraphID(i);
+                let graphElement = document.getElementById(graphElementID);
+                let currentGuessCount = savedHistogramData[i];
+                let graphWidth = stats.won === 0 ? 0 : (currentGuessCount / stats.won) * 100;
+                let alignRight = true;
+                if (graphWidth < StatisticsWindow.minGraphWidth)
+                {
+                    graphWidth = StatisticsWindow.minGraphWidth;
+                    alignRight = false;
+                }
+
+                graphElement.style.width = `${graphWidth}%`;
+                if (alignRight)
+                {
+                    graphElement.classList.add('align-right');
+                }
+
+                let graphNumElementID = this.numToGraphNumID(i);
+                let graphNumElement = document.getElementById(graphNumElementID);
+                graphNumElement.textContent = currentGuessCount;
+            }
+        }
+    }
+
+    numToGraphID(num)
+    {
+        return this.numToPositionWord(num) + "GuessGraph";
+    }
+
+    numToGraphNumID(num)
+    {
+        return this.numToPositionWord(num) + "GuessNum";
+    }
+
+    numToPositionWord(num)
+    {
+        let word = "";
+        switch (num)
+        {
+            case 1:
+                word = "first";
+                break;
+            case 2:
+                word = "second";
+                break;
+            case 3:
+                word = "third";
+                break;
+            case 4:
+                word = "fourth";
+                break;
+            case 5:
+                word = "fifth"
+                break;
+            case 6:
+                word = "sixth";
+                break;
+            default:
+                console.error("numToHistogramElementID -> Wrong num provided");
+                return;
+        }
+
+        return word;
     }
 
     showStatisticsWindow(state)
     {
         let currentPajglaTime = state.time;
 
-        this.createStatisticsFooter();
+        this.createStatisticsFooter(state);
         this.startNextPajglaTimer(currentPajglaTime);
-
         this.isGameWon = state.status == GameStatus.Solved;
+
+        this.paintGuessHistogram(state);
+
         $('#statisticsPopup').modal({
             fadeDuration: 100
         });
     }
 
-    createStatisticsFooter()
+    paintGuessHistogram(state)
+    {
+        //Do not paint if we didn't guess the word
+        if (!this.isGameWon)
+        {
+            return;
+        }
+
+        let currentGuess = state.guesses.length;
+        let graphElementID = this.numToGraphID(currentGuess);
+        let graphElementToPaint = document.getElementById(graphElementID);
+        graphElementToPaint.style.backgroundColor = StatisticsWindow.currentGuessHistogramColor;
+    }
+
+    createStatisticsFooter(state)
     {
         let footerElement = document.getElementById('footer');
 
@@ -331,6 +418,7 @@ export class StatisticsWindow
         shareButton.id = 'shareButton';
         shareButton.textContent = "PODELI";
         shareElement.appendChild(shareButton);
+        shareButton.addEventListener("click", this.onShareButtonClicked(state), false);
     }
 
     startNextPajglaTimer(currentPajglaTime)
@@ -338,7 +426,7 @@ export class StatisticsWindow
         let nextPajglaTime = ++currentPajglaTime;
         let nextPajglaDate = new Date('2/6/2022');
         nextPajglaDate.setHours(8 * nextPajglaTime);
-        
+
         let timerElement = document.getElementById('nextPajglaTimer');
         setInterval(() => {
             let currentDate = Date.now();
@@ -354,5 +442,17 @@ export class StatisticsWindow
                 seconds = '0' + seconds;
             timerElement.textContent = hours + ":" + minutes + ":" + seconds;
         }, 100);
+    }
+
+    onShareButtonClicked(state)
+    {
+        let stringToCopy = "";
+        for (let i = 0; i < state.guesses.length; ++i)
+        {
+            for (let j = 0; j < state.guesses[i].length; ++j)
+            {
+
+            }
+        }
     }
 }

@@ -43,6 +43,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         statisticsWindow.showStatisticsWindow(instance.state);
                     }, STATISTICS_WINDOW_OPEN_DELAY)
                 }
+                else if (state.status === GameStatus.Failed)
+                {
+                    popup(LOSE_MESSAGE(instance.state.correctWord), 5000);
+                    delay(() => {
+                        console.log("Show now");
+                        statisticsWindow.showStatisticsWindow(instance.state);
+                    }, STATISTICS_WINDOW_OPEN_DELAY);
+                }
             }
         });
 
@@ -120,17 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     game.statisticsChangedEvent.push((stats) => {
-        /* stats have the following format:
-        { 
-            won: 0, 
-            lost: 0, 
-            currentStreak: 0, 
-            longestStreak: 0, 
-            totalPlayed: 0 
-        };
-        */
-        
-        // #Todo: StatisticsWindow gets updated....
         console.assert(stats !== null, "Statistics not initialized");
         statisticsWindow.updateStatisticsWindow(stats);
     });
