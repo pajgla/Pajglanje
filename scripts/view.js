@@ -1,6 +1,8 @@
 
 import { simpleAnimateFlipAndClear } from "./animation.js";
-import {LetterStatus, reverse_to_digraph} from "./core_logic.js";
+import { LetterStatus, reverse_to_digraph } from "./core_logic.js";
+import { GameStatus } from "./gameplay.js";
+import { copyToClipboard } from "./clipboard.js";
 
 export function popup(message, duration = 3000) {
     return Toastify({ text: message, className: "toastify-center", duration: duration }).showToast();
@@ -14,6 +16,7 @@ function getStyleForColoring(color) {
     return `background-color:${color};border-color:${color}`;
 }
 
+const RESULT_READY_TO_PASTE = "Kopirano i spremno za slanje!";
 const DEFAULT_LETTER_COLOR_GRAY = "rgb(58, 58, 60)";
 const DEFAULT_LETTER_COLOR_GREEN = "rgb(83, 141, 78)";
 const DEFAULT_LETTER_COLOR_YELLOW = "rgb(181, 159, 59)";
@@ -50,6 +53,7 @@ export class Board {
                 square.classList.add("animate__animated");
                 square.setAttribute("id", getIdForField(guessAttempt, letterIndex));
                 square.setAttribute("data-key", '');
+                square.setAttribute("data-value", 0);
                 boardElement.appendChild(square);
             }
         }
@@ -111,6 +115,7 @@ export class Board {
 
         const letterElement = document.getElementById(id);
         letterElement.style = getStyleForColoring(color);
+        letterElement.setAttribute("data-value", fieldStatus.value);
 
         if (animated) {
             this.flipAnimation(letterElement).then(() => {});
@@ -255,5 +260,212 @@ export class Keyboard {
 
     toggle(status) {
         this.enabled = status;
+    }
+}
+
+export class StatisticsWindow
+{
+    static statisticsPopupElementID = 'statisticsPopupLink';
+    static gamesPlayedElementID = 'gamesPlayedStatistics';
+    static gamesWonElementID = 'gamesWonStatistics';
+    static currentWinStreakElementID = 'currentWinStreakStatistics';
+    static bestWinStreakElementID = 'bestWinStreakStatistics';
+    static gamesWonPercentageElementID = 'gamesWonPercentageStatistics'
+    static currentGuessHistogramColor = 'rgb(0, 153, 51)';
+    static minGraphWidth = 7;
+
+    updateStatisticsWindow(stats)
+    {
+        if (stats === null)
+        {
+            console.assert(false, "Statistics not initialized");
+            return;
+        }
+
+        let gamesPlayedElement = document.getElementById(StatisticsWindow.gamesPlayedElementID);
+        gamesPlayedElement.textContent = stats.totalPlayed;
+        
+        let gamesWonElement = document.getElementById(StatisticsWindow.gamesWonElementID);
+        gamesWonElement.textContent = stats.won;
+
+        let gamesWonPercentage = stats.totalPlayed === 0 ? 0 : (stats.won / stats.totalPlayed) * 100;
+        let gamesWonPercentageElement = document.getElementById(StatisticsWindow.gamesWonPercentageElementID);
+        gamesWonPercentageElement.textContent = gamesWonPercentage + "%"
+
+        let currentWinStreakElement = document.getElementById(StatisticsWindow.currentWinStreakElementID);
+        currentWinStreakElement.textContent = stats.currentStreak;
+
+        let bestWinStreakElement = document.getElementById(StatisticsWindow.bestWinStreakElementID);
+        bestWinStreakElement.textContent = stats.longestStreak;
+
+        let savedHistogramData = stats.histogram;
+        if (typeof savedHistogramData !== 'undefined')
+        {
+            for (let i = 1; i <= Object.keys(savedHistogramData).length; ++i)
+            {
+                let graphElementID = this.numToGraphID(i);
+                let graphElement = document.getElementById(graphElementID);
+                let currentGuessCount = savedHistogramData[i];
+                let graphWidth = stats.won === 0 ? 0 : (currentGuessCount / stats.won) * 100;
+                let alignRight = true;
+                if (graphWidth < StatisticsWindow.minGraphWidth)
+                {
+                    graphWidth = StatisticsWindow.minGraphWidth;
+                    alignRight = false;
+                }
+
+                graphElement.style.width = `${graphWidth}%`;
+                if (alignRight)
+                {
+                    graphElement.classList.add('align-right');
+                }
+
+                let graphNumElementID = this.numToGraphNumID(i);
+                let graphNumElement = document.getElementById(graphNumElementID);
+                graphNumElement.textContent = currentGuessCount;
+            }
+        }
+    }
+
+    numToGraphID(num)
+    {
+        return this.numToPositionWord(num) + "GuessGraph";
+    }
+
+    numToGraphNumID(num)
+    {
+        return this.numToPositionWord(num) + "GuessNum";
+    }
+
+    numToPositionWord(num)
+    {
+        let word = "";
+        switch (num)
+        {
+            case 1:
+                word = "first";
+                break;
+            case 2:
+                word = "second";
+                break;
+            case 3:
+                word = "third";
+                break;
+            case 4:
+                word = "fourth";
+                break;
+            case 5:
+                word = "fifth"
+                break;
+            case 6:
+                word = "sixth";
+                break;
+            default:
+                console.error("numToHistogramElementID -> Wrong num provided");
+                return;
+        }
+
+        return word;
+    }
+
+    showStatisticsWindow(state)
+    {
+        let currentPajglaTime = state.time;
+
+        this.createStatisticsFooter(state);
+        this.startNextPajglaTimer(currentPajglaTime);
+        this.isGameWon = state.status === GameStatus.Solved;
+
+        this.paintGuessHistogram(state);
+
+        $('#statisticsPopup').modal({
+            fadeDuration: 100
+        });
+    }
+
+    paintGuessHistogram(state)
+    {
+        //Do not paint if we didn't guess the word
+        if (!this.isGameWon)
+        {
+            return;
+        }
+
+        let currentGuess = state.guesses.length;
+        let graphElementID = this.numToGraphID(currentGuess);
+        let graphElementToPaint = document.getElementById(graphElementID);
+        graphElementToPaint.style.backgroundColor = StatisticsWindow.currentGuessHistogramColor;
+    }
+
+    createStatisticsFooter(state)
+    {
+        let footerElement = document.getElementById('footer');
+
+        let countdownElement = document.createElement("div");
+        countdownElement.classList.add('countdown');
+        footerElement.appendChild(countdownElement);
+
+        let timerTitle = document.createElement('h4');
+        timerTitle.textContent = "Sledeće pajglanje";
+        countdownElement.appendChild(timerTitle);
+
+        let nextPajglaTimerElement = document.createElement('div');
+        nextPajglaTimerElement.id = "nextPajglaTimer";
+        nextPajglaTimerElement.textContent = '03:49:13';
+        countdownElement.appendChild(nextPajglaTimerElement);
+
+        let shareElement = document.createElement('div');
+        shareElement.classList.add('share');
+        footerElement.appendChild(shareElement);
+
+        let shareButton = document.createElement('button');
+        shareButton.id = 'shareButton';
+        shareButton.textContent = "PODELI";
+        shareElement.appendChild(shareButton);
+        shareButton.addEventListener("click", () => this.onShareButtonClicked(state), false);
+    }
+
+    startNextPajglaTimer(currentPajglaTime)
+    {
+        let nextPajglaTime = ++currentPajglaTime;
+        let nextPajglaDate = new Date('2/6/2022');
+        nextPajglaDate.setHours(8 * nextPajglaTime);
+
+        let timerElement = document.getElementById('nextPajglaTimer');
+        setInterval(() => {
+            let currentDate = Date.now();
+            let dateDiff = nextPajglaDate - currentDate;
+            let hours = Math.floor(dateDiff / (1000 * 60 * 60));
+            let minutes = Math.floor(dateDiff / (1000 * 60)) % 60;
+            let seconds = Math.floor(dateDiff / 1000) % 60;
+            if (hours < 10)
+                hours = '0' + hours;
+            if (minutes < 10)
+                minutes = '0' + minutes;
+            if (seconds < 10)
+                seconds = '0' + seconds;
+            timerElement.textContent = hours + ":" + minutes + ":" + seconds;
+        }, 100);
+    }
+
+    onShareButtonClicked(state)
+    {
+        const squareVisuals = [ '⬛', '🟨', '🟩' ];
+
+        let stringToCopy = `PAJGLANJE #${state.time} ${state.guesses.length}\n\n`;
+        for (let i = 0; i < state.guesses.length; ++i)
+        {
+            let row = [];
+            for (let j = 0; j < state.guesses[i].length; ++j)
+            {
+                let id = getIdForField(i, j);
+                let value = document.getElementById(id).getAttribute("data-value");
+                row.push(squareVisuals[value]);
+            }
+            stringToCopy += row.join('') + "\n";
+        }
+
+        copyToClipboard(stringToCopy);
+        popup(RESULT_READY_TO_PASTE, 5000);
     }
 }

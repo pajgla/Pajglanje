@@ -1,6 +1,6 @@
 
-import {GameOptions, GameplayController, GameStatus, GuessProblem} from "./gameplay.js";
-import {Board, Keyboard, popup} from "./view.js";
+import {GameOptions, GameplayController, GameStatistics, GameStatus, GuessProblem} from "./gameplay.js";
+import {Board, Keyboard, popup, StatisticsWindow} from "./view.js";
 import {delay} from "./animation.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,12 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let game = new GameplayController(options);
     let board = new Board(options);
     let keyboard = new Keyboard();
+    let statisticsWindow = new StatisticsWindow();
 
     let FLIP_ANIMATION_SPEED = 0.25;
     let WIN_MESSAGE = "ISPAJGLANO!";
     let LOSE_MESSAGE = (correct) => `Reč je bila: ${correct.toUpperCase()}!`;
     let WORD_TOO_SHORT_MESSAGE = "Uneta reč je prekratka";
     let WORD_NOT_KNOWN_MESSAGE = "Uneta reč nije u bazi";
+    let STATISTICS_WINDOW_OPEN_DELAY = 1;
 
     game.connectToGameInstance(function(instance) {
         instance.replayEvent.push((state, image) => {
@@ -37,6 +39,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (state.status === GameStatus.Solved) {
                     popup(WIN_MESSAGE);
+                    delay(() => {
+                        statisticsWindow.showStatisticsWindow(instance.state);
+                    }, STATISTICS_WINDOW_OPEN_DELAY)
+                }
+                else if (state.status === GameStatus.Failed)
+                {
+                    popup(LOSE_MESSAGE(instance.state.correctWord), 5000);
+                    delay(() => {
+                        console.log("Show now");
+                        statisticsWindow.showStatisticsWindow(instance.state);
+                    }, STATISTICS_WINDOW_OPEN_DELAY);
                 }
             }
         });
@@ -45,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
             keyboard.toggle(false);
             delay(() => {
                 popup(WIN_MESSAGE, 5000);
+                statisticsWindow.showStatisticsWindow(instance.state);
             }, options.wordLength * FLIP_ANIMATION_SPEED);
         });
 
@@ -52,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
             keyboard.toggle(false);
             delay(() => {
                 popup(LOSE_MESSAGE(correct), 5000);
+                statisticsWindow.showStatisticsWindow(instance.state);
             }, options.wordLength * FLIP_ANIMATION_SPEED);
         });
 
@@ -112,5 +127,11 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('centralHeaderSpace').textContent = `PAJGLANJE #${pajgla.time}`;
     });
 
+    game.statisticsChangedEvent.push((stats) => {
+        console.assert(stats !== null, "Statistics not initialized");
+        statisticsWindow.updateStatisticsWindow(stats);
+    });
+
+    game.triggerStatistics();
     game.triggerPajglaChanged();
 });
