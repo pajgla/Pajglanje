@@ -1,7 +1,8 @@
 
 import { simpleAnimateFlipAndClear } from "./animation.js";
-import {LetterStatus, reverse_to_digraph} from "./core_logic.js";
-import { GameplayController, GameStatus } from "./gameplay.js";
+import { LetterStatus, reverse_to_digraph } from "./core_logic.js";
+import { GameStatus } from "./gameplay.js";
+import { copyToClipboard } from "./clipboard.js";
 
 export function popup(message, duration = 3000) {
     return Toastify({ text: message, className: "toastify-center", duration: duration }).showToast();
@@ -15,6 +16,7 @@ function getStyleForColoring(color) {
     return `background-color:${color};border-color:${color}`;
 }
 
+const RESULT_READY_TO_PASTE = "Kopirano i spremno za slanje!";
 const DEFAULT_LETTER_COLOR_GRAY = "rgb(58, 58, 60)";
 const DEFAULT_LETTER_COLOR_GREEN = "rgb(83, 141, 78)";
 const DEFAULT_LETTER_COLOR_YELLOW = "rgb(181, 159, 59)";
@@ -51,6 +53,7 @@ export class Board {
                 square.classList.add("animate__animated");
                 square.setAttribute("id", getIdForField(guessAttempt, letterIndex));
                 square.setAttribute("data-key", '');
+                square.setAttribute("data-value", 0);
                 boardElement.appendChild(square);
             }
         }
@@ -112,6 +115,7 @@ export class Board {
 
         const letterElement = document.getElementById(id);
         letterElement.style = getStyleForColoring(color);
+        letterElement.setAttribute("data-value", fieldStatus.value);
 
         if (animated) {
             this.flipAnimation(letterElement).then(() => {});
@@ -370,7 +374,7 @@ export class StatisticsWindow
 
         this.createStatisticsFooter(state);
         this.startNextPajglaTimer(currentPajglaTime);
-        this.isGameWon = state.status == GameStatus.Solved;
+        this.isGameWon = state.status === GameStatus.Solved;
 
         this.paintGuessHistogram(state);
 
@@ -418,7 +422,7 @@ export class StatisticsWindow
         shareButton.id = 'shareButton';
         shareButton.textContent = "PODELI";
         shareElement.appendChild(shareButton);
-        shareButton.addEventListener("click", this.onShareButtonClicked(state), false);
+        shareButton.addEventListener("click", () => this.onShareButtonClicked(state), false);
     }
 
     startNextPajglaTimer(currentPajglaTime)
@@ -446,13 +450,22 @@ export class StatisticsWindow
 
     onShareButtonClicked(state)
     {
-        let stringToCopy = "";
+        const squareVisuals = [ '⬛', '🟨', '🟩' ];
+
+        let stringToCopy = `PAJGLANJE #${state.time} ${state.guesses.length}\n\n`;
         for (let i = 0; i < state.guesses.length; ++i)
         {
+            let row = [];
             for (let j = 0; j < state.guesses[i].length; ++j)
             {
-
+                let id = getIdForField(i, j);
+                let value = document.getElementById(id).getAttribute("data-value");
+                row.push(squareVisuals[value]);
             }
+            stringToCopy += row.join('') + "\n";
         }
+
+        copyToClipboard(stringToCopy);
+        popup(RESULT_READY_TO_PASTE, 5000);
     }
 }
