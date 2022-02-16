@@ -284,9 +284,18 @@ export class GameplayController {
         return { 
             won: 0, 
             lost: 0, 
-            currentStreak: 0, 
-            longestStreak: 0, 
-            totalPlayed: 0 
+            totalPlayed: 0,
+            experience: 0,
+            currentStreak: 0,
+            longestStreak: 0,
+            histogram: {
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0,
+                5: 0,
+                6: 0
+            }
         };
     }
 
@@ -295,6 +304,10 @@ export class GameplayController {
         if (stats === null) {
             stats = this.createFreshStatistics();
         }
+        else
+        {
+            stats = JSON.parse(stats);
+        }
 
         if (stat !== GameStatistics.Check) {
             stats.totalPlayed++;
@@ -302,6 +315,8 @@ export class GameplayController {
             if (stat === GameStatistics.RegisterWin) {
                 stats.won++;
                 stats.currentStreak++;
+                let histogramKey = this.currentGameInstance.state.guesses.length;
+                stats.histogram[histogramKey]++;
             } else if (stat === GameStatistics.RegisterLose) {
                 stats.lost++;
                 stats.currentStreak = 0;
@@ -315,6 +330,8 @@ export class GameplayController {
         for (let statisticsHandler of this.statisticsChangedEvent) {
             statisticsHandler(stats);
         }
+
+        window.localStorage.setItem(GameplayController.StatisticsStorageKey, JSON.stringify(stats));
     }
 
     triggerStatistics() {

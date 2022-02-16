@@ -1,6 +1,7 @@
 
 import { simpleAnimateFlipAndClear } from "./animation.js";
 import {LetterStatus, reverse_to_digraph} from "./core_logic.js";
+import { GameplayController, GameStatus } from "./gameplay.js";
 
 export function popup(message, duration = 3000) {
     return Toastify({ text: message, className: "toastify-center", duration: duration }).showToast();
@@ -255,5 +256,103 @@ export class Keyboard {
 
     toggle(status) {
         this.enabled = status;
+    }
+}
+
+export class StatisticsWindow
+{
+    static statisticsPopupElementID = 'statisticsPopupLink';
+    static gamesPlayedElementID = 'gamesPlayedStatistics';
+    static gamesWonElementID = 'gamesWonStatistics';
+    static currentWinStreakElementID = 'currentWinStreakStatistics';
+    static bestWinStreakElementID = 'bestWinStreakStatistics';
+    static gamesWonPercentageElementID = 'gamesWonPercentageStatistics'
+
+    updateStatisticsWindow(stats)
+    {
+        if (stats === null)
+        {
+            console.assert(false, "Statistics not initialized");
+            return;
+        }
+
+        let gamesPlayedElement = document.getElementById(StatisticsWindow.gamesPlayedElementID);
+        gamesPlayedElement.textContent = stats.totalPlayed;
+        
+        let gamesWonElement = document.getElementById(StatisticsWindow.gamesWonElementID);
+        gamesWonElement.textContent = stats.won;
+
+        let gamesWonPercentage = stats.totalPlayed === 0 ? 0 : (stats.won / stats.totalPlayed) * 100;
+        let gamesWonPercentageElement = document.getElementById(StatisticsWindow.gamesWonPercentageElementID);
+        gamesWonPercentageElement.textContent = gamesWonPercentage + "%"
+
+        let currentWinStreakElement = document.getElementById(StatisticsWindow.currentWinStreakElementID);
+        currentWinStreakElement.textContent = stats.currentStreak;
+
+        let bestWinStreakElement = document.getElementById(StatisticsWindow.bestWinStreakElementID);
+        bestWinStreakElement.textContent = stats.longestStreak;
+    }
+
+    showStatisticsWindow(state)
+    {
+        let currentPajglaTime = state.time;
+
+        this.createStatisticsFooter();
+        this.startNextPajglaTimer(currentPajglaTime);
+
+        this.isGameWon = state.status == GameStatus.Solved;
+        $('#statisticsPopup').modal({
+            fadeDuration: 100
+        });
+    }
+
+    createStatisticsFooter()
+    {
+        let footerElement = document.getElementById('footer');
+
+        let countdownElement = document.createElement("div");
+        countdownElement.classList.add('countdown');
+        footerElement.appendChild(countdownElement);
+
+        let timerTitle = document.createElement('h4');
+        timerTitle.textContent = "Sledeće pajglanje";
+        countdownElement.appendChild(timerTitle);
+
+        let nextPajglaTimerElement = document.createElement('div');
+        nextPajglaTimerElement.id = "nextPajglaTimer";
+        nextPajglaTimerElement.textContent = '03:49:13';
+        countdownElement.appendChild(nextPajglaTimerElement);
+
+        let shareElement = document.createElement('div');
+        shareElement.classList.add('share');
+        footerElement.appendChild(shareElement);
+
+        let shareButton = document.createElement('button');
+        shareButton.id = 'shareButton';
+        shareButton.textContent = "PODELI";
+        shareElement.appendChild(shareButton);
+    }
+
+    startNextPajglaTimer(currentPajglaTime)
+    {
+        let nextPajglaTime = ++currentPajglaTime;
+        let nextPajglaDate = new Date('2/6/2022');
+        nextPajglaDate.setHours(8 * nextPajglaTime);
+        
+        let timerElement = document.getElementById('nextPajglaTimer');
+        setInterval(() => {
+            let currentDate = Date.now();
+            let dateDiff = nextPajglaDate - currentDate;
+            let hours = Math.floor(dateDiff / (1000 * 60 * 60));
+            let minutes = Math.floor(dateDiff / (1000 * 60)) % 60;
+            let seconds = Math.floor(dateDiff / 1000) % 60;
+            if (hours < 10)
+                hours = '0' + hours;
+            if (minutes < 10)
+                minutes = '0' + minutes;
+            if (seconds < 10)
+                seconds = '0' + seconds;
+            timerElement.textContent = hours + ":" + minutes + ":" + seconds;
+        }, 100);
     }
 }

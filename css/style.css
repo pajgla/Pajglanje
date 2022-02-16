@@ -49,6 +49,9 @@ header
     display: flex;
     justify-content: space-between;
     height: 50px;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
 }
 
 .overlay
@@ -86,6 +89,11 @@ header
     left:0;
     right: 0;
     position: absolute;
+}
+
+#rightHeaderSpace
+{
+    margin-right: 10px;
 }
 
 .title
@@ -183,4 +191,153 @@ header
 .keyboard-row .BigKeyboardButton
 {
     max-width: 60px;
+}
+
+.headerIcon
+{
+    width: 20px;
+    height: 20px;
+}
+
+#statisticsPopup
+{
+    background-color: rgb(37, 37, 37);
+    color: white;
+}
+
+#statisticsPopup h1,
+#statisticsPopup h4
+{
+    text-align: center;
+}
+
+#statisticsPopup h4
+{
+    padding-top: 10px;
+}
+
+#statistics
+{
+    display: flex;
+}
+
+.statistics-container
+{
+    flex: 1;
+}
+
+.statistics-container .statistics
+{
+    font-size: 36px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;   
+}
+
+.statistics-container .label
+{
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#guess-distribution
+{
+    padding-bottom: 10px;
+    width: 80%;
+    margin: auto;
+}
+
+.graphContainer
+{
+    width: 100%;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    padding-bottom: 4px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.graphContainer .guess
+{
+    width: 10px;
+}
+
+.graphContainer .graph
+{
+    width: 100%;
+    height: 100%;
+    padding-left: 4px;
+}
+
+.graphContainer .graph .graphBar
+{
+    height: 100%;
+    width: 20%;
+    position: relative;
+    background-color: rgb(99, 99, 99);
+    display: flex;
+    justify-content: center;
+}
+
+.graphContainer .graph .graphBar .guessesNum
+{
+    font-weight: bold;
+}
+
+.graphContainer .graph .graphBar.align-right
+{
+    justify-content: right;
+    padding-right: 8px;
+}
+
+#footer
+{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    margin: auto;
+}
+
+#statisticsPopup .countdown
+{
+    border-right: 1px solid rgb(223, 221, 221);
+    width: 50%;
+}
+
+#nextPajglaTimer
+{
+    font-size: 36px;
+    text-align: center;
+}
+
+#statisticsPopup .share
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 12px;
+    width: 50%;
+}
+
+button#shareButton
+{
+    background-color: rgb(74, 145, 74);
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    font-size: 20px;
+    height: 52px;
+    color:rgb(223, 221, 221);
 }
