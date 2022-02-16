@@ -452,7 +452,7 @@ export class StatisticsWindow
     {
         const squareVisuals = [ '⬛', '🟨', '🟩' ];
 
-        let stringToCopy = `PAJGLANJE #${state.time} ${state.guesses.length}\n\n`;
+        let stringToCopy = `PAJGLANJE #${state.time} ${state.guesses.length}/6\n\n`;
         for (let i = 0; i < state.guesses.length; ++i)
         {
             let row = [];
