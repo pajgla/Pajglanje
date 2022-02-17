@@ -61,11 +61,14 @@ export class Board {
     }
 
     onResize() {
+        let windowScreenWidth = window.screen.width;
+        let windowScreenHeight = window.screen.height;
+
         let boardElement = document.getElementById("board");
         let height = getComputedStyle(boardElement).height;
         boardElement.style = `width:${height}`;
 
-        if (window.screen.height <= 600) {
+        if (windowScreenHeight <= 600) {
             boardElement.classList.remove("BigFontSize");
             boardElement.classList.add("SmallFontSize");
         } else {
@@ -74,12 +77,40 @@ export class Board {
         }
 
         let headerElement = document.getElementById("centralHeaderSpace");
-        if (window.screen.width <= 450) {
+        if (windowScreenWidth <= 450) {
             headerElement.style.fontSize = "25px";
             headerElement.style.marginTop = "1.5vh";
         } else {
             headerElement.style.fontSize = "36px";
             headerElement.style.marginTop = null;
+        }
+        
+        let statisticsElements = document.getElementsByClassName('statistics');
+        for (let i = 0; i < statisticsElements.length; ++i)
+        {
+            let currentStatisticsElement = statisticsElements[i];
+            if (windowScreenWidth <= 450)
+            {
+                currentStatisticsElement.style.fontSize = "27px";
+            }
+            else
+            {
+                currentStatisticsElement.style.fontSize = "36px";
+            }
+        }
+
+        let statisticsContainerElements = document.getElementsByClassName('statistics-container');
+        for (let i = 0; i < statisticsElements.length; ++i)
+        {
+            let currentStatisticsContainerElement = statisticsContainerElements[i];
+            if (windowScreenWidth <= 450)
+            {
+                currentStatisticsContainerElement.style.paddingRight = "5px";
+            }
+            else
+            {
+                currentStatisticsContainerElement.style.paddingRight = "0px";
+            }
         }
     }
 
