@@ -3,6 +3,11 @@ export function simpleAnimateFlipAndClear(element) {
     return animateElementAndClean(element, 'flipInX', 0.8);
 }
 
+export function simpleAnimateZoomInAndClear(element)
+{
+    return animateElementAndClean(element, 'bounceIn', 0.4);
+}
+
 export function delay(something, sec) {
     setTimeout(something, sec * 1000);
 }

@@ -1,5 +1,5 @@
 
-import { simpleAnimateFlipAndClear } from "./animation.js";
+import { simpleAnimateFlipAndClear, simpleAnimateZoomInAndClear } from "./animation.js";
 import { LetterStatus, reverse_to_digraph } from "./core_logic.js";
 import { GameStatus } from "./gameplay.js";
 import { copyToClipboard } from "./clipboard.js";
@@ -34,10 +34,11 @@ const simpleStatusToColor = (status) => {
 };
 
 export class Board {
-    constructor(options, statusToColorConverter = simpleStatusToColor, flipAnimation = simpleAnimateFlipAndClear) {
+    constructor(options, statusToColorConverter = simpleStatusToColor, flipAnimation = simpleAnimateFlipAndClear, zoomAnimation = simpleAnimateZoomInAndClear) {
         this.options = options;
         this.statusToColorConverter = statusToColorConverter;
         this.flipAnimation = flipAnimation;
+        this.zoomAnimation = zoomAnimation;
 
         this.currentPosition = [ 0, 0 ];
     }
@@ -60,11 +61,14 @@ export class Board {
     }
 
     onResize() {
+        let windowScreenWidth = window.screen.width;
+        let windowScreenHeight = window.screen.height;
+
         let boardElement = document.getElementById("board");
         let height = getComputedStyle(boardElement).height;
         boardElement.style = `width:${height}`;
 
-        if (window.screen.height <= 600) {
+        if (windowScreenHeight <= 600) {
             boardElement.classList.remove("BigFontSize");
             boardElement.classList.add("SmallFontSize");
         } else {
@@ -73,12 +77,40 @@ export class Board {
         }
 
         let headerElement = document.getElementById("centralHeaderSpace");
-        if (window.screen.width <= 450) {
+        if (windowScreenWidth <= 450) {
             headerElement.style.fontSize = "25px";
             headerElement.style.marginTop = "1.5vh";
         } else {
             headerElement.style.fontSize = "36px";
             headerElement.style.marginTop = null;
+        }
+        
+        let statisticsElements = document.getElementsByClassName('statistics');
+        for (let i = 0; i < statisticsElements.length; ++i)
+        {
+            let currentStatisticsElement = statisticsElements[i];
+            if (windowScreenWidth <= 450)
+            {
+                currentStatisticsElement.style.fontSize = "27px";
+            }
+            else
+            {
+                currentStatisticsElement.style.fontSize = "36px";
+            }
+        }
+
+        let statisticsContainerElements = document.getElementsByClassName('statistics-container');
+        for (let i = 0; i < statisticsElements.length; ++i)
+        {
+            let currentStatisticsContainerElement = statisticsContainerElements[i];
+            if (windowScreenWidth <= 450)
+            {
+                currentStatisticsContainerElement.style.paddingRight = "5px";
+            }
+            else
+            {
+                currentStatisticsContainerElement.style.paddingRight = "0px";
+            }
         }
     }
 
@@ -130,6 +162,8 @@ export class Board {
             letterElement.textContent = keyElement.textContent.toUpperCase();
             letterElement.setAttribute("data-key", keyElement.getAttribute("data-key"));
             this.currentPosition = [ guessAttempt, letterIndex + 1 ];
+
+            this.zoomAnimation(letterElement).then(() => {});
         }
     }
 
@@ -280,7 +314,7 @@ export class StatisticsWindow
     static currentWinStreakElementID = 'currentWinStreakStatistics';
     static bestWinStreakElementID = 'bestWinStreakStatistics';
     static gamesWonPercentageElementID = 'gamesWonPercentageStatistics'
-    static currentGuessHistogramColor = 'rgb(0, 153, 51)';
+    static currentGuessHistogramColor = DEFAULT_LETTER_COLOR_GREEN;
     static minGraphWidth = 7;
 
     updateStatisticsWindow(stats)
@@ -299,7 +333,7 @@ export class StatisticsWindow
 
         let gamesWonPercentage = stats.totalPlayed === 0 ? 0 : (stats.won / stats.totalPlayed) * 100;
         let gamesWonPercentageElement = document.getElementById(StatisticsWindow.gamesWonPercentageElementID);
-        gamesWonPercentageElement.textContent = gamesWonPercentage + "%"
+        gamesWonPercentageElement.textContent = Math.round(gamesWonPercentage) + "%"
 
         let currentWinStreakElement = document.getElementById(StatisticsWindow.currentWinStreakElementID);
         currentWinStreakElement.textContent = stats.currentStreak;
@@ -420,7 +454,6 @@ export class StatisticsWindow
 
         let nextPajglaTimerElement = document.createElement('div');
         nextPajglaTimerElement.id = "nextPajglaTimer";
-        nextPajglaTimerElement.textContent = '03:49:13';
         countdownElement.appendChild(nextPajglaTimerElement);
 
         let shareElement = document.createElement('div');
