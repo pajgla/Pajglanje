@@ -254,8 +254,17 @@ export class Keyboard {
 
     updateKeyColor(key, fieldStatus) {
         Object.setPrototypeOf(fieldStatus, LetterStatus.prototype);
+        let element = this.keys[reverse_to_digraph(key)];
         let color = this.statusToColorConverter(fieldStatus);
-        this.keys[reverse_to_digraph(key)].style = getStyleForColoring(color);
+        element.setAttribute("data-value", fieldStatus.value);
+        element.style = getStyleForColoring(color);
+    }
+
+    getValueForKey(key) {
+        let element = this.keys[reverse_to_digraph(key)];
+        let value = element.getAttribute("data-value");
+        if (value === null || value === "") value = 0;
+        return value;
     }
 
     toggle(status) {
@@ -452,7 +461,7 @@ export class StatisticsWindow
     {
         const squareVisuals = [ '⬛', '🟨', '🟩' ];
 
-        let stringToCopy = `PAJGLANJE #${state.time} ${state.guesses.length}\n\n`;
+        let stringToCopy = `PAJGLANJE #${state.time} ${state.guesses.length}/6\n\n`;
         for (let i = 0; i < state.guesses.length; ++i)
         {
             let row = [];

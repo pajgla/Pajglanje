@@ -86,7 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 let [ key, status ] = matches[index];
                 delay(() => {
                     board.updateFieldColor(guessAttempt, index, status);
-                    keyboard.updateKeyColor(key, status);
+                    console.log(status.value, letters[key]);
+                    if (status.value > keyboard.getValueForKey(key)) {
+                        keyboard.updateKeyColor(key, status);
+                    }
 
                 }, index * FLIP_ANIMATION_SPEED);
             }
