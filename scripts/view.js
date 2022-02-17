@@ -1,5 +1,5 @@
 
-import { simpleAnimateFlipAndClear, simpleAnimateZoomInAndClear } from "./animation.js";
+import { delay, simpleAnimateFlipAndClear, simpleAnimateZoomInAndClear } from "./animation.js";
 import { LetterStatus, reverse_to_digraph } from "./core_logic.js";
 import { GameStatus } from "./gameplay.js";
 import { copyToClipboard } from "./clipboard.js";
@@ -509,5 +509,31 @@ export class StatisticsWindow
 
         copyToClipboard(stringToCopy);
         popup(RESULT_READY_TO_PASTE, 5000);
+    }
+}
+
+export class HelpWindow
+{
+    constructor(flipAnimation = simpleAnimateFlipAndClear)
+    {
+        this.flipAnimation = flipAnimation;
+    }
+
+    initHelpWindow()
+    {
+        let helpButtonElement = document.getElementById('helpWindowImg');
+        helpButtonElement.onclick = () => {
+            let greenLetterElement = document.getElementById('paintGreenExample');
+            let yellowLetterElement = document.getElementById('paintYellowExample');
+            let grayLetterElement = document.getElementById('paintGrayExample');
+            delay(() => {
+                this.flipAnimation(greenLetterElement).then(() => {});
+                this.flipAnimation(yellowLetterElement).then(() => {});
+                this.flipAnimation(grayLetterElement).then(() => {});
+                greenLetterElement.style.backgroundColor = DEFAULT_LETTER_COLOR_GREEN;
+                yellowLetterElement.style.backgroundColor = DEFAULT_LETTER_COLOR_YELLOW;
+                grayLetterElement.style.backgroundColor = DEFAULT_LETTER_COLOR_GRAY;
+            }, 0.4)
+        };
     }
 }

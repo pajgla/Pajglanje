@@ -1,6 +1,6 @@
 
 import {GameOptions, GameplayController, GameStatistics, GameStatus, GuessProblem} from "./gameplay.js";
-import {Board, Keyboard, popup, StatisticsWindow} from "./view.js";
+import {Board, HelpWindow, Keyboard, popup, StatisticsWindow} from "./view.js";
 import {delay} from "./animation.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let board = new Board(options);
     let keyboard = new Keyboard();
     let statisticsWindow = new StatisticsWindow();
+    let helpWindow = new HelpWindow();
 
     let FLIP_ANIMATION_SPEED = 0.25;
     let WIN_MESSAGE = "ISPAJGLANO!";
@@ -136,5 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     game.triggerStatistics();
+    helpWindow.initHelpWindow();
     game.triggerPajglaChanged();
 });
