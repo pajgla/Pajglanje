@@ -274,7 +274,7 @@ export class StatisticsWindow
     static currentWinStreakElementID = 'currentWinStreakStatistics';
     static bestWinStreakElementID = 'bestWinStreakStatistics';
     static gamesWonPercentageElementID = 'gamesWonPercentageStatistics'
-    static currentGuessHistogramColor = 'rgb(83, 141, 78)';
+    static currentGuessHistogramColor = DEFAULT_LETTER_COLOR_GREEN;
     static minGraphWidth = 7;
 
     updateStatisticsWindow(stats)
@@ -293,7 +293,7 @@ export class StatisticsWindow
 
         let gamesWonPercentage = stats.totalPlayed === 0 ? 0 : (stats.won / stats.totalPlayed) * 100;
         let gamesWonPercentageElement = document.getElementById(StatisticsWindow.gamesWonPercentageElementID);
-        gamesWonPercentageElement.textContent = gamesWonPercentage + "%"
+        gamesWonPercentageElement.textContent = Math.round(gamesWonPercentage) + "%"
 
         let currentWinStreakElement = document.getElementById(StatisticsWindow.currentWinStreakElementID);
         currentWinStreakElement.textContent = stats.currentStreak;
@@ -414,7 +414,6 @@ export class StatisticsWindow
 
         let nextPajglaTimerElement = document.createElement('div');
         nextPajglaTimerElement.id = "nextPajglaTimer";
-        nextPajglaTimerElement.textContent = '03:49:13';
         countdownElement.appendChild(nextPajglaTimerElement);
 
         let shareElement = document.createElement('div');

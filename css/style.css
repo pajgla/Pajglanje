@@ -224,11 +224,12 @@ header
 .statistics-container
 {
     flex: 1;
+    padding-right: 5px;
 }
 
 .statistics-container .statistics
 {
-    font-size: 36px;
+    font-size: 27px;
     font-weight: 400;
     display: flex;
     align-items: center;
@@ -312,7 +313,7 @@ header
 
 #nextPajglaTimer
 {
-    font-size: 36px;
+    font-size: 34px;
     text-align: center;
 }
 
