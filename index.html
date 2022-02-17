@@ -34,6 +34,9 @@
         <div id="game">
             <header>
               <div id="leftHeaderSpace">
+                <a id="helpWindowLink" href="#helpWindow" rel="modal:open">
+                  <img id="helpWindowImg" src="images/helpIcon.png" style="filter: invert(100%)" class="headerIcon" />
+                </a>
               </div>
               <div id="centralHeaderSpace">
                 PAJGLANJE
@@ -223,6 +226,81 @@
               </div>
               <!-- Statistics footer -->
               <div id="footer">
+              </div>
+            </div>
+
+            <!-- Help window -->
+            <div id="helpWindow" class="modal">
+              <h2>Pravila</h2>
+              <p>Pogodi zadatu reč u 6 pokušaja.</p><br />
+              <p>Svaki pokušaj mora biti pravilna reč od 6 slova. Pritisni 'Enter' da pošalješ reč.</p><br />
+              <p>Nakon svakog pokušaja, boja polja svakog slova će se promeniti i prikazati koliko je tvoj odgovor bio blizu u odnosu na zadatu reč.</p><br />
+              <div id="examples">
+                <br />
+                <p><b>Primeri:</b></p>
+                <div class="example">
+                  <div class="row">
+                    <div class="exampleSquare animate__animated">
+                      m
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      u
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      z
+                    </div>
+                    <div id="paintGreenExample" class="exampleSquare animate__animated">
+                      i
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      k
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      a
+                    </div>
+                    <p>Slovo <b>I</b> se nalazi u reči koju pogađaš i na <b>tačnom</b> je mestu.</p><br />
+
+                    <div class="exampleSquare animate__animated">
+                      z
+                    </div>
+                    <div id="paintYellowExample" class="exampleSquare animate__animated">
+                      g
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      r
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      a
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      d
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      a
+                    </div>
+                    <p>Slovo <b>G</b> se nalazi u reči koju pogađaš ali je na <b>pogrešnom</b> mestu.</p><br />
+
+                    <div class="exampleSquare animate__animated">
+                      t
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      r
+                    </div>
+                    <div id="paintGrayExample" class="exampleSquare animate__animated">
+                      e
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      z
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      o
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      r
+                    </div>
+                    <p>Slovo <b>E</b> ne postoji u reči koju pogađaš.</p>
+                  </div>
+                </div>
               </div>
             </div>
         </div>
