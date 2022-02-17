@@ -1,5 +1,5 @@
 
-import { simpleAnimateFlipAndClear } from "./animation.js";
+import { simpleAnimateFlipAndClear, simpleAnimateZoomInAndClear } from "./animation.js";
 import { LetterStatus, reverse_to_digraph } from "./core_logic.js";
 import { GameStatus } from "./gameplay.js";
 import { copyToClipboard } from "./clipboard.js";
@@ -34,10 +34,11 @@ const simpleStatusToColor = (status) => {
 };
 
 export class Board {
-    constructor(options, statusToColorConverter = simpleStatusToColor, flipAnimation = simpleAnimateFlipAndClear) {
+    constructor(options, statusToColorConverter = simpleStatusToColor, flipAnimation = simpleAnimateFlipAndClear, zoomAnimation = simpleAnimateZoomInAndClear) {
         this.options = options;
         this.statusToColorConverter = statusToColorConverter;
         this.flipAnimation = flipAnimation;
+        this.zoomAnimation = zoomAnimation;
 
         this.currentPosition = [ 0, 0 ];
     }
@@ -130,6 +131,8 @@ export class Board {
             letterElement.textContent = keyElement.textContent.toUpperCase();
             letterElement.setAttribute("data-key", keyElement.getAttribute("data-key"));
             this.currentPosition = [ guessAttempt, letterIndex + 1 ];
+
+            this.zoomAnimation(letterElement).then(() => {});
         }
     }
 
