@@ -297,7 +297,7 @@ export class Keyboard {
     getValueForKey(key) {
         let element = this.keys[reverse_to_digraph(key)];
         let value = element.getAttribute("data-value");
-        if (value === null || value === "") value = 0;
+        if (value === null || value === "") value = -1;
         return value;
     }
 
