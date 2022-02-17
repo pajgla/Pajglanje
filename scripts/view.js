@@ -274,7 +274,7 @@ export class StatisticsWindow
     static currentWinStreakElementID = 'currentWinStreakStatistics';
     static bestWinStreakElementID = 'bestWinStreakStatistics';
     static gamesWonPercentageElementID = 'gamesWonPercentageStatistics'
-    static currentGuessHistogramColor = 'rgb(0, 153, 51)';
+    static currentGuessHistogramColor = 'rgb(83, 141, 78)';
     static minGraphWidth = 7;
 
     updateStatisticsWindow(stats)
