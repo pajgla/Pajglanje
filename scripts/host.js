@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let game = new GameplayController(options);
     let board = new Board(options);
     let keyboard = new Keyboard();
-    let statisticsWindow = new StatisticsWindow();
+    let statisticsWindow = new StatisticsWindow(options);
 
     let FLIP_ANIMATION_SPEED = 0.25;
     let WIN_MESSAGE = "ISPAJGLANO!";
@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     popup(LOSE_MESSAGE(instance.state.correctWord), 5000);
                     delay(() => {
-                        console.log("Show now");
                         statisticsWindow.showStatisticsWindow(instance.state);
                     }, STATISTICS_WINDOW_OPEN_DELAY);
                 }
@@ -86,7 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 let [ key, status ] = matches[index];
                 delay(() => {
                     board.updateFieldColor(guessAttempt, index, status);
-                    console.log(status.value, letters[key]);
                     if (status.value > keyboard.getValueForKey(key)) {
                         keyboard.updateKeyColor(key, status);
                     }
