@@ -46,7 +46,6 @@ export class Board {
     onConnect() {
         let boardElement = document.getElementById("board");
 
-        console.log("Generating a", this.options.attemptOptions, "by", this.options.wordLength, "board");
         for (let guessAttempt = 0; guessAttempt < this.options.attemptOptions; guessAttempt++) {
             for (let letterIndex = 0; letterIndex < this.options.wordLength; letterIndex++) {
                 let square = document.createElement("div");
@@ -306,8 +305,28 @@ export class Keyboard {
     }
 }
 
-export class StatisticsWindow
-{
+// not exported, because not needed outside view
+const RatingHelper = {
+    numToOrdinal: (num) =>
+    {
+        switch (num)
+        {
+            case 1: return "first";
+            case 2: return "second";
+            case 3: return "third";
+            case 4: return "fourth";
+            case 5: return "fifth"
+            case 6: return "sixth";
+            default:
+                console.error("RatingHelper.numToOrdinal -> Wrong number provided (not 1-6)");
+                return null;
+        }
+    },
+    numToGuessGraph: (num) => RatingHelper.numToOrdinal(num) + "GuessGraph",
+    numToGuessNum: (num) => RatingHelper.numToOrdinal(num) + "GuessNum",
+}
+
+export class StatisticsWindow {
     static statisticsPopupElementID = 'statisticsPopupLink';
     static gamesPlayedElementID = 'gamesPlayedStatistics';
     static gamesWonElementID = 'gamesWonStatistics';
@@ -316,6 +335,10 @@ export class StatisticsWindow
     static gamesWonPercentageElementID = 'gamesWonPercentageStatistics'
     static currentGuessHistogramColor = DEFAULT_LETTER_COLOR_GREEN;
     static minGraphWidth = 7;
+
+    constructor(options) {
+        this.options = options;
+    }
 
     updateStatisticsWindow(stats)
     {
@@ -346,7 +369,7 @@ export class StatisticsWindow
         {
             for (let i = 1; i <= Object.keys(savedHistogramData).length; ++i)
             {
-                let graphElementID = this.numToGraphID(i);
+                let graphElementID = RatingHelper.numToGuessGraph(i);
                 let graphElement = document.getElementById(graphElementID);
                 let currentGuessCount = savedHistogramData[i];
                 let graphWidth = stats.won === 0 ? 0 : (currentGuessCount / stats.won) * 100;
@@ -363,52 +386,11 @@ export class StatisticsWindow
                     graphElement.classList.add('align-right');
                 }
 
-                let graphNumElementID = this.numToGraphNumID(i);
+                let graphNumElementID = RatingHelper.numToGuessNum(i);
                 let graphNumElement = document.getElementById(graphNumElementID);
                 graphNumElement.textContent = currentGuessCount;
             }
         }
-    }
-
-    numToGraphID(num)
-    {
-        return this.numToPositionWord(num) + "GuessGraph";
-    }
-
-    numToGraphNumID(num)
-    {
-        return this.numToPositionWord(num) + "GuessNum";
-    }
-
-    numToPositionWord(num)
-    {
-        let word = "";
-        switch (num)
-        {
-            case 1:
-                word = "first";
-                break;
-            case 2:
-                word = "second";
-                break;
-            case 3:
-                word = "third";
-                break;
-            case 4:
-                word = "fourth";
-                break;
-            case 5:
-                word = "fifth"
-                break;
-            case 6:
-                word = "sixth";
-                break;
-            default:
-                console.error("numToHistogramElementID -> Wrong num provided");
-                return;
-        }
-
-        return word;
     }
 
     showStatisticsWindow(state)
@@ -435,7 +417,7 @@ export class StatisticsWindow
         }
 
         let currentGuess = state.guesses.length;
-        let graphElementID = this.numToGraphID(currentGuess);
+        let graphElementID = RatingHelper.numToGuessGraph(currentGuess);
         let graphElementToPaint = document.getElementById(graphElementID);
         graphElementToPaint.style.backgroundColor = StatisticsWindow.currentGuessHistogramColor;
     }
@@ -494,11 +476,13 @@ export class StatisticsWindow
     {
         const squareVisuals = [ '⬛', '🟨', '🟩' ];
 
-        let stringToCopy = `PAJGLANJE #${state.time} ${state.guesses.length}/6\n\n`;
+        let stringToCopy = `PAJGLANJE #${state.time} ${state.guesses.length}/${this.options.wordLength}\n\n`;
         for (let i = 0; i < state.guesses.length; ++i)
         {
             let row = [];
-            for (let j = 0; j < state.guesses[i].length; ++j)
+            // reading from options to not have to do the mathematics of solving the real number of letters
+            // in the presence of digraphs (lj, nj, dž, ...)
+            for (let j = 0; j < this.options.wordLength; ++j)
             {
                 let id = getIdForField(i, j);
                 let value = document.getElementById(id).getAttribute("data-value");
