@@ -122,13 +122,13 @@ class GameState {
 }
 
 export class GameOptions {
-    constructor() {
-        this.useSaveGames = true;
-        this.clearSavedIfOld = true;
-        this.wordLength = 6;
-        this.attemptOptions = 6;
+    constructor(useSaveGames = true, clearSavedIfOld = true, wordLength = 6, attemptOptions = 6, useServerTime = false) {
+        this.useSaveGames = useSaveGames;
+        this.clearSavedIfOld = clearSavedIfOld;
+        this.wordLength = wordLength;
+        this.attemptOptions = attemptOptions;
         //#TODO : fix a bug caused by API and use server time
-        this.useServerTime = false;
+        this.useServerTime = useServerTime;
     }
 }
 
@@ -149,6 +149,14 @@ export class GameInstance {
         this.gameLostEvent = [];
         this.problematicGuessEvent = [];
         this.guessMadeEvent = [];
+    }
+
+    reinitialize(currentWord, currentTime)
+    {
+        this.state.status = GameStatus.Active;
+        this.state.correctWord = currentWord;
+        this.currentWord = currentWord;
+        this.currentTime = currentTime;
     }
 
     onConnect() {
@@ -257,9 +265,9 @@ export class GameplayController {
         this.statisticsChangedEvent = [];
     }
 
-    triggerPajglaChanged(pajglaTime = this.getTimeFunc()) {
+    triggerPajglaChanged(pajglaTime = this.getTimeFunc(), initialize = true) {
         let pajglaWord = DICT_DAILY_WORDS[pajglaTime];
-
+        console.log(pajglaWord);
         if (pajglaWord === undefined) {
             console.error("Dictionary doesn't have word at index:", pajglaTime);
             return;
@@ -271,9 +279,16 @@ export class GameplayController {
             pajglaChangedHandler(pairTimeWord);
         }
 
-        this.currentGameInstance = new GameInstance(this, pairTimeWord);
-        this.gameInstanceConnection(this.currentGameInstance);
-        this.currentGameInstance.onConnect();
+        if (initialize)
+        {
+            this.currentGameInstance = new GameInstance(this, pairTimeWord);
+            this.gameInstanceConnection(this.currentGameInstance);
+            this.currentGameInstance.onConnect();
+        }
+        else
+        {
+            this.currentGameInstance.reinitialize(pajglaWord, pajglaTime);
+        }
     }
 
     connectToGameInstance(gameCallback) {

@@ -45,7 +45,6 @@ export class Board {
 
     onConnect() {
         let boardElement = document.getElementById("board");
-
         for (let guessAttempt = 0; guessAttempt < this.options.attemptOptions; guessAttempt++) {
             for (let letterIndex = 0; letterIndex < this.options.wordLength; letterIndex++) {
                 let square = document.createElement("div");
@@ -176,6 +175,30 @@ export class Board {
             this.currentPosition = [ guessAttempt, letterIndex - 1 ];
         }
     }
+
+    clearBoard()
+    {
+        for (let guessAttempt = 5; guessAttempt >= 0; --guessAttempt)
+        {
+            for (let letterIndex = 5; letterIndex >= 0; --letterIndex)
+            {
+                delay(() => {
+                    let id = getIdForField(guessAttempt, letterIndex);
+                    let letterElement = document.getElementById(id);
+                    if (letterElement.textContent !== '')
+                    {
+                    }
+                    this.flipAnimation(letterElement, 0.6).then(() => {});
+                    letterElement.textContent = '';
+                    letterElement.setAttribute("data-key", '');
+                    letterElement.style.backgroundColor = '';
+                    letterElement.style.borderColor = '';
+                },  letterIndex * 0.08);
+            }
+        }
+
+        this.currentPosition = [0,0];
+    }
 }
 
 function isLetter(c) {
@@ -302,6 +325,16 @@ export class Keyboard {
 
     toggle(status) {
         this.enabled = status;
+    }
+
+    clearKeyColors()
+    {
+        for (let key in this.keys)
+        {
+            let element = this.keys[reverse_to_digraph(key)];
+            element.style.backgroundColor = '';
+            element.removeAttribute("data-value");
+        }
     }
 }
 
