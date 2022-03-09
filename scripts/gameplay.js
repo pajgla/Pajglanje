@@ -66,6 +66,7 @@ class GameState {
         this.guesses = guesses;
         this.letters = {};
         this.replaying = false;
+        this.rushHourStartTime;
     }
 
     replay(options) {
@@ -116,24 +117,42 @@ class GameState {
         }
     }
 
+    updateRushHourStarted(startTime)
+    {
+        this.rushHourStartTime = startTime;
+    }
+
     is_open_for_guessing() {
         return this.status === GameStatus.Active;
     }
 }
 
+export class GameMode
+{
+    static Normal = new GameStatus("normal")
+    static RushHour = new GameStatus("rushHour")
+
+    constructor(name) {
+        this.name = name
+    }
+}
+
 export class GameOptions {
-    constructor(useSaveGames = true, clearSavedIfOld = true, wordLength = 6, attemptOptions = 6, useServerTime = false) {
+    constructor(useSaveGames = true, clearSavedIfOld = true, wordLength = 6, attemptOptions = 6, useServerTime = false, rushHourDuration = 0, gameMode = GameMode.Normal) {
         this.useSaveGames = useSaveGames;
         this.clearSavedIfOld = clearSavedIfOld;
         this.wordLength = wordLength;
         this.attemptOptions = attemptOptions;
         //#TODO : fix a bug caused by API and use server time
         this.useServerTime = useServerTime;
+        this.rushHourDuration = rushHourDuration;
+        this.gameMode = gameMode;
     }
 }
 
 export class GameInstance {
     static SavedGameStorageKey = "pajgla_saved_game";
+    static RushHourSavedGameStorageKey = "rushhour_saved_game";
 
     constructor(gameplayController, pairTimeWord) {
         this.gameplayController = gameplayController;
@@ -157,43 +176,78 @@ export class GameInstance {
         this.state.correctWord = currentWord;
         this.currentWord = currentWord;
         this.currentTime = currentTime;
+        this.state.guesses = [];
     }
 
     onConnect() {
         if (this.options.useSaveGames) {
-            let shouldSaveNewState = false;
+            switch (this.options.gameMode)
+            {
+                case GameMode.Normal:
+                    this.loadNormalGameModeSavegame();
+                    break;
+                case GameMode.RushHour:
+                    this.loadRushHourGameModeSavegame();
+                    break;
+                default:
+                    console.error("Unknown game mode type provided");
+                    break;
+            }
+        }
+    }
 
-            let savedGame = window.localStorage.getItem(GameInstance.SavedGameStorageKey);
+    loadRushHourGameModeSavegame()
+    {
+        let shouldSaveNewState = false;
+        let savedGame = window.localStorage.getItem(GameInstance.RushHourSavedGameStorageKey);
 
-            if (savedGame === null) {
+        if (savedGame === null)
+        {
+            shouldSaveNewState = true;
+        }
+        else
+        {
+            let state = JSON.parse(savedGame);
+            
+            let currentDate = new Date();
+            let timeFromLastRushHour = currentDate - state.rushHourStartTime; 
+        }
+    }
+
+    loadNormalGameModeSavegame()
+    {
+        let shouldSaveNewState = false;
+
+        let savedGame = window.localStorage.getItem(GameInstance.SavedGameStorageKey);
+
+        if (savedGame === null) {
+            shouldSaveNewState = true;
+        } else {
+            let state = JSON.parse(savedGame);
+
+            if (this.options.clearSavedIfOld && state.time < this.state.time) {
                 shouldSaveNewState = true;
             } else {
-                let state = JSON.parse(savedGame);
+                console.warn("Overwriting empty game from local storage");
+                this.state.status = state.status;
+                Object.setPrototypeOf(this.state.status, GameStatus.prototype);
 
-                if (this.options.clearSavedIfOld && state.time < this.state.time) {
-                    shouldSaveNewState = true;
-                } else {
-                    console.warn("Overwriting empty game from local storage");
-                    this.state.status = state.status;
-                    Object.setPrototypeOf(this.state.status, GameStatus.prototype);
+                this.state.letters = state.letters;
 
-                    this.state.letters = state.letters;
-
-                    this.state.time = state.time;
-                    this.state.guesses = state.guesses;
-                    this.state.correctWord = state.correctWord;
-                }
+                this.state.time = state.time;
+                this.state.guesses = state.guesses;
+                this.state.correctWord = state.correctWord;
             }
+        }
 
-            if (shouldSaveNewState) {
-                console.warn("Overwriting previous local storage");
-                window.localStorage.setItem(GameInstance.SavedGameStorageKey, JSON.stringify(this.state));
-            }
+        if (shouldSaveNewState) {
+            console.warn("Overwriting previous local storage");
+            window.localStorage.setItem(GameInstance.SavedGameStorageKey, JSON.stringify(this.state));
+        }
 
-            let image = this.state.replay(this.options);
-            for (let replayHandler of this.replayEvent) {
-                replayHandler(this.state, image);
-            }
+        let image = this.state.replay(this.options);
+        for (let replayHandler of this.replayEvent) {
+            replayHandler(this.state, image);
         }
     }
 

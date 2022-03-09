@@ -1,8 +1,9 @@
 
-import { delay, simpleAnimateFlipAndClear, simpleAnimateZoomInAndClear } from "./animation.js";
+import { delay, simpleAnimateFlipAndClear, simpleAnimateFlipOutAndClear, simpleAnimateZoomInAndClear } from "./animation.js";
 import { LetterStatus, reverse_to_digraph } from "./core_logic.js";
 import { GameStatus } from "./gameplay.js";
 import { copyToClipboard } from "./clipboard.js";
+import { formatTime } from "./utils.js";
 
 export function popup(message, duration = 3000) {
     return Toastify({ text: message, className: "toastify-center", duration: duration }).showToast();
@@ -34,13 +35,16 @@ const simpleStatusToColor = (status) => {
 };
 
 export class Board {
-    constructor(options, statusToColorConverter = simpleStatusToColor, flipAnimation = simpleAnimateFlipAndClear, zoomAnimation = simpleAnimateZoomInAndClear) {
+    constructor(options, statusToColorConverter = simpleStatusToColor, flipAnimation = simpleAnimateFlipAndClear, zoomAnimation = simpleAnimateZoomInAndClear, flipOutAnimation = simpleAnimateFlipOutAndClear) {
         this.options = options;
         this.statusToColorConverter = statusToColorConverter;
         this.flipAnimation = flipAnimation;
         this.zoomAnimation = zoomAnimation;
-
+        this.flipOutAnimation = flipOutAnimation;
+        this.isRushHourTimerShown = false;
         this.currentPosition = [ 0, 0 ];
+        this.rushHourTimerTimeout;
+        this.rushHourEndTime = new Date();
     }
 
     onConnect() {
@@ -199,6 +203,63 @@ export class Board {
 
         this.currentPosition = [0,0];
     }
+
+    startRushHourTimer()
+    {
+        this.rushHourEndTime.setMinutes(this.rushHourEndTime.getMinutes() + this.options.rushHourDuration);
+        this.rushHourTimerTimeout = setInterval(() => {
+            this.updateRushHourTimer();
+        }, 100);
+        console.log(this.rushHourTimerTimeout);
+        this.showPajglaLogo();
+    }
+
+    updateRushHourTimer()
+    {
+        let centralHeaderElement = document.getElementById("centralHeaderSpace");
+        let rushHourTimeRemaining = this.rushHourEndTime - new Date();
+        if (this.isRushHourTimerShown === true)
+        {
+            centralHeaderElement.textContent = formatTime(Math.floor(rushHourTimeRemaining / (1000 * 60 * 60)), Math.floor((rushHourTimeRemaining / (1000 * 60)) % 60), Math.floor((rushHourTimeRemaining / 1000) % 60));
+        }
+
+        if (rushHourTimeRemaining <= 0)
+        {
+            this.stopRushHourTimer();
+        }
+    }
+
+    showRushHourTimer()
+    {
+        let centralHeaderElement = document.getElementById("centralHeaderSpace");
+        this.isRushHourTimerShown = true;         
+        this.flipAnimation(centralHeaderElement, 0.8).then(() => {
+            delay(() => {
+                this.flipOutAnimation(centralHeaderElement, 0.8).then(() => {
+                    this.showPajglaLogo();
+                });
+            }, 10);
+        });
+    }
+
+    showPajglaLogo()
+    {
+        let centralHeaderElement = document.getElementById("centralHeaderSpace");
+        this.isRushHourTimerShown = false;
+        centralHeaderElement.textContent = "PAJGLANJE";
+        this.flipAnimation(centralHeaderElement, 0.8).then(() => {
+            delay(() => {
+                this.flipOutAnimation(centralHeaderElement, 0.8).then(() => {
+                    this.showRushHourTimer();
+                });
+            }, 3);
+        });   
+    }
+
+    stopRushHourTimer()
+    {
+        clearInterval(this.rushHourTimerTimeout);
+    }
 }
 
 function isLetter(c) {
@@ -351,7 +412,7 @@ const RatingHelper = {
             case 5: return "fifth"
             case 6: return "sixth";
             default:
-                console.error("RatingHelper.numToOrdinal -> Wrong number provided (not 1-6)");
+                console.error("RatingHelper.numToOrdinal -> Wrong number provided (not 1-6). Provided: " + num);
                 return null;
         }
     },

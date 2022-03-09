@@ -86,9 +86,6 @@ header
     font-weight: bold;
     margin: 0.4rem 0 0.4rem 0;
     text-align: center;
-    left:0;
-    right: 0;
-    position: absolute;
 }
 
 #leftHeaderSpace
