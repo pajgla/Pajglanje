@@ -5,4 +5,23 @@ function formatTime(ht, mt, st) {
     return `${h}:${m}:${s}`
 }
 
-export { formatTime };
+function mulberry32(a) {
+    return function() {
+        var t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+function rand_int_decorator(rnd, limit) {
+    return function() {
+        return Math.round(rnd() * limit);
+    }
+}
+
+function make_stable_seeded_rand(seed, limit) {
+    return rand_int_decorator(mulberry32(seed), limit);
+}
+
+export { formatTime, make_stable_seeded_rand };
