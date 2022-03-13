@@ -101,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         keyboard.confirmKeyPressedEvent.push(() => {
             if (keyboard.enabled) {
-                console.log(board.getCurrentGuess());
                 instance.pushGuess(board.getCurrentGuess());
             }
         });

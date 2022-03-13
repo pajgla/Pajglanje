@@ -45,6 +45,7 @@ export class Board {
         this.currentPosition = [ 0, 0 ];
         this.rushHourTimerTimeout;
         this.rushHourEndTime = new Date();
+        this.isRushHourStarted = false;
     }
 
     onConnect() {
@@ -204,14 +205,32 @@ export class Board {
         this.currentPosition = [0,0];
     }
 
-    startRushHourTimer()
+    startRushHourTimer(start)
     {
-        this.rushHourEndTime.setMinutes(this.rushHourEndTime.getMinutes() + this.options.rushHourDuration);
+        if (start === undefined)
+        {
+            console.log("Start time is undefined. Initializing to current time");
+            start = new Date();
+        }
+        else
+        {
+            start = new Date(Date.parse(start));
+        }
+
+        if (this.isRushHourStarted)
+        {
+            return;
+        }
+
+        this.rushHourEndTime.setMinutes(start.getMinutes() + this.options.rushHourDuration);
+
         this.rushHourTimerTimeout = setInterval(() => {
             this.updateRushHourTimer();
         }, 100);
-        console.log(this.rushHourTimerTimeout);
-        this.showPajglaLogo();
+        
+        this.showRushHourTimer();
+
+        this.isRushHourStarted = true;
     }
 
     updateRushHourTimer()

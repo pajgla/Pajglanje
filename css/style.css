@@ -390,3 +390,8 @@ button#shareButton
     user-select: none;
     margin-bottom: 20px;
 }
+
+.toastify
+{
+    text-align: center;
+}
