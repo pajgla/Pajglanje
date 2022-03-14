@@ -5,7 +5,7 @@ import { DICT_DAILY_WORDS } from './dict_daily_words.js';
 import { make_stable_seeded_rand } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    let options = new GameOptions(true, false, 6, 6, false, 1, GameMode.RushHour);
+    let options = new GameOptions(true, false, 6, 6, false, 30, GameMode.RushHour);
     let game = new GameplayController(options);
     let board = new Board(options);
     let keyboard = new Keyboard();
