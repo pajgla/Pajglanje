@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pajglanje - Brzalica</title>
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <script src="scripts/toastify.js"></script>
+    <script type="module" src="scripts/dict_guess_words.js"></script>
+    <script type="module" src="scripts/dict_daily_words.js"></script>
+    <script type="module" src="scripts/funk_pack.js"></script>
+    <script type="module" src="scripts/animation.js"></script>
+    <script type="module" src="scripts/view.js"></script>
+    <script type="module" src="scripts/core_logic.js"></script>
+    <script type="module" src="scripts/gameplay.js"></script>
+    <script type="module" src="scripts/rushHourHost.js"></script>
+  <!-- rushhour -->
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/toastify.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-595XEYLQ7Y"></script>
+    <script src="scripts/gtag.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="game">
+            <header>
+              <div id="leftHeaderSpace">
+                <a id="helpWindowLink" href="#helpWindow" rel="modal:open">
+                  <img id="helpWindowImg" src="images/helpIcon.png" style="filter: invert(100%)" class="headerIcon" />
+                </a>
+              </div>
+              <div id="centralHeaderSpace">
+                PAJGLANJE
+              </div>
+              <div id="rightHeaderSpace">
+                <a id="statisticsPopupLink" href="#statisticsPopup" rel="modal:open">
+                  <img src="images/statisticsIcon.png" style="filter: invert(100%)" class="headerIcon"/>
+                </a>
+              </div>
+            </header>
+
+            <div id="board-container">
+                <div id="board">
+                    <!-- GAME BOARD WILL GENERATE HERE -->
+                </div>
+            </div>
+            <div id="keyboard-container">
+                <div class="keyboard-row">
+                  <button data-key="lj">lj</button>
+                  <button data-key="nj">nj</button>
+                  <button data-key="e">e</button>
+                  <button data-key="r">r</button>
+                  <button data-key="t">t</button>
+                  <button data-key="z">z</button>
+                  <button data-key="u">u</button>
+                  <button data-key="i">i</button>
+                  <button data-key="o">o</button>
+                  <button data-key="p">p</button>
+                  <button data-key="š">š</button>
+                </div>
+                <div class="keyboard-row">
+                  <div class="spacer-half"></div>
+                  <button data-key="a">a</button>
+                  <button data-key="s">s</button>
+                  <button data-key="d">d</button>
+                  <button data-key="f">f</button>
+                  <button data-key="g">g</button>
+                  <button data-key="h">h</button>
+                  <button data-key="j">j</button>
+                  <button data-key="k">k</button>
+                  <button data-key="l">l</button>
+                  <button data-key="č">č</button>
+                  <button data-key="ć">ć</button>
+                  <div class="spacer-half"></div>
+                </div>
+                <div class="keyboard-row">
+                  <button class="BigKeyboardButton" data-key="enter" class="wide-button">Enter</button>
+                  <button data-key="dž">dž</button>
+                  <button data-key="c">c</button>
+                  <button data-key="v">v</button>
+                  <button data-key="b">b</button>
+                  <button data-key="n">n</button>
+                  <button data-key="m">m</button>
+                  <button data-key="đ">đ</button>
+                  <button data-key="ž">ž</button>
+                  <button class="BigKeyboardButton" data-key="del" class="wide-button">Del</button>
+                </div>
+            </div>
+            <!-- Statistics popup -->
+            <div id="statisticsPopup" class="modal" style="padding: 15px 10px;">
+              <h1>Statistika</h1>
+              <div id="statistics">
+                <!-- Statistics -->
+                <div class="statistics-container">
+                  <div class="statistics" id="gamesPlayedStatistics">
+                    0
+                  </div>
+                  <div class="label">
+                    odigrano
+                  </div>
+                </div>
+                <div class="statistics-container">
+                  <div class="statistics" id="gamesWonStatistics">
+                    0
+                  </div>
+                  <div class="label">
+                    ispajglano
+                  </div>
+                </div>
+                <div class="statistics-container">
+                  <div class="statistics" id="gamesWonPercentageStatistics">
+                    0
+                  </div>
+                  <div class="label">
+                    ispajglano u %
+                  </div>
+                </div>
+                <div class="statistics-container">
+                  <div class="statistics" id="currentWinStreakStatistics">
+                    0
+                  </div>
+                  <div class="label">
+                    trenutni niz pobeda
+                  </div>
+                </div>
+                <div class="statistics-container">
+                  <div class="statistics" id="bestWinStreakStatistics">
+                    0
+                  </div>
+                  <div class="label">
+                    najbolji niz pobeda
+                  </div>
+                </div>
+              </div>
+              <!-- Guess distribution -->
+              <h4>Distribucija pogodaka</h4>
+              <div id="guess-distribution">
+
+                <div class="graphContainer">
+                  <div class="guess">
+                    1
+                  </div>
+                  <div class="graph">
+                    <div id="firstGuessGraph" class="graphBar">
+                      <div id="firstGuessNum" class="guessesNum">
+                        0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="graphContainer">
+                  <div class="guess">
+                    2
+                  </div>
+                  <div class="graph">
+                    <div id="secondGuessGraph" class="graphBar">
+                      <div id="secondGuessNum" class="guessesNum">
+                        0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="graphContainer">
+                  <div class="guess">
+                    3
+                  </div>
+                  <div class="graph">
+                    <div id="thirdGuessGraph" class="graphBar">
+                      <div id="thirdGuessNum" class="guessesNum">
+                        0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="graphContainer">
+                  <div class="guess">
+                    4
+                  </div>
+                  <div class="graph">
+                    <div id="fourthGuessGraph" class="graphBar">
+                      <div id="fourthGuessNum" class="guessesNum">
+                        0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="graphContainer">
+                  <div class="guess">
+                    5
+                  </div>
+                  <div class="graph">
+                    <div id="fifthGuessGraph" class="graphBar">
+                      <div id="fifthGuessNum" class="guessesNum">
+                        0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="graphContainer">
+                  <div class="guess">
+                    6
+                  </div>
+                  <div class="graph">
+                    <div id="sixthGuessGraph" class="graphBar">
+                      <div id="sixthGuessNum" class="guessesNum">
+                        0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <!-- Statistics footer -->
+              <div id="footer">
+              </div>
+            </div>
+
+            <!-- Help window -->
+            <div id="helpWindow" class="modal">
+              <h2>Pravila</h2>
+              <p>Pogodi zadatu reč u 6 pokušaja.</p><br />
+              <p>Svaki pokušaj mora biti pravilna reč od 6 slova. Pritisni 'Enter' da pošalješ reč.</p><br />
+              <p>Nakon svakog pokušaja, boja polja svakog slova će se promeniti i prikazati koliko je tvoj odgovor bio blizu u odnosu na zadatu reč.</p><br />
+              <div id="examples">
+                <br />
+                <p><b>Primeri:</b></p>
+                <div class="example">
+                  <div class="row">
+                    <div class="exampleSquare animate__animated">
+                      m
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      u
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      z
+                    </div>
+                    <div id="paintGreenExample" class="exampleSquare animate__animated">
+                      i
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      k
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      a
+                    </div>
+                    <p>Slovo <b>I</b> se nalazi u reči koju pogađaš i na <b>tačnom</b> je mestu.</p><br />
+
+                    <div class="exampleSquare animate__animated">
+                      z
+                    </div>
+                    <div id="paintYellowExample" class="exampleSquare animate__animated">
+                      g
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      r
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      a
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      d
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      a
+                    </div>
+                    <p>Slovo <b>G</b> se nalazi u reči koju pogađaš ali je na <b>pogrešnom</b> mestu.</p><br />
+
+                    <div class="exampleSquare animate__animated">
+                      t
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      r
+                    </div>
+                    <div id="paintGrayExample" class="exampleSquare animate__animated">
+                      e
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      z
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      o
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      r
+                    </div>
+                    <p>Slovo <b>E</b> ne postoji u reči koju pogađaš.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

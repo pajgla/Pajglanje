@@ -86,9 +86,6 @@ header
     font-weight: bold;
     margin: 0.4rem 0 0.4rem 0;
     text-align: center;
-    left:0;
-    right: 0;
-    position: absolute;
 }
 
 #leftHeaderSpace
@@ -392,4 +389,9 @@ button#shareButton
     display: inline-block;
     user-select: none;
     margin-bottom: 20px;
+}
+
+.toastify
+{
+    text-align: center;
 }

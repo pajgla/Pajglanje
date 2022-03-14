@@ -1,11 +1,16 @@
 
-export function simpleAnimateFlipAndClear(element) {
-    return animateElementAndClean(element, 'flipInX', 0.8);
+export function simpleAnimateFlipAndClear(element, duration = 0.8) {
+    return animateElementAndClean(element, 'flipInX', duration);
 }
 
-export function simpleAnimateZoomInAndClear(element)
+export function simpleAnimateZoomInAndClear(element, duration = 0.4)
 {
-    return animateElementAndClean(element, 'bounceIn', 0.4);
+    return animateElementAndClean(element, 'bounceIn', duration);
+}
+
+export function simpleAnimateFlipOutAndClear(element, duration = 0.8)
+{
+    return animateElementAndClean(element, 'flipOutX', duration);
 }
 
 export function delay(something, sec) {

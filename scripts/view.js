@@ -1,8 +1,9 @@
 
-import { delay, simpleAnimateFlipAndClear, simpleAnimateZoomInAndClear } from "./animation.js";
+import { delay, simpleAnimateFlipAndClear, simpleAnimateFlipOutAndClear, simpleAnimateZoomInAndClear } from "./animation.js";
 import { LetterStatus, reverse_to_digraph } from "./core_logic.js";
 import { GameStatus } from "./gameplay.js";
 import { copyToClipboard } from "./clipboard.js";
+import { formatTime } from "./utils.js";
 
 export function popup(message, duration = 3000) {
     return Toastify({ text: message, className: "toastify-center", duration: duration }).showToast();
@@ -34,18 +35,21 @@ const simpleStatusToColor = (status) => {
 };
 
 export class Board {
-    constructor(options, statusToColorConverter = simpleStatusToColor, flipAnimation = simpleAnimateFlipAndClear, zoomAnimation = simpleAnimateZoomInAndClear) {
+    constructor(options, statusToColorConverter = simpleStatusToColor, flipAnimation = simpleAnimateFlipAndClear, zoomAnimation = simpleAnimateZoomInAndClear, flipOutAnimation = simpleAnimateFlipOutAndClear) {
         this.options = options;
         this.statusToColorConverter = statusToColorConverter;
         this.flipAnimation = flipAnimation;
         this.zoomAnimation = zoomAnimation;
-
+        this.flipOutAnimation = flipOutAnimation;
+        this.isRushHourTimerShown = false;
         this.currentPosition = [ 0, 0 ];
+        this.rushHourTimerTimeout;
+        this.rushHourEndTime = new Date();
+        this.isRushHourStarted = false;
     }
 
     onConnect() {
         let boardElement = document.getElementById("board");
-
         for (let guessAttempt = 0; guessAttempt < this.options.attemptOptions; guessAttempt++) {
             for (let letterIndex = 0; letterIndex < this.options.wordLength; letterIndex++) {
                 let square = document.createElement("div");
@@ -176,6 +180,105 @@ export class Board {
             this.currentPosition = [ guessAttempt, letterIndex - 1 ];
         }
     }
+
+    clearBoard()
+    {
+        for (let guessAttempt = 5; guessAttempt >= 0; --guessAttempt)
+        {
+            for (let letterIndex = 5; letterIndex >= 0; --letterIndex)
+            {
+                delay(() => {
+                    let id = getIdForField(guessAttempt, letterIndex);
+                    let letterElement = document.getElementById(id);
+                    if (letterElement.textContent !== '')
+                    {
+                    }
+                    this.flipAnimation(letterElement, 0.6).then(() => {});
+                    letterElement.textContent = '';
+                    letterElement.setAttribute("data-key", '');
+                    letterElement.style.backgroundColor = '';
+                    letterElement.style.borderColor = '';
+                },  letterIndex * 0.08);
+            }
+        }
+
+        this.currentPosition = [0,0];
+    }
+
+    startRushHourTimer(start)
+    {
+        if (start === undefined)
+        {
+            console.log("Start time is undefined. Initializing to current time");
+            start = new Date();
+        }
+        else
+        {
+            start = new Date(Date.parse(start));
+        }
+
+        if (this.isRushHourStarted)
+        {
+            return;
+        }
+
+        this.rushHourEndTime.setMinutes(start.getMinutes() + this.options.rushHourDuration);
+
+        this.rushHourTimerTimeout = setInterval(() => {
+            this.updateRushHourTimer();
+        }, 100);
+        
+        this.showRushHourTimer();
+
+        this.isRushHourStarted = true;
+    }
+
+    updateRushHourTimer()
+    {
+        let centralHeaderElement = document.getElementById("centralHeaderSpace");
+        let rushHourTimeRemaining = this.rushHourEndTime - new Date();
+        if (this.isRushHourTimerShown === true)
+        {
+            centralHeaderElement.textContent = formatTime(Math.floor(rushHourTimeRemaining / (1000 * 60 * 60)), Math.floor((rushHourTimeRemaining / (1000 * 60)) % 60), Math.floor((rushHourTimeRemaining / 1000) % 60));
+        }
+
+        if (rushHourTimeRemaining <= 0)
+        {
+            this.stopRushHourTimer();
+        }
+    }
+
+    showRushHourTimer()
+    {
+        let centralHeaderElement = document.getElementById("centralHeaderSpace");
+        this.isRushHourTimerShown = true;         
+        this.flipAnimation(centralHeaderElement, 0.8).then(() => {
+            delay(() => {
+                this.flipOutAnimation(centralHeaderElement, 0.8).then(() => {
+                    this.showPajglaLogo();
+                });
+            }, 10);
+        });
+    }
+
+    showPajglaLogo()
+    {
+        let centralHeaderElement = document.getElementById("centralHeaderSpace");
+        this.isRushHourTimerShown = false;
+        centralHeaderElement.textContent = "PAJGLANJE";
+        this.flipAnimation(centralHeaderElement, 0.8).then(() => {
+            delay(() => {
+                this.flipOutAnimation(centralHeaderElement, 0.8).then(() => {
+                    this.showRushHourTimer();
+                });
+            }, 3);
+        });   
+    }
+
+    stopRushHourTimer()
+    {
+        clearInterval(this.rushHourTimerTimeout);
+    }
 }
 
 function isLetter(c) {
@@ -303,6 +406,16 @@ export class Keyboard {
     toggle(status) {
         this.enabled = status;
     }
+
+    clearKeyColors()
+    {
+        for (let key in this.keys)
+        {
+            let element = this.keys[reverse_to_digraph(key)];
+            element.style.backgroundColor = '';
+            element.removeAttribute("data-value");
+        }
+    }
 }
 
 // not exported, because not needed outside view
@@ -318,7 +431,7 @@ const RatingHelper = {
             case 5: return "fifth"
             case 6: return "sixth";
             default:
-                console.error("RatingHelper.numToOrdinal -> Wrong number provided (not 1-6)");
+                console.error("RatingHelper.numToOrdinal -> Wrong number provided (not 1-6). Provided: " + num);
                 return null;
         }
     },
@@ -462,12 +575,20 @@ export class StatisticsWindow {
             let hours = Math.floor(dateDiff / (1000 * 60 * 60));
             let minutes = Math.floor(dateDiff / (1000 * 60)) % 60;
             let seconds = Math.floor(dateDiff / 1000) % 60;
+            if (hours < 0)
+                hours = 0;
+            if (minutes < 0)
+                minuts = 0;
+            if (seconds < 0)
+                seconds = 0;
+
             if (hours < 10)
                 hours = '0' + hours;
             if (minutes < 10)
                 minutes = '0' + minutes;
             if (seconds < 10)
                 seconds = '0' + seconds;
+                
             timerElement.textContent = hours + ":" + minutes + ":" + seconds;
         }, 100);
     }

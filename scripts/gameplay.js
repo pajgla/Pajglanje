@@ -14,6 +14,17 @@ function dateToPajglaTime(end) {
     return Math.floor(hourDiff / 8);
 }
 
+function dateToRushHourTime(end)
+{
+    let start = new Date('3/11/2022');
+    start.setHours(17);
+    start.setMinutes(0);
+    start.setSeconds(0);
+    let dateDiff = end - start;
+    let hourDiff = Math.floor(dateDiff / (1000 * 60 * 60));
+    return Math.floor(hourDiff / 24);
+}
+
 function getLocalPajglaTime() {
     let currentDate = new Date();
     return dateToPajglaTime(currentDate);
@@ -26,6 +37,12 @@ function getServerPajglaTime() {
     }
     let currentDate = new Date(JSON.parse(data).utc_datetime);
     return dateToPajglaTime(currentDate);
+}
+
+function getLocalRushHourTime()
+{
+    let currentDate = new Date();
+    return dateToRushHourTime(currentDate);
 }
 
 export class GuessProblem {
@@ -66,6 +83,8 @@ class GameState {
         this.guesses = guesses;
         this.letters = {};
         this.replaying = false;
+        this.rushHourStartTime = undefined;
+        this.rushHourScore = 0;
     }
 
     replay(options) {
@@ -116,24 +135,44 @@ class GameState {
         }
     }
 
+    updateRushHourStarted(startTime)
+    {
+        this.rushHourStartTime = startTime;
+    }
+
     is_open_for_guessing() {
         return this.status === GameStatus.Active;
     }
 }
 
+export class GameMode
+{
+    static Normal = new GameStatus("normal")
+    static RushHour = new GameStatus("rushHour")
+
+    constructor(name) {
+        this.name = name
+    }
+}
+
 export class GameOptions {
-    constructor() {
-        this.useSaveGames = true;
-        this.clearSavedIfOld = true;
-        this.wordLength = 6;
-        this.attemptOptions = 6;
+    static RushHourStartTime = 17;
+
+    constructor(useSaveGames = true, clearSavedIfOld = true, wordLength = 6, attemptOptions = 6, useServerTime = false, rushHourDuration = 0, gameMode = GameMode.Normal) {
+        this.useSaveGames = useSaveGames;
+        this.clearSavedIfOld = clearSavedIfOld;
+        this.wordLength = wordLength;
+        this.attemptOptions = attemptOptions;
         //#TODO : fix a bug caused by API and use server time
-        this.useServerTime = false;
+        this.useServerTime = useServerTime;
+        this.rushHourDuration = rushHourDuration;
+        this.gameMode = gameMode;
     }
 }
 
 export class GameInstance {
     static SavedGameStorageKey = "pajgla_saved_game";
+    static RushHourSavedGameStorageKey = "rushhour_saved_game";
 
     constructor(gameplayController, pairTimeWord) {
         this.gameplayController = gameplayController;
@@ -151,41 +190,134 @@ export class GameInstance {
         this.guessMadeEvent = [];
     }
 
+    reinitialize(currentWord, currentTime, deleteGuesses)
+    {
+        this.state.status = GameStatus.Active;
+        this.state.correctWord = currentWord;
+        this.currentWord = currentWord;
+        this.currentTime = currentTime;
+        if (deleteGuesses)
+        {
+            this.state.guesses = [];
+            this.state.letters = [];
+        }
+    }
+
+    triggerStateSave()
+    {
+        let storageKeyToUse;
+        switch (this.options.gameMode)
+        {
+            case GameMode.Normal:
+                storageKeyToUse = GameInstance.SavedGameStorageKey;
+                break;
+            case GameMode.RushHour:
+                storageKeyToUse = GameInstance.RushHourSavedGameStorageKey;
+                break;
+            default:
+                console.error("Invalid game mode type used");
+                break;
+        }
+
+        window.localStorage.setItem(storageKeyToUse, JSON.stringify(this.state));
+    }
+
     onConnect() {
         if (this.options.useSaveGames) {
-            let shouldSaveNewState = false;
+            switch (this.options.gameMode)
+            {
+                case GameMode.Normal:
+                    this.loadNormalGameModeSavegame();
+                    break;
+                case GameMode.RushHour:
+                    this.loadRushHourGameModeSavegame();
+                    break;
+                default:
+                    console.error("Unknown game mode type provided");
+                    break;
+            }
+        }
+    }
 
-            let savedGame = window.localStorage.getItem(GameInstance.SavedGameStorageKey);
+    loadRushHourGameModeSavegame()
+    {
+        let shouldSaveNewState = false;
+        let savedGame = window.localStorage.getItem(GameInstance.RushHourSavedGameStorageKey);
 
-            if (savedGame === null) {
+        if (savedGame === null)
+        {
+            shouldSaveNewState = true;
+        }
+        else
+        {
+            let state = JSON.parse(savedGame);
+            
+            if (this.options.clearSavedIfOld && state.time < this.state.time)
+            {
+                shouldSaveNewState = true;
+            }
+            else
+            {
+                console.log("Overwriting empty game from local storage");
+                this.state.status = state.status;
+                Object.setPrototypeOf(this.state.status, GameStatus.prototype);
+
+                this.state.letters = state.letters;
+                this.state.time = state.time;
+                this.state.guesses = state.guesses;
+                this.state.rushHourScore = state.rushHourScore;
+                this.state.rushHourStartTime = state.rushHourStartTime;
+                this.state.correctWord = state.correctWord;
+            }
+        }
+
+        if (shouldSaveNewState)
+        {
+            console.warn("Overwriting previous local storage");
+            this.triggerStateSave();
+        }
+
+        let image = this.state.replay(this.options);
+        for (let replayHanlder of this.replayEvent)
+        {
+            replayHanlder(this.state, image);
+        }
+    }
+
+    loadNormalGameModeSavegame()
+    {
+        let shouldSaveNewState = false;
+
+        let savedGame = window.localStorage.getItem(GameInstance.SavedGameStorageKey);
+
+        if (savedGame === null) {
+            shouldSaveNewState = true;
+        } else {
+            let state = JSON.parse(savedGame);
+
+            if (this.options.clearSavedIfOld && state.time < this.state.time) {
                 shouldSaveNewState = true;
             } else {
-                let state = JSON.parse(savedGame);
+                console.warn("Overwriting empty game from local storage");
+                this.state.status = state.status;
+                Object.setPrototypeOf(this.state.status, GameStatus.prototype);
 
-                if (this.options.clearSavedIfOld && state.time < this.state.time) {
-                    shouldSaveNewState = true;
-                } else {
-                    console.warn("Overwriting empty game from local storage");
-                    this.state.status = state.status;
-                    Object.setPrototypeOf(this.state.status, GameStatus.prototype);
+                this.state.letters = state.letters;
 
-                    this.state.letters = state.letters;
-
-                    this.state.time = state.time;
-                    this.state.guesses = state.guesses;
-                    this.state.correctWord = state.correctWord;
-                }
+                this.state.time = state.time;
+                this.state.guesses = state.guesses;
+                this.state.correctWord = state.correctWord;
             }
+        }
 
-            if (shouldSaveNewState) {
-                console.warn("Overwriting previous local storage");
-                window.localStorage.setItem(GameInstance.SavedGameStorageKey, JSON.stringify(this.state));
-            }
+        if (shouldSaveNewState) {
+            console.warn("Overwriting previous local storage");
+            this.triggerStateSave();
+        }
 
-            let image = this.state.replay(this.options);
-            for (let replayHandler of this.replayEvent) {
-                replayHandler(this.state, image);
-            }
+        let image = this.state.replay(this.options);
+        for (let replayHandler of this.replayEvent) {
+            replayHandler(this.state, image);
         }
     }
 
@@ -207,6 +339,13 @@ export class GameInstance {
         return false;
     }
 
+    triggerGameLostEvent()
+    {
+        for (let gameLostHandler of this.gameLostEvent) {
+            gameLostHandler(this.currentWord);
+        }
+    }
+
     pushGuess(guess) {
         if (this.state.is_open_for_guessing()) {
             if (!this.guessIsProblematic(guess)) {
@@ -219,7 +358,10 @@ export class GameInstance {
 
                 if (success) {
                     this.state.status = GameStatus.Solved;
-                    this.gameplayController.updateStatistics(GameStatistics.RegisterWin);
+                    if (this.options.gameMode === GameMode.Normal)
+                    {
+                        this.gameplayController.updateStatistics(GameStatistics.RegisterWin);
+                    }
                     for (let gameWonHandler of this.gameWonEvent) {
                         gameWonHandler(matches);
                     }
@@ -234,7 +376,7 @@ export class GameInstance {
                 }
 
                 if (this.options.useSaveGames) {
-                    window.localStorage.setItem(GameInstance.SavedGameStorageKey, JSON.stringify(this.state));
+                    this.triggerStateSave();
                 }
             }
         } else {
@@ -250,16 +392,29 @@ export class GameplayController {
 
     constructor(options = new GameOptions()) {
         this.options = options;
-        this.getTimeFunc = this.options.useServerTime ? getServerPajglaTime : getLocalPajglaTime;
+        this.getTimeFunc = this.getTimeFunct();
         this.currentGameInstance = null;
         this.gameInstanceConnection = null;
         this.pajglaChangedEvent = [];
         this.statisticsChangedEvent = [];
     }
 
-    triggerPajglaChanged(pajglaTime = this.getTimeFunc()) {
-        let pajglaWord = DICT_DAILY_WORDS[pajglaTime];
+    getTimeFunct()
+    {
+        switch (this.options.gameMode)
+        {
+            case GameMode.Normal:
+                return this.options.useServerTime ? getServerPajglaTime : getLocalPajglaTime;
+            case GameMode.RushHour:
+                return getLocalRushHourTime;
+            default:
+                console.error("Invalid game mode provided");
+                return getLocalPajglaTime;
+        }
+    }
 
+    triggerPajglaChanged(pajglaTime = this.getTimeFunc(), initialize = true, deleteGuesses = true) {
+        let pajglaWord = DICT_DAILY_WORDS[pajglaTime];
         if (pajglaWord === undefined) {
             console.error("Dictionary doesn't have word at index:", pajglaTime);
             return;
@@ -271,9 +426,16 @@ export class GameplayController {
             pajglaChangedHandler(pairTimeWord);
         }
 
-        this.currentGameInstance = new GameInstance(this, pairTimeWord);
-        this.gameInstanceConnection(this.currentGameInstance);
-        this.currentGameInstance.onConnect();
+        if (initialize)
+        {
+            this.currentGameInstance = new GameInstance(this, pairTimeWord);
+            this.gameInstanceConnection(this.currentGameInstance);
+            this.currentGameInstance.onConnect();
+        }
+        else
+        {
+            this.currentGameInstance.reinitialize(pajglaWord, pajglaTime, deleteGuesses);
+        }
     }
 
     connectToGameInstance(gameCallback) {
