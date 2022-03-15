@@ -215,6 +215,7 @@ export class Board {
         else
         {
             start = new Date(Date.parse(start));
+            console.log(start);
         }
 
         if (this.isRushHourStarted)
@@ -222,8 +223,9 @@ export class Board {
             return;
         }
 
+        this.rushHourEndTime = new Date();
         this.rushHourEndTime.setMinutes(start.getMinutes() + this.options.rushHourDuration);
-
+        this.rushHourEndTime.setSeconds(start.getSeconds());
         this.rushHourTimerTimeout = setInterval(() => {
             this.updateRushHourTimer();
         }, 100);
