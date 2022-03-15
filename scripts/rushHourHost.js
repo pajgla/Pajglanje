@@ -5,7 +5,7 @@ import { DICT_DAILY_WORDS } from './dict_daily_words.js';
 import { make_stable_seeded_rand, stringDecrypt } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    let options = new GameOptions(true, true, 6, 6, false, 30, GameMode.RushHour);
+    let options = new GameOptions(true, true, 6, 6, false, 1, GameMode.RushHour);
     let game = new GameplayController(options);
     let board = new Board(options);
     let keyboard = new Keyboard();
@@ -35,14 +35,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function UpdateTimer()
     {
-        let startTime = new Date(game.currentGameInstance.state.rushHourStartTime);
-        if (startTime === undefined)
+        let endTime = new Date(game.currentGameInstance.state.rushHourStartTime);
+        if (endTime === undefined)
         {
             console.error("Start time is undefined.");
             StopTimer();
         }
 
-        let timeRemaining = startTime.setMinutes(startTime.getMinutes() + options.rushHourDuration) - new Date();
+        endTime.setMinutes(endTime.getMinutes() + options.rushHourDuration);
+        let timeRemaining =  endTime - new Date();
         if (timeRemaining <= 0)
         {
             StopTimer();
