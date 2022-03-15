@@ -24,4 +24,14 @@ function make_stable_seeded_rand(seed, limit) {
     return rand_int_decorator(mulberry32(seed), limit);
 }
 
-export { formatTime, make_stable_seeded_rand };
+function stringEncrypt(string)
+{
+    return window.btoa(string);
+}
+
+function stringDecrypt(string)
+{
+    return window.atob(string);
+}
+
+export { formatTime, make_stable_seeded_rand, stringEncrypt, stringDecrypt };

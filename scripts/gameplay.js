@@ -3,6 +3,7 @@ import { DICT_DAILY_WORDS } from './dict_daily_words.js';
 import { DICT_GUESS_WORDS } from './dict_guess_words.js';
 import {consolidate_digraphs, LetterStatus, match_words, valueToLetterStatus} from "./core_logic.js";
 import {ajax} from "./ajax.js"
+import { stringDecrypt, stringEncrypt } from './utils.js';
 
 function dateToPajglaTime(end) {
     let start = new Date('2/6/2022');
@@ -79,7 +80,7 @@ class GameState {
     constructor(status, time, word, guesses) {
         this.status = GameStatus.Active;
         this.time = time;
-        this.correctWord = word;
+        this.correctWord = stringEncrypt(word);
         this.guesses = guesses;
         this.letters = {};
         this.replaying = false;
@@ -94,7 +95,7 @@ class GameState {
         let guesses = [...this.guesses];
         for (let guess of guesses) {
             if (this.is_open_for_guessing()) {
-                let matchResult = match_words(this.correctWord, guess);
+                let matchResult = match_words(stringDecrypt(this.correctWord), guess);
                 this.update(guess, matchResult);
 
                 let [success, matches] = matchResult;
@@ -173,6 +174,7 @@ export class GameOptions {
 export class GameInstance {
     static SavedGameStorageKey = "pajgla_saved_game";
     static RushHourSavedGameStorageKey = "rushhour_saved_game";
+    static SaveGameVersion = 1;
 
     constructor(gameplayController, pairTimeWord) {
         this.gameplayController = gameplayController;
@@ -193,7 +195,8 @@ export class GameInstance {
     reinitialize(currentWord, currentTime, deleteGuesses)
     {
         this.state.status = GameStatus.Active;
-        this.state.correctWord = currentWord;
+        this.state.correctWord = stringEncrypt(currentWord);
+        this.state.time = currentTime;
         this.currentWord = currentWord;
         this.currentTime = currentTime;
         if (deleteGuesses)
@@ -217,6 +220,14 @@ export class GameInstance {
             default:
                 console.error("Invalid game mode type used");
                 break;
+        }
+
+
+        //If someone loads the page with clean savegame, the next reload will be overwritten since we never save 'savegame version'
+        //and since we can't do that in the constructor, we have to that manually here
+        if (this.state.saveGameVersion === undefined)
+        {
+            this.state.saveGameVersion = GameInstance.SaveGameVersion;
         }
 
         window.localStorage.setItem(storageKeyToUse, JSON.stringify(this.state));
@@ -251,12 +262,29 @@ export class GameInstance {
         else
         {
             let state = JSON.parse(savedGame);
+
+            //Simple save version check
+            //#TODO delete rushhour gamemode in couple days. This is just to ensure that the old save is deleted
+            if (state.saveGameVersion === undefined)
+            {
+                this.state.saveGameVersion = GameInstance.SaveGameVersion;
+                if (this.options.gameMode === GameMode.RushHour)
+                {
+                    shouldSaveNewState = true;
+                }
+            }
+
+            if (state.saveGameVersion < GameInstance.SaveGameVersion)
+            {
+                shouldSaveNewState = true;
+            }
             
             if (this.options.clearSavedIfOld && state.time < this.state.time)
             {
                 shouldSaveNewState = true;
             }
-            else
+            
+            if (shouldSaveNewState !== true)
             {
                 console.log("Overwriting empty game from local storage");
                 this.state.status = state.status;
@@ -268,6 +296,7 @@ export class GameInstance {
                 this.state.rushHourScore = state.rushHourScore;
                 this.state.rushHourStartTime = state.rushHourStartTime;
                 this.state.correctWord = state.correctWord;
+                this.state.saveGameVersion = this.state.SaveGameVersion;
             }
         }
 
@@ -349,7 +378,7 @@ export class GameInstance {
     pushGuess(guess) {
         if (this.state.is_open_for_guessing()) {
             if (!this.guessIsProblematic(guess)) {
-                let [success, matches] = match_words(this.state.correctWord, guess);
+                let [success, matches] = match_words(stringDecrypt(this.state.correctWord), guess);
                 this.state.update(guess, [ success, matches ]);
 
                 for (let guessMadeHandler of this.guessMadeEvent) {
@@ -435,6 +464,35 @@ export class GameplayController {
         else
         {
             this.currentGameInstance.reinitialize(pajglaWord, pajglaTime, deleteGuesses);
+        }
+    }
+
+    triggerRushHourPajglaChanged(wordIndex, initialize = true, deleteGuesses = true)
+    {
+        let rushHourTime = this.getTimeFunc();
+        let pajglaWord = DICT_DAILY_WORDS[wordIndex];
+        if (pajglaWord === undefined)
+        {
+            console.error("Dictionary doesn't have word at index:", wordIndex);
+            return;
+        }
+
+        let pairTimeWord = {time: rushHourTime, word: pajglaWord};
+
+        for (let pajglaChangedHandler of this.pajglaChangedEvent)
+        {
+            pajglaChangedHandler(pairTimeWord);
+        }
+
+        if (initialize)
+        {
+            this.currentGameInstance = new GameInstance(this, pairTimeWord);
+            this.gameInstanceConnection(this.currentGameInstance);
+            this.currentGameInstance.onConnect();
+        }
+        else
+        {
+            this.currentGameInstance.reinitialize(pajglaWord, rushHourTime, deleteGuesses);
         }
     }
 

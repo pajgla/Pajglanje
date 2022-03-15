@@ -1,7 +1,7 @@
-
 import {GameOptions, GameplayController, GameStatistics, GameStatus, GuessProblem} from "./gameplay.js";
 import {Board, HelpWindow, Keyboard, popup, StatisticsWindow} from "./view.js";
 import {delay} from "./animation.js";
+import { stringDecrypt } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     let options = new GameOptions();
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 else if (state.status === GameStatus.Failed)
                 {
-                    popup(LOSE_MESSAGE(instance.state.correctWord), 5000);
+                    popup(LOSE_MESSAGE(stringDecrypt(instance.state.correctWord)), 5000);
                     delay(() => {
                         statisticsWindow.showStatisticsWindow(instance.state);
                     }, STATISTICS_WINDOW_OPEN_DELAY);

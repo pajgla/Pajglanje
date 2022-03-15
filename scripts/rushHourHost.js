@@ -2,10 +2,10 @@ import {GameMode, GameOptions, GameplayController, GameStatistics, GameStatus, G
 import {Board, HelpWindow, Keyboard, popup, StatisticsWindow} from "./view.js";
 import {delay} from "./animation.js";
 import { DICT_DAILY_WORDS } from './dict_daily_words.js';
-import { make_stable_seeded_rand } from "./utils.js";
+import { make_stable_seeded_rand, stringDecrypt } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    let options = new GameOptions(true, false, 6, 6, false, 30, GameMode.RushHour);
+    let options = new GameOptions(true, true, 6, 6, false, 30, GameMode.RushHour);
     let game = new GameplayController(options);
     let board = new Board(options);
     let keyboard = new Keyboard();
@@ -77,14 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 else if (state.status === GameStatus.Failed)
                 {
-                    popup(LOSE_MESSAGE(instance.state.correctWord), 5000);
+                    popup(LOSE_MESSAGE(stringDecrypt(instance.state.correctWord)), 5000);
                 }
             }
 
             for (let i = 0; i < state.rushHourScore; ++i)
             {
                 let randomWordIndex = randomPajglaFunct();
-                game.triggerPajglaChanged(randomWordIndex, false, false);
+                game.triggerRushHourPajglaChanged(randomWordIndex, false, false);
             }
 
             if (state.rushHourStartTime !== undefined)
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let score = ++instance.state.rushHourScore;
             keyboard.toggle(false);
             let randomWordIndex = randomPajglaFunct();
-            game.triggerPajglaChanged(randomWordIndex, false, true);
+            game.triggerRushHourPajglaChanged(randomWordIndex, false, true);
             instance.triggerStateSave();
             popup(WIN_MESSAGE(score), 5000);
             delay(() => {
@@ -183,5 +183,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     let randomPajglaTime = randomPajglaFunct();
-    game.triggerPajglaChanged(randomPajglaTime);
+    game.triggerRushHourPajglaChanged(randomPajglaTime);
 });

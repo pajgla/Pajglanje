@@ -209,7 +209,6 @@ export class Board {
     {
         if (start === undefined)
         {
-            console.log("Start time is undefined. Initializing to current time");
             start = new Date();
         }
         else
@@ -222,8 +221,9 @@ export class Board {
             return;
         }
 
+        this.rushHourEndTime = new Date();
         this.rushHourEndTime.setMinutes(start.getMinutes() + this.options.rushHourDuration);
-
+        this.rushHourEndTime.setSeconds(start.getSeconds());
         this.rushHourTimerTimeout = setInterval(() => {
             this.updateRushHourTimer();
         }, 100);
