@@ -209,13 +209,11 @@ export class Board {
     {
         if (start === undefined)
         {
-            console.log("Start time is undefined. Initializing to current time");
             start = new Date();
         }
         else
         {
             start = new Date(Date.parse(start));
-            console.log(start);
         }
 
         if (this.isRushHourStarted)

@@ -1,4 +1,3 @@
-
 import {GameOptions, GameplayController, GameStatistics, GameStatus, GuessProblem} from "./gameplay.js";
 import {Board, HelpWindow, Keyboard, popup, StatisticsWindow} from "./view.js";
 import {delay} from "./animation.js";

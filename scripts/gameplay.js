@@ -262,8 +262,6 @@ export class GameInstance {
         else
         {
             let state = JSON.parse(savedGame);
-            
-            console.log(`State.time: ${state.time} / this.state.time: ${this.state.time}`);
 
             //Simple save version check
             //#TODO delete rushhour gamemode in couple days. This is just to ensure that the old save is deleted
