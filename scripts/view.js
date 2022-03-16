@@ -578,7 +578,7 @@ export class StatisticsWindow {
             if (hours < 0)
                 hours = 0;
             if (minutes < 0)
-                minuts = 0;
+                minutes = 0;
             if (seconds < 0)
                 seconds = 0;
 
@@ -597,7 +597,8 @@ export class StatisticsWindow {
     {
         const squareVisuals = [ '⬛', '🟨', '🟩' ];
 
-        let stringToCopy = `PAJGLANJE #${state.time} ${state.guesses.length}/${this.options.wordLength}\n\n`;
+        let guessNumber = (state.status === GameStatus.Solved ? state.guesses.length : "x");
+        let stringToCopy = `PAJGLANJE #${state.time} ${guessNumber}/${this.options.wordLength}\npajglanje.com\n\n`;
         for (let i = 0; i < state.guesses.length; ++i)
         {
             let row = [];
