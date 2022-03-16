@@ -26,12 +26,11 @@ function make_stable_seeded_rand(seed, limit) {
 
 function stringEncrypt(string)
 {
-    return window.btoa(string);
+    return window.btoa(encodeURI(encodeURIComponent(string)));
 }
-
 function stringDecrypt(string)
 {
-    return window.atob(string);
+    return decodeURIComponent(decodeURI(window.atob(string))); 
 }
 
 export { formatTime, make_stable_seeded_rand, stringEncrypt, stringDecrypt };
