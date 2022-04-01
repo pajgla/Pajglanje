@@ -1,5 +1,10 @@
 
 export const DICT_GUESS_WORDS = [
+  'hahaha',
+  'vangla',
+  'lilili',
+  'vangle',
+  'feljton',
   'rusija',
   'abažur',
   'abažura',
@@ -26,6 +31,7 @@ export const DICT_GUESS_WORDS = [
   'abdomenu',
   'Abel',
   'Abelar',
+  'milica',
   'aber',
   'abera',
   'aberacija',
