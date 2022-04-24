@@ -18,6 +18,7 @@
     <script type="module" src="scripts/core_logic.js"></script>
     <script type="module" src="scripts/gameplay.js"></script>
     <script type="module" src="scripts/host.js"></script>
+    <script type="module" src="scripts/sideMenu.js"></script>
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css" />
@@ -34,6 +35,9 @@
         <div id="game">
             <header>
               <div id="leftHeaderSpace">
+                <a href="#">
+                  <img id="openSideMenuButton" src="images/menuIcon.png" style="filter: invert(100%)" class="headerIcon" />
+                </a>
                 <a id="helpWindowLink" href="#helpWindow" rel="modal:open">
                   <img id="helpWindowImg" src="images/helpIcon.png" style="filter: invert(100%)" class="headerIcon" />
                 </a>
@@ -302,6 +306,11 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <!-- SIDE MENU -->
+            <div id="sideMenu">
+              <a href="javascript:void(0)" id="closeSideMenuButton" class="closeButton">&times;</a>
+              <a href="//pajglanje.com/brzalica.html">Brzalica</a>
             </div>
         </div>
     </div>

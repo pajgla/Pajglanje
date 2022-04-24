@@ -35,14 +35,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function UpdateTimer()
     {
-        let startTime = new Date(game.currentGameInstance.state.rushHourStartTime);
-        if (startTime === undefined)
+        let endTime = new Date(game.currentGameInstance.state.rushHourStartTime);
+        if (endTime === undefined)
         {
             console.error("Start time is undefined.");
             StopTimer();
         }
 
-        let timeRemaining = startTime.setMinutes(startTime.getMinutes() + options.rushHourDuration) - new Date();
+        endTime.setMinutes(endTime.getMinutes() + options.rushHourDuration);
+        let timeRemaining =  endTime - new Date();
         if (timeRemaining <= 0)
         {
             StopTimer();
@@ -89,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (state.rushHourStartTime !== undefined)
             {
-                board.startRushHourTimer(state.rushHourStartTime);
+                board.startRushHourTimer(state.rushHourStartTime, game.currentGameInstance.state.time);
                 StartTimer();
             }
         });

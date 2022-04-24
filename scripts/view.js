@@ -46,6 +46,7 @@ export class Board {
         this.rushHourTimerTimeout;
         this.rushHourEndTime = new Date();
         this.isRushHourStarted = false;
+        this.rushHourTime = 0;
     }
 
     onConnect() {
@@ -205,15 +206,15 @@ export class Board {
         this.currentPosition = [0,0];
     }
 
-    startRushHourTimer(start)
+    startRushHourTimer(startTime, pajglaTime)
     {
-        if (start === undefined)
+        if (startTime === undefined)
         {
-            start = new Date();
+            startTime = new Date();
         }
         else
         {
-            start = new Date(Date.parse(start));
+            startTime = new Date(startTime);
         }
 
         if (this.isRushHourStarted)
@@ -221,9 +222,9 @@ export class Board {
             return;
         }
 
-        this.rushHourEndTime = new Date();
-        this.rushHourEndTime.setMinutes(start.getMinutes() + this.options.rushHourDuration);
-        this.rushHourEndTime.setSeconds(start.getSeconds());
+        this.rushHourEndTime = new Date(startTime);
+        this.rushHourEndTime.setMinutes(startTime.getMinutes() + this.options.rushHourDuration);
+        this.rushHourEndTime.setSeconds(startTime.getSeconds());
         this.rushHourTimerTimeout = setInterval(() => {
             this.updateRushHourTimer();
         }, 100);
@@ -231,6 +232,7 @@ export class Board {
         this.showRushHourTimer();
 
         this.isRushHourStarted = true;
+        this.rushHourTime = pajglaTime;
     }
 
     updateRushHourTimer()
@@ -265,7 +267,7 @@ export class Board {
     {
         let centralHeaderElement = document.getElementById("centralHeaderSpace");
         this.isRushHourTimerShown = false;
-        centralHeaderElement.textContent = "PAJGLANJE";
+        centralHeaderElement.textContent = `BRZALICA #${this.rushHourTime}`;
         this.flipAnimation(centralHeaderElement, 0.8).then(() => {
             delay(() => {
                 this.flipOutAnimation(centralHeaderElement, 0.8).then(() => {
