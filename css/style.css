@@ -5,10 +5,9 @@
 
 @font-face {
     font-family: 'CustomFont';
-    src: url('../fonts/Inter-Regular.ttf');
-    font-weight: normal;
+    src: url('../fonts/shlop rg.ttf');
+    font-weight: 200;
     font-style: normal;
-
 }
 
 a {
@@ -20,13 +19,44 @@ html {
     font-family: 'CustomFont';
     font-weight: normal;
     font-style: normal;
+    letter-spacing: 2pt;
 }
 
 body
 {
-    background-color:rgb(18, 18, 19) !important;
+    background-color: #911514 !important;
+
     height: 100%;
     margin: 0;
+}
+
+.bg {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  width: 200%;
+  height: 200vh;
+  background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
+  background-repeat: repeat;
+  animation: bg-animation .2s infinite;
+  opacity: .9;
+  visibility: visible;
+}
+
+@keyframes bg-animation {
+    0% { transform: translate(0,0) }
+    10% { transform: translate(-5%,-5%) }
+    20% { transform: translate(-10%,5%) }
+    30% { transform: translate(5%,-10%) }
+    40% { transform: translate(-5%,15%) }
+    50% { transform: translate(-10%,5%) }
+    60% { transform: translate(15%,0) }
+    70% { transform: translate(0,10%) }
+    80% { transform: translate(-15%,0) }
+    90% { transform: translate(10%,5%) }
+    100% { transform: translate(5%,0) }
 }
 
 #container
@@ -56,6 +86,7 @@ header
     flex-direction: row;
     align-items: center;
     flex-wrap: nowrap;
+    color:  black;
 }
 
 .overlay
@@ -85,7 +116,7 @@ header
 
 #centralHeaderSpace
 {
-    color: gainsboro;
+    color: black;
     font-size: 36px;
     font-weight: bold;
     margin: 0.4rem 0 0.4rem 0;
@@ -99,6 +130,7 @@ header
     display: flex;
     flex-direction: row;
     column-gap: 10px;
+    color: black;
 }
 
 #rightHeaderSpace
@@ -107,6 +139,7 @@ header
     display: flex;
     flex-direction: row;
     column-gap: 10px;
+    color: black;
 }
 
 .title
@@ -190,7 +223,7 @@ header
     padding: 0;
     height: 58px;
     cursor: pointer;
-    background-color: rgb(129, 131, 132);
+    background-color: rgb(0, 0, 0);
     color: rgb(215, 218, 220);
     flex-grow: 1;
     text-transform: uppercase;
@@ -199,6 +232,8 @@ header
     user-select: none;
     width: 100%;
     max-width: 40px;
+    font-size: 20pt;
+    letter-spacing: 1pt;
 }
 
 .keyboard-row .BigKeyboardButton
@@ -354,6 +389,7 @@ button#shareButton
     font-size: 20px;
     height: 52px;
     color:rgb(223, 221, 221);
+    font-family: 'CustomFont';
 }
 
 #helpWindow
@@ -449,3 +485,4 @@ button#shareButton
     #sideMenu {padding-top: 15px;}
     #sideMenu a {font-size: 18px;}
   }
+
