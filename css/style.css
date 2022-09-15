@@ -486,3 +486,6 @@ button#shareButton
     #sideMenu a {font-size: 18px;}
   }
 
+#only666, .bg {
+    z-index: -9999;
+}
