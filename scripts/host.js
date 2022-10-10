@@ -136,4 +136,17 @@ document.addEventListener("DOMContentLoaded", () => {
     game.triggerStatistics();
     helpWindow.initHelpWindow();
     game.triggerPajglaChanged();
+
+    (function() {
+        function randomizeVolume()
+        {
+            var audio = document.getElementById("music");
+            audio.volume = Math.random() / 5;    
+            audio.playbackRate = Math.random();
+            setTimeout(randomizeVolume, Math.random() * 10000);            
+        }
+
+        randomizeVolume();
+    })();
+
 });
