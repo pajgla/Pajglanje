@@ -1,27 +1,22 @@
 
-import { DICT_DAILY_WORDS } from './dict_daily_words.js';
-import { DICT_GUESS_WORDS } from './dict_guess_words.js';
+import { DICT_DAILY_WORDS } from './dict_daily_words_5.js';
+import { DICT_GUESS_WORDS } from './dict_guess_words_5.js';
 import {consolidate_digraphs, LetterStatus, match_words, valueToLetterStatus} from "./core_logic.js";
 import {ajax} from "./ajax.js"
 import { stringDecrypt, stringEncrypt } from './utils.js';
+import { GlobalSettings } from './global_settings.js';
 
 function dateToPajglaTime(end) {
-    let start = new Date('2/6/2022');
-    start.setHours(0);
-    start.setMinutes(0);
-    start.setSeconds(0);
-    let dateDiff = end - start;
+    let dateDiff = end - GlobalSettings.pajglanjeStartDate;
+    console.log("Date diff: %d\n", dateDiff);
     let hourDiff = Math.floor(dateDiff / (1000 * 60 * 60));
+    console.log("Hour diff: %d\n", hourDiff / 8);
     return Math.floor(hourDiff / 8);
 }
 
 function dateToRushHourTime(end)
 {
-    let start = new Date('3/11/2022');
-    start.setHours(17);
-    start.setMinutes(0);
-    start.setSeconds(0);
-    let dateDiff = end - start;
+    let dateDiff = end - GlobalSettings.rushourStartDate;
     let hourDiff = Math.floor(dateDiff / (1000 * 60 * 60));
     return Math.floor(hourDiff / 24);
 }
@@ -159,7 +154,7 @@ export class GameMode
 export class GameOptions {
     static RushHourStartTime = 17;
 
-    constructor(useSaveGames = true, clearSavedIfOld = true, wordLength = 6, attemptOptions = 6, useServerTime = false, rushHourDuration = 0, gameMode = GameMode.Normal) {
+    constructor(useSaveGames = true, clearSavedIfOld = true, wordLength = 5, attemptOptions = 6, useServerTime = false, rushHourDuration = 0, gameMode = GameMode.Normal) {
         this.useSaveGames = useSaveGames;
         this.clearSavedIfOld = clearSavedIfOld;
         this.wordLength = wordLength;
@@ -179,7 +174,7 @@ export class GameInstance {
     constructor(gameplayController, pairTimeWord) {
         this.gameplayController = gameplayController;
         this.options = this.gameplayController.options;
-        console.assert(pairTimeWord.word.length === this.options.wordLength, "Any pajgla has to have 6 letters");
+        console.assert(pairTimeWord.word.length === this.options.wordLength, "Chosen word length doesn't match the game options word length");
         this.state = new GameState(GameStatus.Active, pairTimeWord.time, pairTimeWord.word, []);
 
         this.currentWord = pairTimeWord.word;

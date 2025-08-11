@@ -4,6 +4,7 @@ import { LetterStatus, reverse_to_digraph } from "./core_logic.js";
 import { GameStatus } from "./gameplay.js";
 import { copyToClipboard } from "./clipboard.js";
 import { formatTime } from "./utils.js";
+import { GlobalSettings } from "./global_settings.js";
 
 export function popup(message, duration = 3000) {
     return Toastify({ text: message, className: "toastify-center", duration: duration }).showToast();
@@ -546,7 +547,7 @@ export class StatisticsWindow {
         footerElement.appendChild(countdownElement);
 
         let timerTitle = document.createElement('h4');
-        timerTitle.textContent = "Sledeće pajglanje";
+        timerTitle.textContent = "Sledeće pajglanje za";
         countdownElement.appendChild(timerTitle);
 
         let nextPajglaTimerElement = document.createElement('div');
@@ -567,7 +568,7 @@ export class StatisticsWindow {
     startNextPajglaTimer(currentPajglaTime)
     {
         let nextPajglaTime = ++currentPajglaTime;
-        let nextPajglaDate = new Date('2/6/2022');
+        let nextPajglaDate = new Date(GlobalSettings.pajglanjeStartDate);
         nextPajglaDate.setHours(8 * nextPajglaTime);
 
         let timerElement = document.getElementById('nextPajglaTimer');
@@ -600,7 +601,7 @@ export class StatisticsWindow {
         const squareVisuals = [ '⬛', '🟨', '🟩' ];
 
         let guessNumber = (state.status === GameStatus.Solved ? state.guesses.length : "x");
-        let stringToCopy = `PAJGLANJE #${state.time} ${guessNumber}/${this.options.wordLength}\npajglanje.com\n\n`;
+        let stringToCopy = `PAJGLANJE #${state.time} ${guessNumber}/${this.options.attemptOptions}\npajglanje.com\n\n`;
         for (let i = 0; i < state.guesses.length; ++i)
         {
             let row = [];

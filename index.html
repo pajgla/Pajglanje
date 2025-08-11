@@ -10,8 +10,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
     <script src="scripts/toastify.js"></script>
     <script type="module" src="scripts/clipboard.js"></script>
-    <script type="module" src="scripts/dict_guess_words.js"></script>
-    <script type="module" src="scripts/dict_daily_words.js"></script>
+    <script type="module" src="scripts/dict_guess_words_5.js"></script>
+    <script type="module" src="scripts/dict_daily_words_5.js"></script>
     <script type="module" src="scripts/funk_pack.js"></script>
     <script type="module" src="scripts/animation.js"></script>
     <script type="module" src="scripts/view.js"></script>
@@ -31,22 +31,15 @@
     <script src="scripts/gtag.js"></script>
 </head>
 <body>
-  <div id="only666">
-    <audio autoplay loop id="music" volume="0.1">
-      <source src="../audio/Horror.mp3" type="audio/mpeg" />
-      <source src="../audio/Horror.ogg" type="audio/ogg; codecs=vorbis" />
-    </audio>
-    <div class="bg"></div>
-  </div>
     <div id="container">
         <div id="game">
             <header>
               <div id="leftHeaderSpace">
                 <a href="#">
-                  <img id="openSideMenuButton" src="images/menuIcon.png" class="headerIcon" />
+                  <img id="openSideMenuButton" src="images/menuIcon.png" class="headerIcon invert" />
                 </a>
                 <a id="helpWindowLink" href="#helpWindow" rel="modal:open">
-                  <img id="helpWindowImg" src="images/helpIcon.png" class="headerIcon" />
+                  <img id="helpWindowImg" src="images/helpIcon.png" class="headerIcon invert" />
                 </a>
               </div>
               <div id="centralHeaderSpace">
@@ -54,7 +47,7 @@
               </div>
               <div id="rightHeaderSpace">
                 <a id="statisticsPopupLink" href="#statisticsPopup" rel="modal:open">
-                  <img src="images/statisticsIcon.png" class="headerIcon"/>
+                  <img src="images/statisticsIcon.png" class="headerIcon invert"/>
                 </a>
               </div>
             </header>
@@ -243,8 +236,8 @@
             <!-- Help window -->
             <div id="helpWindow" class="modal">
               <h2>Pravila</h2>
-              <p>Pogodi zadatu reč u 6 pokušaja.</p><br />
-              <p>Svaki pokušaj mora biti pravilna reč od 6 slova. Pritisni 'Enter' da pošalješ reč.</p><br />
+              <p>Pogodi zadatu reč u 5 pokušaja.</p><br />
+              <p>Svaki pokušaj mora biti pravilna reč od 5 slova. Pritisni 'Enter' da pošalješ reč.</p><br />
               <p>Nakon svakog pokušaja, boja polja svakog slova će se promeniti i prikazati koliko je tvoj odgovor bio blizu u odnosu na zadatu reč.</p><br />
               <div id="examples">
                 <br />
@@ -252,64 +245,55 @@
                 <div class="example">
                   <div class="row">
                     <div class="exampleSquare animate__animated">
-                      m
+                      l
                     </div>
                     <div class="exampleSquare animate__animated">
-                      u
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      z
-                    </div>
-                    <div id="paintGreenExample" class="exampleSquare animate__animated">
-                      i
+                      a
                     </div>
                     <div class="exampleSquare animate__animated">
                       k
                     </div>
-                    <div class="exampleSquare animate__animated">
+                    <div id="paintGreenExample" class="exampleSquare animate__animated">
                       a
                     </div>
-                    <p>Slovo <b>I</b> se nalazi u reči koju pogađaš i na <b>tačnom</b> je mestu.</p><br />
+                    <div class="exampleSquare animate__animated">
+                      t
+                    </div>
+                    <p>Slovo <b>A</b> se nalazi u reči koju pogađaš i na <b>tačnom</b> je mestu.</p><br />
 
                     <div class="exampleSquare animate__animated">
-                      z
+                      p
                     </div>
                     <div id="paintYellowExample" class="exampleSquare animate__animated">
-                      g
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      r
+                      l
                     </div>
                     <div class="exampleSquare animate__animated">
                       a
                     </div>
-                    <div class="exampleSquare animate__animated">
-                      d
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      a
-                    </div>
-                    <p>Slovo <b>G</b> se nalazi u reči koju pogađaš ali je na <b>pogrešnom</b> mestu.</p><br />
-
                     <div class="exampleSquare animate__animated">
                       t
                     </div>
                     <div class="exampleSquare animate__animated">
-                      r
+                      a
+                    </div>
+                    <p>Slovo <b>L</b> se nalazi u reči koju pogađaš ali je na <b>pogrešnom</b> mestu.</p><br />
+
+                    <div class="exampleSquare animate__animated">
+                      v
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      a
                     </div>
                     <div id="paintGrayExample" class="exampleSquare animate__animated">
-                      e
+                      š
                     </div>
                     <div class="exampleSquare animate__animated">
-                      z
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      o
+                      a
                     </div>
                     <div class="exampleSquare animate__animated">
                       r
                     </div>
-                    <p>Slovo <b>E</b> ne postoji u reči koju pogađaš.</p>
+                    <p>Slovo <b>Š</b> ne postoji u reči koju pogađaš.</p>
                   </div>
                 </div>
               </div>
