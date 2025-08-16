@@ -17,7 +17,7 @@ export const DICT_DAILY_WORDS = [
  'džihad',
  'čopor',
  'ustup',
- 'Novak',
+ 'novak',
  'ishod',
  'kavez',
  'ognjen',

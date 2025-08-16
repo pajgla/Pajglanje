@@ -9332,7 +9332,7 @@ export const DICT_GUESS_WORDS = [
      'nišči',
      'Noama',
      'nobel',
-     'Novak',
+     'novak',
      'novac',
      'Novel',
      'novim',
