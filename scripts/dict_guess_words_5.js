@@ -10541,7 +10541,7 @@ export const DICT_GUESS_WORDS = [
      'paraf',
      'parah',
      'pareo',
-     'Pariz',
+     'pariz',
      'pario',
      'parip',
      'Paris',
