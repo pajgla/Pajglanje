@@ -1,0 +1,207 @@
+import { GetStyleForLetterStatus } from "../../../helpers/ColorFunctions"
+import * as AnimationsModule from "../../../animations/Animation";
+import type { IBoard } from "./IBoard";
+import { GlobalGameSettings } from "../../GlobalGameSettings";
+import type { ELetterStatus, LetterStatusWrapper } from "../word_services/AttemptStatuses";
+import { GlobalViewSettings } from "../../../siteView/GlobalViewSettings";
+
+export class Board implements IBoard {
+    private wordLength: number = 5;
+    private maxGuesses: number = 6;
+    private currentLetterPosition: [number, number] = [0, 0];
+
+    constructor(wordLength: number, maxGuesses: number)
+    {
+        this.wordLength = wordLength;
+        this.maxGuesses = maxGuesses;
+    }
+
+    public GetCurrentAttemptPosition(): number {
+        return this.currentLetterPosition[0];
+    }
+
+    public CreateBoardElement(): void {
+        let boardelement: HTMLElement | null = document.getElementById("board");
+        if (!boardelement) {
+            throw new Error("Board element not found");
+        }
+
+        for (let guessAttempt = 0; guessAttempt < this.maxGuesses; guessAttempt++)
+        {
+            for (let letterIndex = 0; letterIndex < this.wordLength; letterIndex++)
+            {
+                let square: HTMLElement = this.CreateLetterSquareElement(guessAttempt, letterIndex);
+                boardelement.appendChild(square);
+            }
+        }
+
+        //Set board parent style
+        boardelement.style.setProperty("grid-template-columns", `repeat(${this.wordLength}, minmax(20px, 80px))`);
+    }
+
+    private CreateLetterSquareElement(guessAttempt: number, letterIndex: number): HTMLElement {
+        let square: HTMLElement = document.createElement("div");
+        square.classList.add("square");
+        square.classList.add("animate__animated");
+        square.setAttribute("id", this.GetIDForField(guessAttempt, letterIndex));
+        square.setAttribute("data-key", '');
+        square.setAttribute("data-value", "");
+        return square
+    }
+
+    public GetIDForField(guessAttempt: number, letterIndex: number): string {
+        return `guess_${guessAttempt}_letter_${letterIndex}`;
+    }
+
+    public OnResize(): void {
+        let windowScreenHeight: number = window.screen.height;
+
+        let boardElement: HTMLElement | null = document.querySelector(".board");
+        if (!boardElement) {
+            throw new Error("Board element not found");
+        }
+
+        let height: string = getComputedStyle(boardElement).height;
+        boardElement.style = `width: ${height}`;
+
+        if (windowScreenHeight <= 600)
+        {
+            boardElement.classList.remove("BigFontSize");
+            boardElement.classList.add("SmallFontSize");
+        }
+        else
+        {
+            boardElement.classList.remove("SmallFontSize");
+            boardElement.classList.add("BigFontSize");
+        }
+    }
+
+    public GetCurrentGuess(): string {
+        let [guessAttempt, letterIndex] = this.currentLetterPosition;
+        let guess: string = "";
+        for (let i = 0; i < letterIndex; ++i)
+        {
+            const letterElement = this.GetLetterHTMLElement(guessAttempt, i);
+            let dataKey = letterElement.getAttribute("data-key");
+            guess += dataKey;
+        }
+
+        return guess.trim();
+    }
+
+    public NextGuess(): void {
+        let [guessAttempt, _] = this.currentLetterPosition;
+        if (guessAttempt < this.maxGuesses)
+        {
+            this.currentLetterPosition = [guessAttempt + 1, 0];
+        }
+    }
+
+    public UpdateFieldLetter(guessAttempt: number, letterIndex: number, letter: string): void {
+        let letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
+        letterElement.textContent = `${letter}`.toUpperCase();
+        letterElement.setAttribute("data-key", letter);
+    }
+
+    public UpdateFieldColor(guessAttempt: number, letterIndex: number, letterStatus: ELetterStatus, animated: boolean = true): void {
+        const letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
+        letterElement.style = GetStyleForLetterStatus(letterStatus);
+        letterElement.setAttribute('data-value', letterStatus.toString());
+        if (animated) {
+            this.AnimateLetter(letterElement);
+        }
+    }
+
+    private GetLetterHTMLElement(guessAttempt: number, letterIndex: number): HTMLElement
+    {
+        const letterID = this.GetIDForField(guessAttempt, letterIndex);
+        let letterHTMLElement = document.getElementById(letterID);
+        if (!letterHTMLElement)
+        {
+            throw new Error(`Letter element for guess attempt ${guessAttempt} and index ${letterIndex} not found`);
+        }
+
+        return letterHTMLElement;
+    }
+
+    public FillNextLetter(letter: string): void {
+        let [guessAttempt, letterIndex] = this.currentLetterPosition;
+        if (letterIndex < this.wordLength)
+        {
+            let id = this.GetIDForField(guessAttempt, letterIndex);
+            let letterElement = document.getElementById(id);
+            if (!letterElement) {
+                throw new Error(`Letter element with ID ${id} not found`);
+            }
+
+            this.UpdateFieldLetter(guessAttempt, letterIndex, letter);
+            this.currentLetterPosition = [guessAttempt, letterIndex + 1];
+            AnimationsModule.Animation_BounceAndClear(letterElement).then(() => {});
+        }
+    }
+
+    public RetractLetter(): void {
+        let [ guessAttempt, letterIndex ] = this.currentLetterPosition;
+        if (letterIndex > 0)
+        {
+            let id = this.GetIDForField(guessAttempt, letterIndex - 1);
+            let letterElement = document.getElementById(id);
+            if (!letterElement) {
+                throw new Error(`Letter element with ID ${id} not found`);
+            }
+
+            letterElement.textContent = "";
+            letterElement.setAttribute("data-key", '');
+            this.currentLetterPosition = [guessAttempt, letterIndex - 1];
+            AnimationsModule.Animation_BounceAndClear(letterElement).then(() => {});
+        }
+    }
+
+    public ClearBoard(): void {
+        for (let guessAttempt = this.maxGuesses - 1; guessAttempt >= 0; --guessAttempt)
+        {
+            for (let letterIndex = this.wordLength - 1; letterIndex >= 0; --letterIndex)
+            {
+                setTimeout(() => {
+                    let letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
+                    letterElement.textContent = "";
+                    letterElement.setAttribute("data-key", '');
+                    letterElement.style.backgroundColor = "";
+                    letterElement.style.borderColor = "";
+                    letterElement.style.background = '';
+                    AnimationsModule.Animation_FlipInAndClear(letterElement).then(() => {});
+                }, letterIndex * 50);
+            }
+        }
+
+        this.currentLetterPosition = [0, 0];
+    }
+
+    public async ColorAttemptWord(letterStatuses: LetterStatusWrapper[], delay: boolean = true): Promise<void>
+    {
+        if (letterStatuses.length != GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH)
+        {
+            throw new Error("Letter statuses length is not correct");
+        }
+
+        const flipDelay = delay ? GlobalViewSettings.K_LETTER_FLIP_DELAY : 0;
+        let totalDuration = GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH * flipDelay;
+
+        const guessAttempt = this.currentLetterPosition[0];
+        for (let i = 0; i < GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH; ++i)
+        {
+            setTimeout(async () => {
+                    let letterElement = this.GetLetterHTMLElement(guessAttempt, i);
+                    this.UpdateFieldColor(guessAttempt, i, letterStatuses[i]!.status!, true);
+                    
+            }, flipDelay * i);            
+        }
+
+        await new Promise(resolve => setTimeout(resolve, totalDuration));
+    }
+
+    private AnimateLetter(letterElement: HTMLElement)
+    {
+        AnimationsModule.Animation_FlipInAndClear(letterElement).then(() => {});
+    }
+}

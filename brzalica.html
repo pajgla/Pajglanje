@@ -1,59 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-595XEYLQ7Y"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-595XEYLQ7Y');
+    </script>
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pajglanje - Brzalica</title>
+    <title>Pajglanje</title>
+
+    <!-- IMPORTS -->
+     <script type="importmap">
+      {
+        "imports": {
+          "jquery": "https://esm.sh/jquery@3.7.1",
+          "jquery-modal": "https://esm.sh/jquery-modal@0.9.2?deps=jquery@3.7.1"
+        }
+      }
+     </script>
+
     <!-- SCRIPTS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
-    <script src="scripts/toastify.js"></script>
-    <script type="module" src="scripts/dict_guess_words.js"></script>
-    <script type="module" src="scripts/dict_daily_words.js"></script>
-    <script type="module" src="scripts/funk_pack.js"></script>
-    <script type="module" src="scripts/animation.js"></script>
-    <script type="module" src="scripts/view.js"></script>
-    <script type="module" src="scripts/core_logic.js"></script>
-    <script type="module" src="scripts/gameplay.js"></script>
-    <script type="module" src="scripts/rushHourHost.js"></script>
-    <script type="module" src="scripts/sideMenu.js"></script>
-  <!-- rushhour -->
+     <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+    <script type="module" src="src/siteView/BrzalicaViewHost.ts"></script>
+    <script type="module" src="src/BrzalicaHost.ts"></script>
+    <script type="module" src="js/popupAnimations.ts"></script>
+    <!-- Default modal behavior -->
+    <script>
+        $.modal.defaults.fadeDuration = 100;
+    </script>
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/toastify.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.css">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-595XEYLQ7Y"></script>
-    <script src="scripts/gtag.js"></script>
+    <!-- FAVICON -->
+    <link rel="icon" type="image/ico" href="favicon.ico" />
 </head>
 <body>
-  <div>
-    <audio autoplay loop id="music" volume="0.1">
-      <source src="../audio/Horror.mp3" type="audio/mpeg" />
-      <source src="../audio/Horror.ogg" type="audio/ogg; codecs=vorbis" />
-    </audio>
-  </div>
-  <div class="bg"></div>
+    <!-- LOADER -->
+    <div id="loader"></div>
+
     <div id="container">
         <div id="game">
             <header>
               <div id="leftHeaderSpace">
-                <a href="#">
-                  <img id="openSideMenuButton" src="images/menuIcon.png" class="headerIcon" />
+                <a href="#" class="headerLink">
+                  <img id="openSideMenuButton" src="images/menuIcon.png" class="headerIcon invert" />
                 </a>
-                <a id="helpWindowLink" href="#helpWindow" rel="modal:open">
-                  <img id="helpWindowImg" src="images/helpIcon.png" class="headerIcon" />
+                <a id="helpWindowLink" class="headerLink" href="#helpWindow" rel="modal:open">
+                  <img id="helpWindowImg" src="images/helpIcon.png" class="headerIcon invert" />
                 </a>
               </div>
               <div id="centralHeaderSpace">
-                PAJGLANJE
+                BRZALICA
               </div>
               <div id="rightHeaderSpace">
-                <a id="statisticsPopupLink" href="#statisticsPopup" rel="modal:open">
-                  <img src="images/statisticsIcon.png" class="headerIcon"/>
+                <a id="userPopupLink" class="headerLink" href="#userPopup">
+                  <img src="images/user.png" class="headerIcon invert"/>
+                </a>
+                <a id="statisticsPopupLink" class="headerLink" href="#statisticsPopup" rel="modal:open">
+                  <img src="images/statisticsIcon.png" class="headerIcon invert"/>
                 </a>
               </div>
             </header>
@@ -64,52 +81,57 @@
                 </div>
             </div>
             <div id="keyboard-container">
-                <div class="keyboard-row">
-                  <button data-key="lj">lj</button>
-                  <button data-key="nj">nj</button>
-                  <button data-key="e">e</button>
-                  <button data-key="r">r</button>
-                  <button data-key="t">t</button>
-                  <button data-key="z">z</button>
-                  <button data-key="u">u</button>
-                  <button data-key="i">i</button>
-                  <button data-key="o">o</button>
-                  <button data-key="p">p</button>
-                  <button data-key="š">š</button>
-                </div>
-                <div class="keyboard-row">
-                  <div class="spacer-half"></div>
-                  <button data-key="a">a</button>
-                  <button data-key="s">s</button>
-                  <button data-key="d">d</button>
-                  <button data-key="f">f</button>
-                  <button data-key="g">g</button>
-                  <button data-key="h">h</button>
-                  <button data-key="j">j</button>
-                  <button data-key="k">k</button>
-                  <button data-key="l">l</button>
-                  <button data-key="č">č</button>
-                  <button data-key="ć">ć</button>
-                  <div class="spacer-half"></div>
-                </div>
-                <div class="keyboard-row">
-                  <button class="BigKeyboardButton" data-key="enter" class="wide-button">Enter</button>
-                  <button data-key="dž">dž</button>
-                  <button data-key="c">c</button>
-                  <button data-key="v">v</button>
-                  <button data-key="b">b</button>
-                  <button data-key="n">n</button>
-                  <button data-key="m">m</button>
-                  <button data-key="đ">đ</button>
-                  <button data-key="ž">ž</button>
-                  <button class="BigKeyboardButton" data-key="del" class="wide-button">Del</button>
+              <div id="keyboard-wrapper">
+                  <div class="keyboard-row">
+                    <button class="unused" data-key="lj">lj</button>
+                    <button class="unused" data-key="nj">nj</button>
+                    <button class="unused" data-key="e">e</button>
+                    <button class="unused" data-key="r">r</button>
+                    <button class="unused" data-key="t">t</button>
+                    <button class="unused" data-key="z">z</button>
+                    <button class="unused" data-key="u">u</button>
+                    <button class="unused" data-key="i">i</button>
+                    <button class="unused" data-key="o">o</button>
+                    <button class="unused" data-key="p">p</button>
+                    <button class="unused" data-key="š">š</button>
+                  </div>
+                  <div class="keyboard-row">
+                    <div class="spacer-half"></div>
+                    <button class="unused" data-key="a">a</button>
+                    <button class="unused" data-key="s">s</button>
+                    <button class="unused" data-key="d">d</button>
+                    <button class="unused" data-key="f">f</button>
+                    <button class="unused" data-key="g">g</button>
+                    <button class="unused" data-key="h">h</button>
+                    <button class="unused" data-key="j">j</button>
+                    <button class="unused" data-key="k">k</button>
+                    <button class="unused" data-key="l">l</button>
+                    <button class="unused" data-key="č">č</button>
+                    <button class="unused" data-key="ć">ć</button>
+                    <div class="spacer-half"></div>
+                  </div>
+                  <div class="keyboard-row">
+                    <button class="BigKeyboardButton unused" data-key="enter" class="wide-button">Unesi</button>
+                    <button class="unused" data-key="dž">dž</button>
+                    <button class="unused" data-key="c">c</button>
+                    <button class="unused" data-key="v">v</button>
+                    <button class="unused" data-key="b">b</button>
+                    <button class="unused" data-key="n">n</button>
+                    <button class="unused" data-key="m">m</button>
+                    <button class="unused" data-key="đ">đ</button>
+                    <button class="unused" data-key="ž">ž</button>
+                    <button class="BigKeyboardButton unused" data-key="del" class="wide-button">
+                      <img src="images/delete_inverted.png" />
+                    </button>
+                  </div>
                 </div>
             </div>
             <!-- Statistics popup -->
             <div id="statisticsPopup" class="modal" style="padding: 15px 10px;">
               <h1>Statistika</h1>
+
+              <!-- Statistics -->
               <div id="statistics">
-                <!-- Statistics -->
                 <div class="statistics-container">
                   <div class="statistics" id="gamesPlayedStatistics">
                     0
@@ -123,7 +145,7 @@
                     0
                   </div>
                   <div class="label">
-                    ispajglano
+                    prosečno pokušaja po reči
                   </div>
                 </div>
                 <div class="statistics-container">
@@ -131,7 +153,7 @@
                     0
                   </div>
                   <div class="label">
-                    ispajglano u %
+                    ukupno reči ispajglano
                   </div>
                 </div>
                 <div class="statistics-container">
@@ -139,7 +161,7 @@
                     0
                   </div>
                   <div class="label">
-                    trenutni niz pobeda
+                    prosečno ispajglanih reči po partiji
                   </div>
                 </div>
                 <div class="statistics-container">
@@ -147,7 +169,7 @@
                     0
                   </div>
                   <div class="label">
-                    najbolji niz pobeda
+                    najviše ispajglanih reči u partiji
                   </div>
                 </div>
               </div>
@@ -239,76 +261,80 @@
               </div>
             </div>
 
+            <!-- User popup-->
+            <div class="popup-overlay" id="loginPopup">
+                <div class="popup">
+                    <button class="close-btn" id="closePopup">&times;</button>
+                    
+                    <div class="form-container">
+                      <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%;">
+                        <b style="color: white; font-size: large;">USKORO!</b>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Help window -->
             <div id="helpWindow" class="modal">
               <h2>Pravila</h2>
-              <p>Pogodi zadatu reč u 6 pokušaja.</p><br />
-              <p>Svaki pokušaj mora biti pravilna reč od 6 slova. Pritisni 'Enter' da pošalješ reč.</p><br />
+              <p>Pogodi što više reči za zadato vreme.</p><br />
               <p>Nakon svakog pokušaja, boja polja svakog slova će se promeniti i prikazati koliko je tvoj odgovor bio blizu u odnosu na zadatu reč.</p><br />
+              <p>Reč koju pogađaš može da sadrži više istih slova (primer: ALATI - 2 slova A u istoj reči)</p><br />
               <div id="examples">
                 <br />
                 <p><b>Primeri:</b></p>
                 <div class="example">
                   <div class="row">
                     <div class="exampleSquare animate__animated">
-                      m
+                      l
                     </div>
                     <div class="exampleSquare animate__animated">
-                      u
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      z
-                    </div>
-                    <div id="paintGreenExample" class="exampleSquare animate__animated">
-                      i
+                      a
                     </div>
                     <div class="exampleSquare animate__animated">
                       k
                     </div>
-                    <div class="exampleSquare animate__animated">
+                    <div class="exampleSquare animate__animated paintCorrectExample">
                       a
                     </div>
-                    <p>Slovo <b>I</b> se nalazi u reči koju pogađaš i na <b>tačnom</b> je mestu.</p><br />
+                    <div class="exampleSquare animate__animated">
+                      t
+                    </div>
+                    <p>Samo jedno slovo <b>A</b> se nalazi u reči koju pogađaš i na <b>tačnom</b> je mestu.</p><br />
 
                     <div class="exampleSquare animate__animated">
-                      z
+                      p
                     </div>
-                    <div id="paintYellowExample" class="exampleSquare animate__animated">
-                      g
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      r
+                    <div class="exampleSquare animate__animated paintPresentExample">
+                      l
                     </div>
                     <div class="exampleSquare animate__animated">
                       a
                     </div>
-                    <div class="exampleSquare animate__animated">
-                      d
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      a
-                    </div>
-                    <p>Slovo <b>G</b> se nalazi u reči koju pogađaš ali je na <b>pogrešnom</b> mestu.</p><br />
-
                     <div class="exampleSquare animate__animated">
                       t
                     </div>
                     <div class="exampleSquare animate__animated">
+                      a
+                    </div>
+                    <p>Slovo <b>L</b> se nalazi u reči koju pogađaš ali je na <b>pogrešnom</b> mestu.</p><br />
+
+                    <div class="exampleSquare animate__animated">
+                      v
+                    </div>
+                    <div class="exampleSquare animate__animated paintCorrectExample">
+                      a
+                    </div>
+                    <div class="exampleSquare animate__animated">
+                      š
+                    </div>
+                    <div class="exampleSquare animate__animated paintPresentExample">
+                      a
+                    </div>
+                    <div class="exampleSquare animate__animated">
                       r
                     </div>
-                    <div id="paintGrayExample" class="exampleSquare animate__animated">
-                      e
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      z
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      o
-                    </div>
-                    <div class="exampleSquare animate__animated">
-                      r
-                    </div>
-                    <p>Slovo <b>E</b> ne postoji u reči koju pogađaš.</p>
+                    <p>Oba slova <b>A</b> se nalaze u reči koju pogađaš. Jedno je na dobrom mestu, drugo nije</p>
                   </div>
                 </div>
               </div>
@@ -316,7 +342,7 @@
             <!-- SIDE MENU -->
             <div id="sideMenu">
               <a href="javascript:void(0)" id="closeSideMenuButton" class="closeButton">&times;</a>
-              <a href="//pajglanje.com">Početna</a>
+              <a href="/index.html">Pajglanje</a>
             </div>
         </div>
     </div>

@@ -1,0 +1,21 @@
+export enum EventTypes {
+    TestEvent = "testEvent",
+    ConfirmKeyPressedEvent = "confirmKeyPressedEvent",
+    DeleteKeyPressedEvent = "deleteKeyPressedEvent",
+    LetterKeyPressedEvent = "letterKeyPressedEvent",
+    RequestKeyboardStateChangeEvent = "requestKeyboardStateChangeEvent",
+    GameWonEvent = "gameWonEvent",
+    GameLostEvent = "gameLostEvent",
+    NewPajglaGameStartedEvent = "newGameStartedEvent",
+    NewBrzalicaGameStartedEvent = "newBrzalicaGameStartedEvent",
+    CreateStatisticsFooterEvent = "createStatisticsFooterElement",
+    OnShareButtonClickedEvent = "onShareButtonClickedEvent",
+    StartNextGameTimerEvent = "startNextPajglaTimerEvent",
+    StartLoaderEvent = "startLoaderEvent",
+    StopLoaderEvent = "stopLoaderEvent",
+    OnBrzalicaLoaded = "onBrzalicaLoaded",
+    OnBrzalicaWordGuessed = "onBrzalicaWordGuessed",
+    OnBrzalicaGameOver = 'onBrzalicaTimeOut',
+    PopulateBrzalicaStatisticsView = 'populateBrzalicaStatisticsView',
+}
+

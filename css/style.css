@@ -1,406 +1,694 @@
+@keyframes loading {
+    0% {
+        transform: rotate(0turn)
+    }
+
+    100% {
+        transform: rotate(1turn)
+    }
+}
+
+@keyframes slide-in {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(.9)
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+    }
+}
+
 * {
     margin: 0;
-    padding: 0;
+    padding: 0
+}
+
+:root {
+    --modal-fade-duration: 0.5s;
+}
+
+.modal.fade {
+    transition: opacity var(--modal-fade-duration) ease-in-out;
 }
 
 @font-face {
-    font-family: 'CustomFont';
-    src: url('../fonts/Inter-Regular.ttf');
-    font-style: normal;
-    font-weight: normal;
+    font-family:custom-font;src:url("../fonts/Inter-Regular.ttf");font-style:normal;font-weight:400
+}
+
+@font-face {
+    font-family:Inconsolata;src:url("../fonts/Inconsolata-VariableFont_wdth,wght.ttf");font-style:normal;font-weight:400
 }
 
 a {
-    text-decoration:none !important;
+    text-decoration: none!important
+}
+
+body,html {
+    height: 100vh;
+    height: 100dvh
 }
 
 html {
-    height: 100%;
-    font-family: 'CustomFont';
-    font-weight: normal;
-    font-style: normal;
+    font-family: custom-font, Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    font-style: normal
 }
 
-body
-{
-    background-color: rgb(18, 18, 19) !important;
-
-    height: 100%;
+body {
+    background: linear-gradient(135deg,#0f0f10,#16191c)!important;
     margin: 0;
+    overflow: hidden
 }
 
-#container
-{
-    display: flex;
+#container,#game {
     width: 100%;
     height: 100%;
-    align-items: center;
-    flex-direction: column;
+    display: flex;
+    flex-direction: column
 }
 
-#game
-{
-    width: 100%;
+#container {
+    align-items: center
+}
+
+#game {
     max-width: 500px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    min-height: 0
 }
 
-header
-{
-    border-bottom: 1px solid rgb(58, 58, 60);
+.overlay,header {
     display: flex;
+    align-items: center
+}
+
+header {
+    border-bottom: 1px solid #2d323c;
+    background: rgb(30 35 42 / 80%);
+    backdrop-filter: blur(10px);
     justify-content: space-between;
     height: 50px;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: nowrap;
+    flex-flow: row nowrap
 }
 
-.overlay
-{
-    display: flex;
+.overlay {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
     justify-content: center;
-    align-items: center;
-    color:black;
-    z-index: 3000;
+    color: #000;
+    z-index: 3000
 }
 
-.overlayContent
-{
+.overlayContent {
     position: relative;
     border-radius: 10px;
-    border: 1px solid black;
-    background-color: black;
-    color: white;
+    border: 1px solid rgb(70 120 180 / 30%);
+    background: linear-gradient(135deg,rgb(25 30 38 / 95%),rgb(35 42 52 / 95%));
+    backdrop-filter: blur(15px);
+    color: #fff;
     max-width: 500px;
     box-sizing: border-box;
+    box-shadow: 0 8px 32px rgb(0 0 0 / 40%)
 }
 
-#centralHeaderSpace
-{
-    color: gainsboro;
+#centralHeaderSpace,.title {
+    color: #e8f0ff;
     font-size: 36px;
-    font-weight: bold;
-    margin: 0.4rem 0 0.4rem 0;
+    font-weight: 700;
+    margin: .4rem 0;
     text-align: center;
+    text-shadow: 0 2px 4px rgb(70 120 180 / 30%)
 }
 
-#leftHeaderSpace
-{
+#leftHeaderSpace,#rightHeaderSpace {
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px
+}
+
+#leftHeaderSpace {
     margin-left: 10px;
-    z-index: 1;
-    display: flex;
-    flex-direction: row;
-    column-gap: 10px;
+    z-index: 1
 }
 
-#rightHeaderSpace
-{
-    margin-right: 10px;
-    display: flex;
-    flex-direction: row;
-    column-gap: 10px;
+#rightHeaderSpace {
+    margin-right: 10px
 }
 
-.title
-{
-    color: gainsboro;
-    font-size: 36px;
-    font-weight: bold;
-    margin: 0.4rem 0 0.4rem 0;
-    text-align: center;
-}
-
-#board-container
-{
-    display: flex;
+#board,#board-container {
     justify-content: center;
+    box-sizing: border-box
+}
+
+#board-container {
+    display: flex;
     align-items: center;
-    flex-grow: 1;
-    overflow: hidden;
+    flex: 1;
+    overflow: visible;
+    padding: 10px;
+    min-height: 0
 }
 
-#board
-{
+#board {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 5px;
-    padding: 15px 50px 50px 50px;
-    box-sizing: border-box;
+    align-content: center;
+    gap: 7px;
+    width: 100%;
     height: 100%;
-    max-width: 450px;
-    max-height: 450px;
+    font-family: CustomFont, Arial, Helvetica, sans-serif;
 }
 
-.BigFontSize
-{
-    font-size: 2em;
+#board,.BigFontSize {
+    font-size: 2em
 }
 
-.SmallFontSize
-{
-    font-size: 1em;
+.SmallFontSize {
+    font-size: 1em
 }
 
-.square
-{
-    border: 2px solid rgb(58, 58, 60);
+.square {
+    border: 2px solid rgb(70 75 85 / 40%);
+    background: rgb(45 50 58 / 30%);
     line-height: 1;
-    font-weight: bold;
-    color: gainsboro;
+    font-weight: 700;
+    color: #e8f0ff;
     text-transform: uppercase;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     aspect-ratio: 1/1;
-    animation-duration: 0.5s;
+    animation-duration: .5s;
     box-sizing: border-box;
+    transition: all .3s ease;
+    text-align: center;
+    vertical-align: middle
 }
 
-#keyboard-container
-{
+.square:empty::before {
+    content: "  ";
+    visibility: hidden;
+    font-size: 2em;
+    font-weight: 700;
+    line-height: 1
+}
+
+#keyboard-container {
     height: 200px;
     max-width: 500px;
     min-height: 200px;
     justify-content: center;
     align-items: center;
-    margin: auto 5px auto 10px;
+    margin: 0 10px 5px;
     position: relative;
+    flex-shrink: 0
 }
 
-#keyboard-wrapper
-{
+#keyboard-wrapper {
     position: absolute;
     bottom: 0;
     width: 100%;
-    padding-bottom: 5px;
+    padding-bottom: 5px
 }
 
-.keyboard-row
-{
+.keyboard-row {
     display: flex;
     justify-content: center;
     width: 100%;
     margin: 0 auto 8px;
-    touch-action: manipulation;
+    touch-action: manipulation
 }
 
-.keyboard-row button
-{
+.keyboard-row .unused {
+    background: rgb(122 147 181 / 30%)
+}
+
+.keyboard-row button {
     font-family: inherit;
-    font-weight: bold;
-    border: 0;
+    font-weight: 700;
+    border: 1px solid rgb(60 75 95 / 40%);
     padding: 0;
     height: 50px;
     cursor: pointer;
-    background-color: rgb(129, 131, 132);
-    color: rgb(215, 218, 220);
+    color: #e8f0ff;
     flex-grow: 1;
     text-transform: uppercase;
     margin-right: 6px;
-    border-radius: 4px;
+    border-radius: 6px;
     user-select: none;
     width: 100%;
     max-width: 40px;
+    transition: all .2s ease;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 4px rgb(0 0 0 / 20%)
 }
 
-.keyboard-row .BigKeyboardButton
-{
+.keyboard-row button:hover {
+    background: linear-gradient(135deg,rgb(95 110 130 / 95%),rgb(75 90 110 / 95%));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgb(0 0 0 / 30%)
+}
+
+.keyboard-row button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgb(0 0 0 / 20%)
+}
+
+.keyboard-row .BigKeyboardButton {
     max-width: 60px;
-    padding: 5px;
+    padding: 5px
 }
 
-.headerIcon
-{
+.keyboard-row .BigKeyboardButton img {
     width: 25px;
     height: 25px;
+    object-fit: contain;
+    vertical-align: middle
 }
 
-#statisticsPopup
-{
-    background-color: rgb(37, 37, 37);
-    color: white;
+.headerIcon {
+    width: 25px;
+    height: 25px;
+    transition: all .3s ease;
+    filter: drop-shadow(0 2px 4px rgb(70 120 180 / 30%))
 }
 
-#statisticsPopup h1,
-#statisticsPopup h4
-{
-    text-align: center;
+.headerIcon:hover {
+    transform: scale(1.05);
+    filter: invert(100%) drop-shadow(0 4px 8px rgb(70 120 180 / 50%))
 }
 
-#statisticsPopup h4
-{
-    padding-top: 10px;
+.headerLink {
+    -webkit-tap-highlight-color: transparent
 }
 
-#statistics
-{
+#loader {
+    width: 100vw;
+    height: 100vh;
+    transition: opacity .75s,visibility .75s;
+    z-index: 9999999;
+}
+
+.loader-hidden,.popup-overlay {
+    opacity: 0;
+    visibility: hidden
+}
+
+#loader::after {
+    content: "";
+    width: 75px;
+    height: 75px;
+    border: 10px solid rgb(60 75 95 / 90%);
+    border-top-color: #0f151e;
+    border-radius: 50%;
+    animation: loading .75s ease infinite
+}
+
+#loader,.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(12px)
 }
 
-.statistics-container
-{
+.popup-overlay {
+    background: rgb(0 0 0 / 60%);
+    right: 0;
+    bottom: 0;
+    transition: all .3s ease
+}
+
+.popup-overlay.show {
+    opacity: 1;
+    visibility: visible
+}
+
+.trigger-btn {
+    padding: 15px 30px;
+    background: linear-gradient(45deg,rgb(60 75 95 / 90%),rgb(70 120 180 / 80%));
+    color: #fff;
+    border: 0;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .3s ease;
+    box-shadow: 0 8px 25px rgb(70 120 180 / 30%)
+}
+
+.trigger-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgb(70 120 180 / 40%)
+}
+
+.popup {
+    background: linear-gradient(135deg,rgb(30 35 45 / 95%),rgb(40 48 60 / 95%));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgb(70 120 180 / 20%);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgb(0 0 0 / 30%);
+    width: 80%;
+    max-width: 400px;
+    overflow: hidden;
+    animation: slide-in .3s ease-out
+}
+
+.popup,.tab,.tabs {
+    position: relative
+}
+
+.tabs {
+    display: flex;
+    background: rgb(45 55 70 / 80%);
+    backdrop-filter: blur(10px);
+    border-radius: 20px 20px 0 0
+}
+
+.tab {
     flex: 1;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: rgb(232 240 255 / 70%);
+    transition: all .3s ease;
+    z-index: 2
 }
 
-.statistics-container .statistics
-{
+.tab.active {
+    color: #e8f0ff
+}
+
+.tab-indicator {
+    position: absolute;
+    bottom: 0;
+    height: 3px;
+    background: linear-gradient(45deg,rgb(70 120 180 / 80%),rgb(90 140 200 / 80%));
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    border-radius: 2px 2px 0 0;
+    box-shadow: 0 2px 8px rgb(70 120 180 / 40%)
+}
+
+.form-container {
+    position: relative;
+    height: 300px;
+    overflow: hidden
+}
+
+.form {
+    position: absolute;
+    width: 100%;
+    padding: 40px;
+    transition: all .4s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    gap: 25px
+}
+
+.form.login {
+    transform: translateX(0)
+}
+
+.form.register {
+    transform: translateX(100%)
+}
+
+.form.login.show-register {
+    transform: translateX(-100%)
+}
+
+.form.register.show-register {
+    transform: translateX(0)
+}
+
+.form,.input,.input-group {
+    box-sizing: border-box
+}
+
+.input-group {
+    position: relative
+}
+
+.input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid rgb(60 75 95 / 40%);
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all .3s ease;
+    background: rgb(45 55 70 / 60%);
+    backdrop-filter: blur(10px);
+    color: #e8f0ff
+}
+
+.input:focus {
+    outline: 0;
+    border-color: rgb(70 120 180 / 80%);
+    background: rgb(55 65 80 / 80%);
+    box-shadow: 0 0 0 3px rgb(70 120 180 / 20%)
+}
+
+.input::placeholder {
+    color: rgb(232 240 255 / 50%)
+}
+
+.btn {
+    padding: 15px;
+    border: 0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .3s ease;
+    background: linear-gradient(120deg,rgb(60 75 95 / 90%),rgb(70 120 180 / 80%));
+    color: #e8f0ff;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgb(70 120 180 / 20%)
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgb(70 120 180 / 30%);
+    background: linear-gradient(120deg,rgb(70 85 105 / 95%),rgb(80 130 190 / 90%))
+}
+
+.btn:active {
+    transform: translateY(0)
+}
+
+#sideMenu a,.close-btn {
+    color: rgb(232 240 255 / 70%)
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: 0 0;
+    border: 0;
+    font-size: 24px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all .3s ease
+}
+
+#statisticsPopup {
+    background: linear-gradient(135deg,rgb(30 35 45 / 95%),rgb(40 48 60 / 95%));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgb(70 120 180 / 20%);
+    color: #e8f0ff;
+    box-shadow: 0 25px 50px rgb(0 0 0 / 30%);
+    animation: fadeIn .3s ease-in-out;
+}
+
+#statisticsPopup h1,#statisticsPopup h4 {
+    text-align: center;
+    text-shadow: 0 2px 4px rgb(0 0 0 / 30%)
+}
+
+#statisticsPopup h4 {
+    padding-top: 10px
+}
+
+#statistics,.close-btn {
+    display: flex
+}
+
+.close-btn:hover {
+    background: rgb(60 75 95 / 30%);
+    color: #e8f0ff
+}
+
+.statistics-container {
+    flex: 1;
+    padding-right: 5px
+}
+
+.statistics-container .label,.statistics-container .statistics {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center
+}
+
+.statistics-container .statistics {
     font-size: 36px;
     font-weight: 400;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;   
+    color: rgb(70 120 180 / 90%);
+    text-shadow: 0 2px 4px rgb(0 0 0 / 30%)
 }
 
-.statistics-container .label
-{
+.statistics-container .label {
     font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    color: rgb(232 240 255 / 80%)
 }
 
-#guess-distribution
-{
+#guess-distribution {
     padding-bottom: 10px;
     width: 80%;
-    margin: auto;
+    margin: auto
 }
 
-.graphContainer
-{
-    width: 100%;
-    height: 20px;
+#footer,.graphContainer {
     display: flex;
-    align-items: center;
+    width: 100%;
+    align-items: center
+}
+
+.graphContainer {
+    height: 20px;
     padding-bottom: 4px;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 20px
 }
 
-.graphContainer .guess
-{
+.graphContainer .guess {
     width: 10px;
+    color: rgb(232 240 255 / 80%)
 }
 
-.graphContainer .graph
-{
+.graphContainer .graph {
     width: 100%;
     height: 100%;
-    padding-left: 4px;
+    padding-left: 4px
 }
 
-.graphContainer .graph .graphBar
-{
+.graphContainer .graph .graphBar {
     height: 100%;
     width: 20%;
     position: relative;
-    background-color: rgb(99, 99, 99);
+    background: linear-gradient(90deg,rgb(60 75 95 / 70%),rgb(70 120 180 / 60%));
     display: flex;
     justify-content: center;
+    border-radius: 2px;
+    backdrop-filter: blur(5px)
 }
 
-.graphContainer .graph .graphBar .guessesNum
-{
-    font-weight: bold;
+.graphContainer .graph .graphBar .guessesNum {
+    font-weight: 700;
+    color: #e8f0ff
 }
 
-.graphContainer .graph .graphBar.align-right
-{
+.graphContainer .graph .graphBar.align-right {
     justify-content: right;
-    padding-right: 8px;
+    padding-right: 8px
 }
 
-#footer
-{
-    display: flex;
-    width: 100%;
-    align-items: center;
-    margin: auto;
+#footer {
+    margin: auto
 }
 
-#statisticsPopup .countdown
-{
-    border-right: 1px solid rgb(223, 221, 221);
-    width: 50%;
+#statisticsPopup .countdown {
+    border-right: 1px solid rgb(70 120 180 / 40%);
+    width: 50%
 }
 
-#nextPajglaTimer
-{
-    font-size: 34px;
+#nextPajglaTimer {
+    font-size: 39px;
     text-align: center;
+    color: rgb(70 120 180 / 90%);
+    font-family: Inconsolata, Arial, Helvetica, sans-serif;
 }
 
-#statisticsPopup .share
-{
+#statisticsPopup .share,button#shareButton {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center
+}
+
+#statisticsPopup .share {
     padding-left: 12px;
-    width: 50%;
+    width: 50%
 }
 
-button#shareButton
-{
-    background-color: rgb(74, 145, 74);
-    font-weight: bold;
-    border-radius: 4px;
+button#shareButton {
+    background: linear-gradient(135deg,rgb(50 120 80 / 90%),rgb(70 140 100 / 80%));
+    font-weight: 700;
+    border-radius: 6px;
     cursor: pointer;
-    border: none;
+    border: 1px solid rgb(70 140 100 / 30%);
     user-select: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 80%;
     font-size: 20px;
     height: 52px;
-    color:rgb(223, 221, 221);
+    color: #e8f0ff;
+    transition: all .3s ease;
+    box-shadow: 0 4px 15px rgb(50 120 80 / 20%)
 }
 
-#helpWindow
-{
-    background-color: rgb(37, 37, 37);
-    color: white;
-    text-align: center;
+button#shareButton:hover {
+    background: linear-gradient(135deg,rgb(60 130 90 / 95%),rgb(80 150 110 / 90%));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgb(50 120 80 / 30%)
+}
+
+#helpWindow,#sideMenu {
+    backdrop-filter: blur(20px)
+}
+
+#helpWindow {
+    background: linear-gradient(135deg,rgb(30 35 45 / 95%),rgb(40 48 60 / 95%));
+    border: 1px solid rgb(70 120 180 / 20%);
+    color: #e8f0ff;
     padding: 15px 10px;
+    box-shadow: 0 25px 50px rgb(0 0 0 / 30%)
 }
 
-#helpWindow h2
-{
+#helpWindow h2 {
     padding-bottom: 10px;
+    text-shadow: 0 2px 4px rgb(0 0 0 / 30%)
 }
 
-#helpWindow p
-{
+#helpWindow p {
     font-size: 14px;
+    color: rgb(232 240 255 / 90%)
 }
 
-#helpWindow #examples
-{
-    border-top: 1px solid rgb(129, 131, 132);
+#helpWindow #examples {
+    border-top: 1px solid rgb(70 120 180 / 30%)
 }
 
-#helpWindow .example
-{
+#helpWindow .example {
     margin-top: 24px;
-    margin-bottom: 24px;
+    margin-bottom: 24px
 }
 
-#helpWindow .exampleSquare
-{
-    border: 2px solid rgb(58, 58, 60);
+#helpWindow .exampleSquare {
+    border: 2px solid rgb(60 75 95 / 60%);
+    background: rgb(35 42 52 / 30%);
     line-height: 2rem;
-    font-weight: bold;
-    color: gainsboro;
+    font-weight: 700;
+    color: #e8f0ff;
     text-transform: uppercase;
     justify-content: center;
     align-items: center;
@@ -410,61 +698,207 @@ button#shareButton
     display: inline-block;
     user-select: none;
     margin-bottom: 20px;
+    vertical-align: middle
 }
 
-.toastify
-{
-    text-align: center;
+#helpWindow,.toastify {
+    text-align: center
 }
 
-#sideMenu
-{
+#sideMenu {
     height: 100%;
     width: 0;
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #111;
+    background: linear-gradient(135deg,rgb(20 25 32 / 60%),rgb(30 35 45 / 60%));
+    border-right: 1px solid rgb(70 120 180 / 20%);
     overflow-x: hidden;
     padding-top: 60px;
-    transition: 0.5s;
+    transition: .5s
 }
 
-#sideMenu a 
-{
+#sideMenu a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
-    color: #818181;
     display: block;
-    transition: 0.3s;
+    transition: .3s;
+    border-bottom: 1px solid rgb(60 75 95 / 20%)
 }
 
-#sideMenu a:hover
-{
-    color: #f1f1f1;
+#sideMenu a:hover {
+    color: #e8f0ff;
+    background: rgb(60 75 95 / 20%);
+    transform: translateX(10px)
 }
 
-#sideMenu .closeButton
-{
+#sideMenu .closeButton {
     position: absolute;
     top: 0;
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
+    color: rgb(232 240 255 / 80%)
 }
 
-.invert
-{
-    filter: invert(100%);
+.invert {
+    filter: invert(100%)
 }
 
-@media screen and (max-height: 450px) {
-    #sideMenu {padding-top: 15px;}
-    #sideMenu a {font-size: 18px;}
-  }
+@media screen and (width <=450px) {
+    .statistics-container .statistics {
+        font-size: 25px
+    }
+}
 
-#only666, .bg {
-    z-index: -9999;
+@media screen and (width <=360px) {
+    .statistics-container .statistics {
+        font-size: 18px
+    }
+
+    .statistics-container {
+        max-width: 50px
+    }
+
+    .statistics-container .label {
+        font-size: 10px
+    }
+
+    .graphContainer .graph .graphBar .guessesNum {
+        font-size: 12px
+    }
+}
+
+@media screen and (height <=450px) {
+    #sideMenu {
+        padding-top: 15px
+    }
+
+    #sideMenu a {
+        font-size: 18px
+    }
+}
+
+@media screen and (width <=600px) {
+    #centralHeaderSpace {
+        font-size: 6vw
+    }
+}
+
+@media screen and (height <=800px) {
+    #board {
+        gap: 6px;
+        max-width: 400px
+    }
+
+    #helpWindow .exampleSquare {
+        width: 30px;
+        height: 30px
+    }
+}
+
+@media screen and (height <=755px) {
+    #board {
+        gap: 6px;
+        max-width: 360px;
+        font-size: 1.5em
+    }
+
+    #helpWindow .exampleSquare {
+        width: 27px;
+        height: 27px;
+        line-height: 1.8rem
+    }
+}
+
+@media screen and (height <=690px) {
+    #board-container {
+        padding: 5px
+    }
+
+    #board {
+        gap: 5px;
+        max-width: 300px
+    }
+
+    #keyboard-container {
+        height: 180px;
+        min-height: 180px;
+        margin: 0 5px 5px
+    }
+
+    .keyboard-row button {
+        height: 45px
+    }
+
+    #helpWindow .exampleSquare {
+        width: 24px;
+        height: 24px;
+        font-size: 15px;
+        line-height: 1.5rem;
+        margin-bottom: 15px
+    }
+}
+
+@media screen and (height <=580px) {
+    header {
+        height: 45px
+    }
+
+    .headerIcon {
+        width: 22px;
+        height: 22px
+    }
+
+    #board {
+        gap: 4px;
+        max-width: 255px;
+        font-size: 1em
+    }
+
+    #keyboard-container {
+        height: 160px;
+        min-height: 160px
+    }
+
+    .keyboard-row button {
+        height: 42px;
+        font-size: 13px
+    }
+}
+
+@media screen and (height <=530px) {
+    header {
+        height: 30px
+    }
+
+    .headerIcon {
+        width: 20px;
+        height: 20px
+    }
+
+    #board {
+        gap: 2px;
+        max-width: 250px;
+        font-size: 1em
+    }
+
+    .square {
+        border-width: 1px
+    }
+
+    .keyboard-row button {
+        height: 42px;
+        font-size: 13px
+    }
+}
+
+.blocker {
+    backdrop-filter: blur(12px)
+}
+
+.close-modal {
+    filter: invert()
 }

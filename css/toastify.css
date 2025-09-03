@@ -1,25 +1,23 @@
-/*!
+/*
  * Toastify js 1.11.2
- * https://github.com/apvarun/toastify-js
- * @license MIT licensed
- *
- * Copyright (C) 2018 Varun A P
+ * Simplified, modernized styling
  */
 
 .toastify {
     padding: 12px 20px;
-    color: #000000;
+    color: #fff;
     display: inline-block;
-    background: -webkit-linear-gradient(315deg, #ccc, #c0c0c0);
-    background: linear-gradient(135deg, #ccc, #c0c0c0);
+    background: #333; /* solid neutral background instead of gradient */
     position: fixed;
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
-    border-radius: 2px;
+    transition: all 0.3s ease;
+    border-radius: 6px; /* slightly more rounded corners */
     cursor: pointer;
     text-decoration: none;
     max-width: calc(50% - 20px);
     z-index: 2147483647;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 15%); /* subtle shadow for depth */
+    width: max-content;
 }
 
 .toastify.on {
@@ -33,7 +31,7 @@
     cursor: pointer;
     font-family: inherit;
     font-size: 1em;
-    opacity: 0.4;
+    opacity: 0.6; /* slightly stronger visibility */
     padding: 0 5px;
 }
 
@@ -69,12 +67,48 @@
     margin-right: auto;
     left: 0;
     right: 0;
-    max-width: fit-content;
-    max-width: -moz-fit-content;
+    max-width: 450px;
     margin-top: 7vh;
 }
 
-@media only screen and (max-width: 360px) {
+.toastify-info {
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    max-width: 450px;
+    margin-top: 6vh;
+    background: #3a6ea5; /* calm blue tone */
+    color: white;
+    width: max-content;
+}
+
+.toastify-error {
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    max-width: 300px;
+    margin-top: 6vh;
+    background: #b23b3b; /* softer red tone */
+    color: white;
+    width: max-content;
+}
+
+.toastify-congrats {
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    max-width: 300px;
+    margin-top: 6vh;
+    background: #17b35a; /* softer red tone */
+    color: white;
+    width: max-content;
+    box-shadow: 0 0 20px rgb(0 0 0 / 60%);
+}
+
+@media only screen and (width <= 360px) {
     .toastify-right, .toastify-left {
         margin-left: auto;
         margin-right: auto;
