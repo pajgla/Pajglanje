@@ -1,0 +1,218 @@
+@keyframes loading {
+    0% {
+        transform: rotate(0turn)
+    }
+    100% {
+        transform: rotate(1turn)
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100vh;
+    height: 100dvh;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    background: linear-gradient(135deg, #0f0f10, #16191c) !important;
+    overflow: hidden;
+    color: #e8f0ff;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+    position: relative;
+}
+
+.maintenance-card {
+    background: linear-gradient(135deg, rgba(25, 30, 38, 0.95), rgba(35, 42, 52, 0.95));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(70, 120, 180, 0.20);
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.30);
+    animation: slide-in 0.6s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.maintenance-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(45deg, rgba(70, 120, 180, 0.8), rgba(90, 140, 200, 0.8));
+    box-shadow: 0 2px 8px rgba(70, 120, 180, 0.4);
+}
+
+.icon-container {
+    margin-bottom: 30px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.maintenance-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(60, 75, 95, 0.9), rgba(70, 120, 180, 0.8));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 8px 25px rgba(70, 120, 180, 0.3);
+    border: 2px solid rgba(70, 120, 180, 0.3);
+}
+
+.maintenance-icon::before {
+    content: '⚙️';
+    animation: loading 2s linear infinite;
+}
+
+h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #e8f0ff;
+    text-shadow: 0 2px 4px rgba(70, 120, 180, 0.30);
+}
+
+.description {
+    font-size: 16px;
+    color: rgba(232, 240, 255, 0.7);
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 600px) {
+    .maintenance-card {
+        padding: 40px 25px;
+        margin: 10px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .subtitle {
+        font-size: 18px;
+    }
+
+    .description {
+        font-size: 15px;
+    }
+
+    .maintenance-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .maintenance-card {
+        padding: 30px 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+    }
+
+    .description {
+        font-size: 14px;
+    }
+
+    .maintenance-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+}
+
+@media screen and (max-height: 650px) {
+    .maintenance-card {
+        padding: 30px 25px;
+    }
+
+    .icon-container {
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 28px;
+        margin-bottom: 15px;
+    }
+
+    .subtitle {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .description {
+        margin-bottom: 25px;
+    }
+
+    .contact-info {
+        margin-top: 20px;
+        padding: 15px;
+    }
+}
+
+/* Background particles effect */
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(70, 120, 180, 0.3);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+}
+
+.particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+.particle:nth-child(2) { top: 60%; left: 20%; animation-delay: 1s; }
+.particle:nth-child(3) { top: 30%; left: 80%; animation-delay: 2s; }
+.particle:nth-child(4) { top: 80%; left: 70%; animation-delay: 3s; }
+.particle:nth-child(5) { top: 10%; left: 60%; animation-delay: 4s; }
+.particle:nth-child(6) { top: 70%; left: 30%; animation-delay: 5s; }
