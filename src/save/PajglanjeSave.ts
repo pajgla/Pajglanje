@@ -19,6 +19,11 @@ export class PajglanjeSave extends SaveBase<PajglaSaveStorage> {
                 throw new Error("An error occured while reading old save");
             }
 
+            //Change old save key
+            window.localStorage.removeItem(GlobalGameSettings.K_OLD_PAJGLA_SAVEGAME_KEY);
+            window.localStorage.setItem("OLD_" + GlobalGameSettings.K_OLD_PAJGLA_SAVEGAME_KEY, oldSaveGameJSON!);
+
+
             this.m_SaveGame.lastPajglaTime = parsedSaveGame.time;
             this.m_SaveGame.gameState = ResolveGameState(parsedSaveGame.status.name);
             for (let word of parsedSaveGame.guesses)
@@ -40,11 +45,17 @@ export class PajglanjeSave extends SaveBase<PajglaSaveStorage> {
                 throw new Error("Cannot parse old statistics save");
             }
 
+            //Change old statistics key
+            window.localStorage.removeItem(GlobalGameSettings.K_OLD_STATISTICS_SAVEGAME_KEY);
+            window.localStorage.setItem("OLD_" + GlobalGameSettings.K_OLD_STATISTICS_SAVEGAME_KEY, oldStatisticsSaveJSON!);
+
             this.m_SaveGame.stats.gamesWon = parsedStatistics.won;
             this.m_SaveGame.stats.bestStreak = parsedStatistics.longestStreak;
             this.m_SaveGame.stats.currentStreak = parsedStatistics.currentStreak;
             this.m_SaveGame.stats.gamesPlayed = parsedStatistics.totalPlayed;
             this.m_SaveGame.stats.histogram = ResolveOldHistogram(parsedStatistics.histogram);
+
+            this.TriggerSave(GlobalGameSettings.K_PAJGLA_SAVEGAME_KEY);
         }
         else
         {            
