@@ -303,7 +303,7 @@ export class BrzalicaGame extends GameBase {
         
         const saveData = this.m_Save.GetSaveGame();
         saveData.wordSave.guesses = [];
-        saveData.startDate = new Date();
+        saveData.wordSolvingStartDate = new Date();
         this.m_Save.OverwriteCachedSave(saveData);
         this.m_Save.TriggerSave();
 
