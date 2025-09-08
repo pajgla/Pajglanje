@@ -294,7 +294,7 @@ export class BrzalicaGame extends GameBase {
     {
         const solvingTime = (new Date().getTime() - new Date(this.m_WordSolvingStartDate).getTime()) / 1000; // in seconds
         GlobalEvents.Dispatch(EventTypes.OnBrzalicaWordGuessed, this.m_Board.GetCurrentAttemptPosition(), solvingTime);
-
+        
         this.m_Board.ClearBoard();
         this.ChooseNextGuessWordAndSave();
         this.m_Keyboard.ClearAllColoring();
@@ -306,7 +306,9 @@ export class BrzalicaGame extends GameBase {
         saveData.wordSolvingStartDate = new Date();
         this.m_Save.OverwriteCachedSave(saveData);
         this.m_Save.TriggerSave();
-
+        
+        const wordGuessedFormattedMessage = GlobalViewSettings.formatMessage(GlobalViewSettings.K_BRZALICA_WORD_GUESSED_MESSAGE, {guessed_words: this.m_GuessedWords.toString()});
+        NotificationHelpers.ShowCongratsNotification(wordGuessedFormattedMessage, 5000);
     }
 
     //Callbacks
