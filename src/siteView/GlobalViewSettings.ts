@@ -10,7 +10,8 @@ export class GlobalViewSettings
     //Word guessing
     public static readonly K_SHORT_WORD_INFO = "Uneta reč je prekratka";
     public static readonly K_WORD_NOT_FOUND = "Uneta reč ne postoji u našoj bazi";
-    public static readonly K_WORD_GUESSED = "ISPAJGLANO!";
+    public static readonly K_WORD_GUESSED_MESSAGE = "ISPAJGLANO!";
+    public static readonly K_SPECIAL_WORD_GUESSED_MESSAGE = "Stota pajgla uspešno ispajglana!";
     public static readonly K_GAME_LOST = "Reč je bila: ";
 
     public static readonly K_SHORT_USERNAME_LENGTH_ERROR = `Korisničko ime mora da sadrži bar ${GlobalUserSettings.K_MIN_USERNAME_LENGHT} karaktera`;

@@ -123,10 +123,15 @@ export class PajglanjeGame extends GameBase {
         }
     }
 
-    public StartGame(): void {
+    private GetPajglaTime(): number
+    {
         let pajglaStartTime = GlobalGameSettings.K_PAJGLANJE_START_TIME;
-        let pajglaTime = GameTimeHelpers.GetGameTime(pajglaStartTime, GlobalGameSettings.K_NEXT_PAJGLA_IN_HOURS);
+        return GameTimeHelpers.GetGameTime(pajglaStartTime, GlobalGameSettings.K_NEXT_PAJGLA_IN_HOURS);
+    }
 
+    public StartGame(): void {
+
+        const pajglaTime = this.GetPajglaTime();
         this.ChangePageTitle(GlobalGameSettings.K_PAJGLANJE_GAME_NAME, pajglaTime);
 
         this.m_WordService.ChooseGuessWord(pajglaTime);
@@ -171,7 +176,16 @@ export class PajglanjeGame extends GameBase {
         let delay = shouldDelay ? GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH * GlobalViewSettings.K_LETTER_FLIP_DELAY : 0;
         setTimeout(async ()  => {
             if (newState === EGameState.Won)
-                NotificationHelpers.ShowCongratsNotification(GlobalViewSettings.K_WORD_GUESSED, 3000);
+            {
+                if (this.GetPajglaTime() === 100)
+                {
+                    NotificationHelpers.ShowCongratsNotification(GlobalViewSettings.K_SPECIAL_WORD_GUESSED_MESSAGE, 4000);
+                }
+                else
+                {
+                    NotificationHelpers.ShowCongratsNotification(GlobalViewSettings.K_WORD_GUESSED_MESSAGE, 3000);
+                }
+            }
             else if (newState === EGameState.Lost)
                 NotificationHelpers.ShowErrorNotification(GlobalViewSettings.K_GAME_LOST + this.m_WordService.GetGuessWord(), 3000);
         }, delay);

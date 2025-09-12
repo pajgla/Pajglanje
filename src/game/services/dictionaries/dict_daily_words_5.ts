@@ -99,6 +99,7 @@ export const DICT_DAILY_WORDS = [
  'gužva',
  'plaža',
  'ubica',
+ 'stota',
  'stena',
  'sabor',
  'krađa',
