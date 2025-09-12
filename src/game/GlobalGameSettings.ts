@@ -8,10 +8,10 @@ export class GlobalGameSettings {
 
     //Brzalica settings
     public static readonly K_BRZALICA_GAME_NAME = "Brzalica";
-    public static readonly K_BRZALICA_START_TIME: Date = new Date('2025-09-03T06:00:00');
+    public static readonly K_BRZALICA_START_TIME: Date = new Date('2025-09-07T02:00:00');
     public static readonly K_BRZALICA_WORD_LENGTH = 5;
     public static readonly K_BRZALICA_ATTEMPTS = 6;
-    public static readonly K_NEXT_BRZALICA_IN_HOURS = 24; // 1-24
+    public static readonly K_NEXT_BRZALICA_IN_HOURS = 12; // 1-24
     public static readonly K_BRZALICA_DURATION = 900;
 
     //Save Game
