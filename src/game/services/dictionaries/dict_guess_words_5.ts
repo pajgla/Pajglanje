@@ -18046,4 +18046,7 @@ export const DICT_GUESS_WORDS = [
      'šušte',
      'šušti',
      'ščepa',
+     'rakun',
+     'lokna',
+     'felna'
 ];

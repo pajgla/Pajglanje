@@ -10,7 +10,8 @@ export class GlobalViewSettings
     //Word guessing
     public static readonly K_SHORT_WORD_INFO = "Uneta reč je prekratka";
     public static readonly K_WORD_NOT_FOUND = "Uneta reč ne postoji u našoj bazi";
-    public static readonly K_WORD_GUESSED = "ISPAJGLANO!";
+    public static readonly K_WORD_GUESSED_MESSAGE = "ISPAJGLANO!";
+    public static readonly K_SPECIAL_WORD_GUESSED_MESSAGE = "Stota pajgla uspešno ispajglana!";
     public static readonly K_GAME_LOST = "Reč je bila: ";
 
     public static readonly K_SHORT_USERNAME_LENGTH_ERROR = `Korisničko ime mora da sadrži bar ${GlobalUserSettings.K_MIN_USERNAME_LENGHT} karaktera`;
@@ -67,6 +68,7 @@ export class GlobalViewSettings
     public static readonly K_BOARD_CLEAR_DELAY = 500;
     public static readonly K_TIME_OUT_MESSAGE = `Vreme je isteklo! Reč je bila: `;
     public static readonly K_BRZALICA_FAILED = `Neispajglano. Reč je bila: `;
+    public static readonly K_BRZALICA_WORD_GUESSED_MESSAGE = `Bravo! Ukupno ispajglanih reči: {guessed_words}. Idemo dalje`;
 
     //Authentication messages
     public static readonly K_LOGIN_FAILED_MESSAGE = 'Došlo je do greške prilikom prijavljivanja';
