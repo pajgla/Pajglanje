@@ -762,7 +762,6 @@ export const DICT_DAILY_WORDS = [
  'salon',
  'menza',
  'ukras',
- 'klopa',
  'kaput',
  'sidro',
  'čoban',
