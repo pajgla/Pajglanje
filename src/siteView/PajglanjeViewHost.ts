@@ -13,10 +13,11 @@ const helpWindowView = new HelpWindowView();
 const statisticsWindowView = new PajglanjeStatisticsWindowView();
 const headerView = new PajglanjeHeaderView();
 const loaderView = new LoaderView();
+const userView = new UserView();
 
 document.addEventListener("DOMContentLoaded", () => {
     statisticsWindowView.Init();
-    //userView.Init();
+    userView.Init();
     sideMenuView.Init();
     helpWindowView.Init();
     headerView.Init();

@@ -3,6 +3,7 @@ import { EventTypes } from '../Events/EventTypes';
 import { GlobalGameSettings } from './GlobalGameSettings';
 import * as WordHelpers from '../helpers/WordHelpers'
 import * as NotificationHelpers from '../helpers/NotificationHelpers';
+import * as ServerCalls from "../calls/ServerCalls";
 import { ELetterStatus, GuessAttemptData, GuessAttemptStatus } from './services/word_services/AttemptStatuses';
 import { GlobalViewSettings } from '../siteView/GlobalViewSettings';
 import { PajglanjeSave } from '../save/PajglanjeSave';
@@ -78,6 +79,14 @@ export class PajglanjeGame extends GameBase {
         saveData.gameState = newState;
         this.m_Save.OverwriteCachedSave(saveData);
         this.m_Save.TriggerSave(GlobalGameSettings.K_PAJGLA_SAVEGAME_KEY);
+    }
+
+    private SendGameStartServerMessage()
+    {
+        if (this.m_Board.GetCurrentAttemptPosition() === 0)
+        {
+            
+        }
     }
 
     protected override OnAttemptSubmitted()

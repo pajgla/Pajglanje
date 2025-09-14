@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerForm: HTMLElement | null = document.querySelector('.form.register');
     const openPopupBtn: HTMLElement | null = document.getElementById('userPopupLink');
     const closePopupBtn: HTMLElement | null = document.getElementById('closePopup');
-    const popupOverlay: HTMLElement | null = document.getElementById('loginPopup');
+    const popupOverlay: HTMLElement | null = document.getElementById('popupOverlay');
     const profileOverlay: HTMLElement | null = document.getElementById('userProfilePopup');
 
     function showPopup(): void {

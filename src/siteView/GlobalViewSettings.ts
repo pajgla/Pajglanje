@@ -68,10 +68,12 @@ export class GlobalViewSettings
     public static readonly K_TIME_OUT_MESSAGE = `Vreme je isteklo! Reč je bila: `;
     public static readonly K_BRZALICA_FAILED = `Neispajglano. Reč je bila: `;
 
-    //Server messages
+    //Authentication messages
     public static readonly K_LOGIN_FAILED_MESSAGE = 'Došlo je do greške prilikom prijavljivanja';
     public static readonly K_LOGIN_INFO_WRONG_MESSAGE = 'Prijava je neuspešna - proveri korisničko ime i lozinku';
     public static readonly K_REGISTRATION_FAILED_MESSAGE = 'Došlo je do greške prilikom registracije';
     public static readonly K_REGISTRATION_SUCCESSFUL_MESSAGE = 'Registracija uspešna!';
     public static readonly K_LOGIN_SUCCESSFUL_MESSAGE = `Prijava za '{username}' je uspešna`;
+    public static readonly K_AUTOLOGIN_SUCCESSFUL_MESSAGE = `Prijavljeni ste kao {username}`;
+    public static readonly K_USERNAME_TAKEN = `Korisničko ime je zauzeto`;
 }
