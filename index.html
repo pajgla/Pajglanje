@@ -19,13 +19,12 @@
     <!-- SCRIPTS -->
     <script type="module" src="src/siteView/PajglanjeViewHost.ts"></script>
     <script type="module" src="src/PajglanjeHost.ts"></script>
-    <script type="module" src="js/popupAnimations.ts"></script>
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/toastify.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.css">
+    <link rel="stylesheet" href="css/animate.min.css" />
+    <link rel="stylesheet" href="css/jquery.modal.min.css">
 
     <!-- FAVICON -->
      <link rel="icon" type="image/ico" href="favicon.ico" />
@@ -109,183 +108,150 @@
                   </div>
                 </div>
             </div>
-            <!-- Statistics popup -->
-            <div id="statisticsPopup" class="modal" style="padding: 15px 10px;">
-              <h1>Statistika</h1>
-              <div id="statistics">
-                <!-- Statistics -->
-                <div class="statistics-container">
-                  <div class="statistics" id="gamesPlayedStatistics">
-                    0
-                  </div>
-                  <div class="label">
-                    odigrano
-                  </div>
-                </div>
-                <div class="statistics-container">
-                  <div class="statistics" id="gamesWonStatistics">
-                    0
-                  </div>
-                  <div class="label">
-                    ispajglano
-                  </div>
-                </div>
-                <div class="statistics-container">
-                  <div class="statistics" id="gamesWonPercentageStatistics">
-                    0
-                  </div>
-                  <div class="label">
-                    ispajglano u %
-                  </div>
-                </div>
-                <div class="statistics-container">
-                  <div class="statistics" id="currentWinStreakStatistics">
-                    0
-                  </div>
-                  <div class="label">
-                    trenutni niz pobeda
-                  </div>
-                </div>
-                <div class="statistics-container">
-                  <div class="statistics" id="bestWinStreakStatistics">
-                    0
-                  </div>
-                  <div class="label">
-                    najbolji niz pobeda
-                  </div>
-                </div>
-              </div>
-              <!-- Guess distribution -->
-              <h4>Distribucija pogodaka</h4>
-              <div id="guess-distribution">
-
-                <div class="graphContainer">
-                  <div class="guess">
-                    1
-                  </div>
-                  <div class="graph">
-                    <div id="firstGuessGraph" class="graphBar">
-                      <div id="firstGuessNum" class="guessesNum">
-                        0
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="graphContainer">
-                  <div class="guess">
-                    2
-                  </div>
-                  <div class="graph">
-                    <div id="secondGuessGraph" class="graphBar">
-                      <div id="secondGuessNum" class="guessesNum">
-                        0
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="graphContainer">
-                  <div class="guess">
-                    3
-                  </div>
-                  <div class="graph">
-                    <div id="thirdGuessGraph" class="graphBar">
-                      <div id="thirdGuessNum" class="guessesNum">
-                        0
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="graphContainer">
-                  <div class="guess">
-                    4
-                  </div>
-                  <div class="graph">
-                    <div id="fourthGuessGraph" class="graphBar">
-                      <div id="fourthGuessNum" class="guessesNum">
-                        0
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="graphContainer">
-                  <div class="guess">
-                    5
-                  </div>
-                  <div class="graph">
-                    <div id="fifthGuessGraph" class="graphBar">
-                      <div id="fifthGuessNum" class="guessesNum">
-                        0
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="graphContainer">
-                  <div class="guess">
-                    6
-                  </div>
-                  <div class="graph">
-                    <div id="sixthGuessGraph" class="graphBar">
-                      <div id="sixthGuessNum" class="guessesNum">
-                        0
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-              <!-- Statistics footer -->
-              <div id="footer">
-              </div>
-            </div>
-
 
             <!-- User popup-->
-            <div class="popup-overlay" id="popupOverlay">
-                <div class="popup">
-                    <button class="close-btn" id="closePopup">&times;</button>
-                    <div class="tabs">
-                        <div class="tab active" data-tab="login">Login</div>
-                        <div class="tab" data-tab="register">Register</div>
-                        <div class="tab-indicator"></div>
-                    </div>
+            <div class="popup-overlay" id="userPopupOverlay">
 
-                    <div class="form-container">
-                        <div class="form login">
-                            <div class="input-group">
-                                <input id="login-username" type="text" class="input" placeholder="Username" required>
-                            </div>
-                            <div class="input-group">
-                                <input id="login-password" type="password" class="input" placeholder="Password" required>
-                            </div>
-                            <button id="login-btn" type="submit" class="btn">Login</button>
-                          </div>
-
-                        <div class="form register">
-                            <div class="input-group">
-                                <input id="register-username" type="text" class="input" placeholder="Username" required>
-                            </div>
-                            <div class="input-group">
-                                <input id="register-password" type="password" class="input" placeholder="Password" required>
-                            </div>
-                            <button id="register-btn" type="submit" class="btn">Register</button>
-                          </div>
-                    </div>
-                </div>
             </div>
 
             <!-- USER LOGGED IN POPUP -->
-            <div class="popup-overlay" id="userProfilePopup">
+            <div class="popup-overlay" id="userProfilePopupOverlay">
                 <div class="popup">
                     <button class="close-btn" id="closePopup">
                       &times;
                     </button>
+                <!-- Statistics popup -->
+                <div id="statisticsPopup" style="padding: 15px 10px;">
+                  <h1>Statistika</h1>
+                  <div id="statistics">
+                    <!-- Statistics -->
+                    <div class="statistics-container">
+                      <div class="statistics" id="gamesPlayedStatistics">
+                        0
+                      </div>
+                      <div class="label">
+                        odigrano
+                      </div>
+                    </div>
+                    <div class="statistics-container">
+                      <div class="statistics" id="gamesWonStatistics">
+                        0
+                      </div>
+                      <div class="label">
+                        ispajglano
+                      </div>
+                    </div>
+                    <div class="statistics-container">
+                      <div class="statistics" id="gamesWonPercentageStatistics">
+                        0
+                      </div>
+                      <div class="label">
+                        ispajglano u %
+                      </div>
+                    </div>
+                    <div class="statistics-container">
+                      <div class="statistics" id="currentWinStreakStatistics">
+                        0
+                      </div>
+                      <div class="label">
+                        trenutni niz pobeda
+                      </div>
+                    </div>
+                    <div class="statistics-container">
+                      <div class="statistics" id="bestWinStreakStatistics">
+                        0
+                      </div>
+                      <div class="label">
+                        najbolji niz pobeda
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Guess distribution -->
+                  <h4>Distribucija pogodaka</h4>
+                  <div id="guess-distribution">
 
-                    
+                    <div class="graphContainer">
+                      <div class="guess">
+                        1
+                      </div>
+                      <div class="graph">
+                        <div id="firstGuessGraph" class="graphBar">
+                          <div id="firstGuessNum" class="guessesNum">
+                            0
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="graphContainer">
+                      <div class="guess">
+                        2
+                      </div>
+                      <div class="graph">
+                        <div id="secondGuessGraph" class="graphBar">
+                          <div id="secondGuessNum" class="guessesNum">
+                            0
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="graphContainer">
+                      <div class="guess">
+                        3
+                      </div>
+                      <div class="graph">
+                        <div id="thirdGuessGraph" class="graphBar">
+                          <div id="thirdGuessNum" class="guessesNum">
+                            0
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="graphContainer">
+                      <div class="guess">
+                        4
+                      </div>
+                      <div class="graph">
+                        <div id="fourthGuessGraph" class="graphBar">
+                          <div id="fourthGuessNum" class="guessesNum">
+                            0
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="graphContainer">
+                      <div class="guess">
+                        5
+                      </div>
+                      <div class="graph">
+                        <div id="fifthGuessGraph" class="graphBar">
+                          <div id="fifthGuessNum" class="guessesNum">
+                            0
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="graphContainer">
+                      <div class="guess">
+                        6
+                      </div>
+                      <div class="graph">
+                        <div id="sixthGuessGraph" class="graphBar">
+                          <div id="sixthGuessNum" class="guessesNum">
+                            0
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Statistics footer -->
+                  <div id="footer">
+                  </div>
+                </div>
                 </div>
             </div>
 

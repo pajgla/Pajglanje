@@ -15,6 +15,7 @@ import { CopyToClipboard, LetterStateToShareSymbol } from '../helpers/ShareHelpe
 import { GameBase } from './GameBase';
 import $ from 'jquery'
 import 'jquery-modal'
+import { UserManager } from '../managers/user/UserManager';
 
 export class PajglanjeGame extends GameBase {
     private m_Save: PajglanjeSave = new PajglanjeSave();
@@ -83,14 +84,44 @@ export class PajglanjeGame extends GameBase {
 
     private SendGameStartServerMessage()
     {
-        if (this.m_Board.GetCurrentAttemptPosition() === 0)
+        if (this.m_Board.GetCurrentAttemptPosition() !== 0)
         {
-            
+            return;
         }
+
+        const userManager = UserManager.Get();
+        if (userManager === null || userManager === undefined)
+        {
+            console.error("UserManager is not initialized");
+            return;
+        }
+
+        if (!userManager.GetIsUserLoggedIn())
+        {
+            return;
+        }
+
+        const userID = userManager.GetUserID();
+        if (userID === null)
+        {
+            console.error("Couldn't fetch user id");
+            return;
+        }
+
+        const loginToken = userManager.GetLoginToken();
+        if (loginToken === null)
+        {
+            console.error("Couldn't fetch login token");
+            return;
+        }
+
+        ServerCalls.StartGame(userID, new Date().getTime(), loginToken, this.GetPajglaTime());
     }
 
     protected override OnAttemptSubmitted()
     {
+        this.SendGameStartServerMessage();
+        
         const attemptWord = this.m_Board.GetCurrentGuess();
         const attemptData: GuessAttemptData = this.m_WordService.CheckWordAttempt(attemptWord);
         if (attemptData.guessAttemptStatus === GuessAttemptStatus.TooShort)

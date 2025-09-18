@@ -76,6 +76,9 @@ export class GlobalViewSettings
     public static readonly K_REGISTRATION_FAILED_MESSAGE = 'Došlo je do greške prilikom registracije';
     public static readonly K_REGISTRATION_SUCCESSFUL_MESSAGE = 'Registracija uspešna!';
     public static readonly K_LOGIN_SUCCESSFUL_MESSAGE = `Prijava za '{username}' je uspešna`;
-    public static readonly K_AUTOLOGIN_SUCCESSFUL_MESSAGE = `Prijavljeni ste kao {username}`;
+    public static readonly K_AUTOLOGIN_SUCCESSFUL_MESSAGE = `Prijavljeni ste kao '<i>{username}</i>'`;
     public static readonly K_USERNAME_TAKEN = `Korisničko ime je zauzeto`;
+
+    //Error notifications
+    public static readonly K_FATAL_GAME_ERROR_MESSAGE = `Došlo je do greške. Nema pajglanja :(`;
 }

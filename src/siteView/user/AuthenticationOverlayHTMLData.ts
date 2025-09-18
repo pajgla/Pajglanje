@@ -1,4 +1,5 @@
-const userPopupHTMLData: string = `
+const authenticationOverlayHTMLData: string = `
+                <div class="popup" id="popup-data">
                     <div class="tabs">
                         <div class="tab active" data-tab="login">Login</div>
                         <div class="tab" data-tab="register">Register</div>
@@ -26,6 +27,7 @@ const userPopupHTMLData: string = `
                             <button id="register-btn" type="submit" class="btn">Register</button>
                           </div>
                     </div>
+                </div>
 `
 
-export {userPopupHTMLData}
+export {authenticationOverlayHTMLData}

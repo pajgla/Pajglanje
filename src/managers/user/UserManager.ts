@@ -61,6 +61,9 @@ export class UserManager
             isLoggedIn = false;
         }
 
+        //Reload page on success
+        window.location.reload();
+
         return isLoggedIn;
     }
 
@@ -110,20 +113,17 @@ export class UserManager
 
     public async TryAutoLogin()
     {
-        GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
-
         let savedUserDataJSON = localStorage.getItem(GlobalGameSettings.K_USER_SAVE_KEY);
         if (savedUserDataJSON === null || savedUserDataJSON === undefined)
         {
             //No save file found
-            GlobalEvents.Dispatch(EventTypes.StopLoaderEvent);
+            GlobalEvents.Dispatch(EventTypes.OnAutologinFinished, false);
             return;
         }
 
         this.m_UserSaveData = JSON.parse(savedUserDataJSON) as UserSaveData;
         if (this.m_UserSaveData === null || this.m_UserSaveData === undefined)
         {
-            GlobalEvents.Dispatch(EventTypes.StopLoaderEvent);
             throw new Error(`An error occured while trying to parse User Save Data`);
         }
 
@@ -131,13 +131,13 @@ export class UserManager
         const result = await ServerCalls.CheckToken(this.m_UserSaveData.userID, token, 32);
         console.log(`Autologin: ${result.success}`);
 
-        GlobalEvents.Dispatch(EventTypes.StopLoaderEvent);
-
         if (result.success)
         {
-            NotificationHelpers.ShowCongratsNotification(GlobalViewSettings.formatMessage(GlobalViewSettings.K_AUTOLOGIN_SUCCESSFUL_MESSAGE, {username: this.m_UserSaveData.username}));
+            NotificationHelpers.ShowInfoNotification(GlobalViewSettings.formatMessage(GlobalViewSettings.K_AUTOLOGIN_SUCCESSFUL_MESSAGE, {username: this.m_UserSaveData.username}), 4000);
             this.m_IsUserLoggedIn = true;
         }
+
+        GlobalEvents.Dispatch(EventTypes.OnAutologinFinished, result.success);
     }
 
     public GetIsUserLoggedIn(): boolean

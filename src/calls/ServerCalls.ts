@@ -132,9 +132,9 @@ interface GameRequest
 export async function StartGame(userID: number, timestamp: number, token: string, session: number): Promise<GameResponse>
 {
     try {
-        const postData: GameRequest = {user_id: userID, timestamp: timestamp, token: token, session: session};
-
-        const response = await fetch(`${K_SERVER_ADDRESS}/game/start_game`, {
+        const postData: GameRequest = {user_id: userID, timestamp: 1, token: token, session: session};
+        console.log(JSON.stringify(postData));
+        const response = await fetch(`${K_SERVER_ADDRESS}/game/start`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

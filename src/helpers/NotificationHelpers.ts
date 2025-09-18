@@ -6,7 +6,8 @@ export function ShowInfoNotification(text: string, duration: number = GlobalView
     Toastify({
         text: text,
         duration: duration,
-        className: "toastify-info"
+        className: "toastify-info",
+        escapeMarkup: false
     }).showToast();
 }
 
@@ -15,7 +16,8 @@ export function ShowCongratsNotification(text: string, duration: number = Global
     Toastify({
         text: text,
         duration: duration,
-        className: "toastify-congrats"
+        className: "toastify-congrats",
+        escapeMarkup: false
     }).showToast();
 }
 
@@ -24,6 +26,7 @@ export function ShowErrorNotification(text: string, duration: number = GlobalVie
     Toastify({
         text: text,
         duration: duration,
-        className: "toastify-error"
+        className: "toastify-error",
+        escapeMarkup: false
     }).showToast();
 }
