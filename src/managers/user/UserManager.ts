@@ -155,6 +155,16 @@ export class UserManager
         return this.m_UserSaveData?.userID ?? null;
     }
 
+    public GetUsername(): string | null
+    {
+        if (!this.GetIsUserLoggedIn())
+        {
+            return null;
+        }
+
+        return this.m_UserSaveData?.username ?? null;
+    }
+
     public GetLoginToken(): string | null
     {
         if (!this.GetIsUserLoggedIn())
@@ -163,5 +173,11 @@ export class UserManager
         }
 
         return this.m_UserSaveData?.token ?? null;
+    }
+
+    public Logout()
+    {
+        window.localStorage.removeItem(GlobalGameSettings.K_USER_SAVE_KEY);
+        window.location.reload();
     }
 }

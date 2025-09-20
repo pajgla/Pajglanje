@@ -18,4 +18,6 @@ export class GlobalUserSettings
     public static readonly K_POPUP_OVERLAY_ID = "userPopupOverlay";
     public static readonly K_SHOW_POPUP_CLASS = "show";
     public static readonly K_ACTIVE_TAB_CLASS = ".tab.active";
+    public static readonly K_USERNAME_DISPLAY_ID = "username-display";
+    public static readonly K_LOGOUT_BUTTON_ID = "user-actions-logout";
 }
