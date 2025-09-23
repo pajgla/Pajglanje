@@ -256,6 +256,7 @@ export class BrzalicaGame extends GameBase {
     private OnGameLost()
     {
         this.m_Keyboard.SetEnabled(false);
+        this.m_Keyboard.ChangeLockState(true);
         this.m_Timer.StopTimer();
 
         if (this.m_Board.GetCurrentAttemptPosition() > GlobalGameSettings.K_BRZALICA_ATTEMPTS - 1)
