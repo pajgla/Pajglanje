@@ -196,7 +196,10 @@ export class PajglanjeGame extends GameBase {
             this.OpenStatisticsWindow();
         }, statisticsWindowDelay);
 
-        GlobalEvents.Dispatch(EventTypes.RequestKeyboardStateChangeEvent, false, true);
+        //Lock the keyboard
+        this.m_Keyboard.SetEnabled(false);
+        this.m_Keyboard.ChangeLockState(true);
+
         GlobalEvents.Dispatch(EventTypes.CreateStatisticsFooterEvent);
     }
 
