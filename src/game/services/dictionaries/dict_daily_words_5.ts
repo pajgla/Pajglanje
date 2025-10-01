@@ -685,7 +685,7 @@ export const DICT_DAILY_WORDS = [
  'dlake',
  'ženka',
  'pudla',
- 'aleji',
+ 'aleje',
  'limun',
  'briga',
  'uteha',
