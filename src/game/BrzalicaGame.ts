@@ -256,6 +256,7 @@ export class BrzalicaGame extends GameBase {
     private OnGameLost()
     {
         this.m_Keyboard.SetEnabled(false);
+        this.m_Keyboard.ChangeLockState(true);
         this.m_Timer.StopTimer();
 
         if (this.m_Board.GetCurrentAttemptPosition() > GlobalGameSettings.K_BRZALICA_ATTEMPTS - 1)
@@ -308,7 +309,7 @@ export class BrzalicaGame extends GameBase {
         this.m_Save.TriggerSave();
         
         const wordGuessedFormattedMessage = GlobalViewSettings.formatMessage(GlobalViewSettings.K_BRZALICA_WORD_GUESSED_MESSAGE, {guessed_words: this.m_GuessedWords.toString()});
-        NotificationHelpers.ShowCongratsNotification(wordGuessedFormattedMessage, 5000);
+        NotificationHelpers.ShowCongratsNotification(wordGuessedFormattedMessage, 2000);
     }
 
     //Callbacks

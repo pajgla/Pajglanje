@@ -162,6 +162,7 @@ export class Board implements IBoard {
         {
             for (let letterIndex = this.wordLength - 1; letterIndex >= 0; --letterIndex)
             {
+                const delay = guessAttempt * 150 + letterIndex * 50;
                 setTimeout(() => {
                     let letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
                     letterElement.textContent = "";
@@ -169,8 +170,8 @@ export class Board implements IBoard {
                     letterElement.style.backgroundColor = "";
                     letterElement.style.borderColor = "";
                     letterElement.style.background = '';
-                    AnimationsModule.Animation_FlipInAndClear(letterElement).then(() => {});
-                }, letterIndex * 50);
+                    AnimationsModule.Animation_FlipInAndClear(letterElement);
+                }, delay);
             }
         }
 

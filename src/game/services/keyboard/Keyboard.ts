@@ -177,12 +177,11 @@ export class Keyboard implements IKeyboard {
         keyElement.classList.remove("unused");
     }
 
-    private OnKeyboardStateChangeRequested(newState: boolean, lock: boolean = false): void {
+    private OnKeyboardStateChangeRequested(newState: boolean): void {
         this.SetEnabled(newState);
-        this.ChangeLockState(lock);
     }
 
-    private ChangeLockState(newState: boolean)
+    public ChangeLockState(newState: boolean)
     {
         this.m_IsLocked = newState;
     }
