@@ -110,6 +110,25 @@ export class UserManager
 
         localStorage.setItem(GlobalGameSettings.K_USER_SAVE_KEY, JSON.stringify(userSaveData));
     }
+    
+    private SaveUserCheckString(checkString: string)
+    {
+        if (this.m_UserSaveData === null)
+        {
+            throw new Error(`User save data is null`);
+        }
+        
+        const savedString = localStorage.getItem(GlobalGameSettings.K_USER_SAVE_KEY);
+        if (savedString === null)
+        {
+            throw new Error(`User save data is null`);
+        }
+        
+        let savedData = JSON.parse(savedString) as UserSaveData;
+        savedData.checkString = checkString;
+        
+        localStorage.setItem(GlobalGameSettings.K_USER_SAVE_KEY, JSON.stringify(savedData));
+    }
 
     public async TryAutoLogin()
     {
@@ -139,10 +158,119 @@ export class UserManager
 
         GlobalEvents.Dispatch(EventTypes.OnAutologinFinished, result.success);
     }
+    
+    public async StartGame(gameTime: number)
+    {
+        if (!this.GetIsUserLoggedIn())
+        {
+            console.error("User is not logged in");
+        }
+        
+        const userID = this.GetUserID();
+        if (userID === null)
+        {
+            console.error("User ID is null");
+        }
+        
+        const loginToken = this.GetLoginToken();
+        if (loginToken === null)
+        {
+            console.error("Login token is null");
+        }
+        
+        const response = await ServerCalls.StartGame(userID!, new Date().getTime(), loginToken!, gameTime);
+        if (!response.success)
+        {
+            GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
+            NotificationHelpers.ShowErrorNotification("Došlo je do greške sa serverom. Bićeš izlogovan kroz par sekundi. ", 5000);
+            //Reload the page and log the user out
+            
+            setTimeout(() => {
+                this.Logout();
+            }, 5000);
+        }
+        
+        console.log("Server - game started");
+        
+        this.SaveUserCheckString(response.check);
+        
+        return response.success;
+    }
+    
+    public async SaveGuess(guesses: string, gameTime: number)
+    {
+        if (!this.GetIsUserLoggedIn())
+        {
+            console.error("User is not logged in but we tried saving guesses to server");
+            return;
+        }
+        
+        const userID = this.GetUserID();
+        if (userID === null)
+        {
+            console.error("User ID is null");
+            return;
+        }
+        
+        const token = this.GetLoginToken();
+        if (token === null)
+        {
+            console.error("Login token is null");
+            return;
+        }
+        
+        const userCheckString = this.m_UserSaveData!.checkString;
+        const timeStamp = new Date().getTime();
+        const checkString = userCheckString + guesses + timeStamp;
+        const hashedCheck = await HashHelpers.sha256(checkString);
+        if (hashedCheck === userCheckString)
+        {
+            console.error("Invalid check string");
+            return;
+        }
+        
+        const response = await ServerCalls.SaveGame(userID, timeStamp, token, gameTime, guesses, hashedCheck);
+        if (!response.success)
+        {
+            //this.LogoutWithFatalErrorAndTimeout("Došlo je do greške sa serverom prilikom čuvanja podataka");
+        }
+        
+        return response.success;
+    }
+    
+    public async LoadData(key: string): Promise<string>
+    {
+        if (!this.GetIsUserLoggedIn())
+        {
+            console.error("Tried to load data but the user is not logged in");
+            return "";
+        }
+        
+        const response = await ServerCalls.LoadGame(key);
+        if (!response.success)
+        {
+            console.error("Failed to load data");
+            return "";
+        }
+        
+        return response.value;
+    }
+    
+    private LogoutWithFatalErrorAndTimeout(message: string)
+    {
+        GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
+        NotificationHelpers.ShowErrorNotification(message, 5000);
+        setTimeout(() => {
+            this.Logout();
+        }, 5000);
+    }
+    
+    public async SaveData(key: string, value: string)
+    {}
 
     public GetIsUserLoggedIn(): boolean
     {
-        return this.m_IsUserLoggedIn;
+        return this.m_IsUserLoggedIn && this.m_UserSaveData != null;
     }
 
     public GetUserID(): number | null

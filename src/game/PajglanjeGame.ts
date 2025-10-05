@@ -21,10 +21,12 @@ export class PajglanjeGame extends GameBase {
     private m_Save: PajglanjeSave = new PajglanjeSave();
     private m_StatisticsManager: PajglanjeStatisticsManager = new PajglanjeStatisticsManager();
 
-    public override Init(): void {
-        super.Init();
+    public override async Init(): Promise<void> {
+        await super.Init();
 
-        this.m_Save.Init();
+        console.log("PajglanjeGame Init");
+        await this.m_Save.Init();
+        console.log("PajglanjeGame Init - Save initialized");
     }
 
     protected override InitCallbacks(): void {
@@ -82,7 +84,7 @@ export class PajglanjeGame extends GameBase {
         this.m_Save.TriggerSave(GlobalGameSettings.K_PAJGLA_SAVEGAME_KEY);
     }
 
-    private SendGameStartServerMessage()
+    private async SendGameStartServerMessage()
     {
         if (this.m_Board.GetCurrentAttemptPosition() !== 0)
         {
@@ -96,30 +98,12 @@ export class PajglanjeGame extends GameBase {
             return;
         }
 
-        if (!userManager.GetIsUserLoggedIn())
-        {
-            return;
-        }
-
-        const userID = userManager.GetUserID();
-        if (userID === null)
-        {
-            console.error("Couldn't fetch user id");
-            return;
-        }
-
-        const loginToken = userManager.GetLoginToken();
-        if (loginToken === null)
-        {
-            console.error("Couldn't fetch login token");
-            return;
-        }
-
-        ServerCalls.StartGame(userID, new Date().getTime(), loginToken, this.GetPajglaTime());
+        const response = await userManager.StartGame(this.GetPajglaTime());
     }
 
     protected override OnAttemptSubmitted()
-    {
+    {        
+        //Do not wait for server response. If something bad happens, we will reload the page
         this.SendGameStartServerMessage();
         
         const attemptWord = this.m_Board.GetCurrentGuess();
@@ -151,6 +135,8 @@ export class PajglanjeGame extends GameBase {
         saveData.wordSave.guesses.push(WordHelpers.SerbianWordToCharArray(attemptWord));
         this.m_Save.OverwriteCachedSave(saveData);
         this.m_Save.TriggerSave(GlobalGameSettings.K_PAJGLA_SAVEGAME_KEY);
+        
+        this.SaveToServer();
 
         if (attemptData.guessAttemptStatus == GuessAttemptStatus.Correct)
         {
@@ -162,6 +148,41 @@ export class PajglanjeGame extends GameBase {
             this.ChangeGameState(EGameState.Lost, false);
         }
     }
+    
+    private SaveToServer()
+    {
+        const userManager = UserManager.Get();
+        if (userManager === null || userManager === undefined)
+        {
+            console.error("UserManager is not initialized");
+            return;
+        }
+        
+        if (!userManager.GetIsUserLoggedIn())
+        {
+            return;
+        }
+        
+        const guesses = this.m_Board.GetAllGuesses();
+        let serverGuesses = "";
+        for (const guess of guesses)
+        {
+            serverGuesses += guesses + '+';
+        }
+        
+        if (serverGuesses.length < 0)
+        {
+            console.error("Called SaveToServer with empty guesses");
+            return;
+        }
+        
+        if (serverGuesses.charAt(serverGuesses.length - 1) === '+')
+        {
+            serverGuesses = serverGuesses.slice(0, -1);
+        }
+        
+        userManager.SaveGuess(serverGuesses, this.GetPajglaTime());
+    }
 
     private GetPajglaTime(): number
     {
@@ -170,7 +191,7 @@ export class PajglanjeGame extends GameBase {
     }
 
     public StartGame(): void {
-
+        console.log("PajglanjeGame StartGame");
         const pajglaTime = this.GetPajglaTime();
         this.ChangePageTitle(GlobalGameSettings.K_PAJGLANJE_GAME_NAME, pajglaTime);
 

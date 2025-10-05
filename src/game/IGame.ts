@@ -1,4 +1,4 @@
 export interface IGame {
-    Init(): void;
+    Init(): Promise<void>;
     StartGame(): void;
 }

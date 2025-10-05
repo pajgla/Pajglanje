@@ -31,9 +31,9 @@ export class BrzalicaGame extends GameBase {
         this.m_UniqueGenerator = new UniqueRandom(); //Just to remove CError
     }
 
-    public override Init(): void {
-        super.Init();
-        this.m_Save.Init();
+    public override async Init(): Promise<void> {
+        await super.Init();
+        await this.m_Save.Init();
         this.m_Stats.Init();
     }
 

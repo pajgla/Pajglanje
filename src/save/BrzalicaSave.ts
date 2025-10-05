@@ -6,13 +6,13 @@ import * as StatisticsHelpers from "../statistics/StatisticHelpers";
 
 export class BrzalicaSave extends SaveBase<BrzalicaSaveStorage> {
 
-    public override Init(): void {
+    public override async Init(): Promise<void> {
         let savedGameJSON = window.localStorage.getItem(GlobalGameSettings.K_BRZALICA_SAVEGAME_KEY);
 
         if (savedGameJSON === null || savedGameJSON === undefined)
         {
             //No local storage found
-            return;
+            return Promise.resolve();
         }
 
         this.m_SaveGame = JSON.parse(savedGameJSON) as BrzalicaSaveStorage;
@@ -20,6 +20,8 @@ export class BrzalicaSave extends SaveBase<BrzalicaSaveStorage> {
         {
             throw new Error("An error occured while loading local save game.");
         }
+        
+        return Promise.resolve();
     }
 
     public override TriggerSave(saveKey: string = GlobalGameSettings.K_BRZALICA_SAVEGAME_KEY): void {

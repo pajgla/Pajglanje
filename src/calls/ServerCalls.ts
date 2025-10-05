@@ -1,42 +1,12 @@
 import { GlobalEvents } from "../core/EventBus";
 import { EventTypes } from "../Events/EventTypes";
 
-const K_SERVER_ADDRESS : string = 'https://cozygame.rs:8001';
+const K_SERVER_ADDRESS: string = 'https://cozygame.rs:8001';
 
+// Common interfaces
 export interface CreateUserResponse {
     success: boolean;
     reason: string;
-}
-
-export async function RegisterUser(username: string, password: string): Promise<CreateUserResponse> {
-    //Start loading
-    GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
-    
-    try {
-        const response = await fetch(`${K_SERVER_ADDRESS}/users/create`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-
-            body: JSON.stringify({username, password}),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP Error! Status: ${response.status}`);
-        }
-
-        const data: CreateUserResponse = await response.json();
-        console.log(data);
-        return data;
-    } catch (err)
-    {
-        console.error('Error while creating user: ' + err);
-        return { success: false, reason: ""};
-    }
-    finally {
-        GlobalEvents.Dispatch(EventTypes.StopLoaderEvent);
-    }
 }
 
 export interface LoginUserResponse {
@@ -45,115 +15,162 @@ export interface LoginUserResponse {
     token: string;
 }
 
-export async function LoginUser(username: string, password: string): Promise<LoginUserResponse>
-{
-    try {
-        const response = await fetch(`${K_SERVER_ADDRESS}/users/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-
-            body: JSON.stringify({username, password})
-        });
-
-        if (!response.ok)
-        {
-            throw new Error(`HTTP Error! Status ${response.status}`);
-        }
-
-        const data: LoginUserResponse = await response.json();
-        console.log(data);
-        return data;
-    } catch (err)
-    {
-        console.log("An error occured while trying to login user: " + err);
-        return {success: false, user_id: -1, token: ""};
-    }
-}
-
-export interface TokenCheckResponse
-{
+export interface TokenCheckResponse {
     success: boolean;
 }
 
-interface TokenCheckData
-{
+interface TokenCheckData {
     user_id: number;
     token: string;
     session: number;
 }
 
-export async function CheckToken(userID: number, token: string, session: number): Promise<TokenCheckResponse>
-{
-    try {
-        const postData: TokenCheckData = {user_id: userID, token: token, session: session};
+interface GameResponse {
+    success: boolean;
+    check: string;
+}
 
-        const response = await fetch(`${K_SERVER_ADDRESS}/game/check_tokens`, {
+interface GameRequest {
+    user_id: number;
+    timestamp: number;
+    token: string;
+    session: number;
+}
+
+interface SaveGameRequest {
+    user_id: number;
+    timestamp: number;
+    token: string;
+    session: number;
+    guesses: string;
+    check: string;
+}
+
+interface SaveGameResponse {
+    success: boolean;
+}
+
+interface DataLoadRequest {
+    key: string;
+}
+
+interface DataLoadResponse {
+    success: boolean;
+    value: string;
+}
+
+async function makeServerCall<TResponse>(
+    endpoint: string,
+    body: any,
+    errorMessage: string,
+    defaultErrorResponse: TResponse,
+    showLoader: boolean = false
+): Promise<TResponse> {
+    if (showLoader) {
+        GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
+    }
+
+    try {
+        const response = await fetch(`${K_SERVER_ADDRESS}${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-
-
-
-            body: JSON.stringify(postData)
+            body: JSON.stringify(body),
         });
 
-        if (!response.ok)
-        {
-            throw new Error(`HTTP Error! Status ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status}`);
         }
 
-        const data: TokenCheckResponse = await response.json();
+        const data: TResponse = await response.json();
         console.log(data);
         return data;
-    } catch (err)
-    {
-        console.log("An error occured while checking for token: " + err);
-        return {success: false};
+    } catch (err) {
+        console.error(`${errorMessage}: ${err} // for enpoint: ${endpoint}`);
+        return defaultErrorResponse;
+    } finally {
+        if (showLoader) {
+            GlobalEvents.Dispatch(EventTypes.StopLoaderEvent);
+        }
     }
 }
 
-interface GameResponse
-{
-    success: boolean,
-    check: string
+export async function RegisterUser(username: string, password: string): Promise<CreateUserResponse> {
+    return makeServerCall<CreateUserResponse>(
+        '/users/create',
+        { username, password },
+        'Error while creating user',
+        { success: false, reason: "" },
+        true
+    );
 }
 
-interface GameRequest
-{
-    user_id: number,
+export async function LoginUser(username: string, password: string): Promise<LoginUserResponse> {
+    return makeServerCall<LoginUserResponse>(
+        '/users/login',
+        { username, password },
+        'An error occurred while trying to login user',
+        { success: false, user_id: -1, token: "" }
+    );
+}
+
+export async function CheckToken(userID: number, token: string, session: number): Promise<TokenCheckResponse> {
+    const postData: TokenCheckData = { user_id: userID, token: token, session: session };
+    return makeServerCall<TokenCheckResponse>(
+        '/game/check_tokens',
+        postData,
+        'An error occurred while checking for token',
+        { success: false }
+    );
+}
+
+export async function StartGame(userID: number, timestamp: number, token: string, session: number): Promise<GameResponse> {
+    const postData: GameRequest = { user_id: userID, timestamp: 1, token: token, session: session };
+    console.log(JSON.stringify(postData));
+    
+    return makeServerCall<GameResponse>(
+        '/game/start',
+        postData,
+        'An error occurred while starting game',
+        { success: false, check: "" }
+    );
+}
+
+export async function SaveGame(
+    userID: number,
     timestamp: number,
     token: string,
-    session: number
+    session: number,
+    guesses: string,
+    checkString: string
+): Promise<SaveGameResponse> {
+    const postData: SaveGameRequest = {
+        user_id: userID,
+        timestamp: timestamp,
+        token: token,
+        session: session,
+        guesses: guesses,
+        check: checkString
+    };
+    console.log(JSON.stringify(postData));
+
+    return makeServerCall<SaveGameResponse>(
+        '/game/save',
+        postData,
+        'An error occurred while saving game (guess)',
+        { success: false }
+    )
 }
 
-export async function StartGame(userID: number, timestamp: number, token: string, session: number): Promise<GameResponse>
-{
-    try {
-        const postData: GameRequest = {user_id: userID, timestamp: 1, token: token, session: session};
-        console.log(JSON.stringify(postData));
-        const response = await fetch(`${K_SERVER_ADDRESS}/game/start`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(postData)
-        });
+export async function LoadGame(dataKey: string): Promise<DataLoadResponse> {
+    const postData: DataLoadRequest = { key: dataKey };
+    console.log(JSON.stringify(postData));
 
-        if (!response.ok)
-        {
-            console.error(`HTTP Error! Status ${response.status}`);
-            return {success: false, check: ""};
-        }
-
-        const data: GameResponse = await response.json();
-        console.log(data);
-        return data;
-    } catch (err)
-    {
-        console.log("An error occured while checking for token: " + err);
-        return {success: false, check: ""};
-    }
+    return makeServerCall<DataLoadResponse>(
+        '/game/get_data',
+        postData,
+        'An error occurred while loading game data',
+        { success: false, value: "" }
+    );
 }

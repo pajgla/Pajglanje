@@ -133,7 +133,6 @@ export class AuthenticationView
     private async OnLoginButtonClicked()
     {
         console.log(`Logging in ...`);
-        GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
 
         let username = this.GetInput(this.m_LoginUsernameInput);
         let password = this.GetInput(this.m_LoginPasswordInput);
@@ -161,15 +160,14 @@ export class AuthenticationView
             throw new Error(`UserManager is null`);
         }
 
+        GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
         await userManager.TryLogin(username, password);
-
         GlobalEvents.Dispatch(EventTypes.StopLoaderEvent);
     }
 
     private async OnRegisterButtonClicked()
     {
         console.log(`Registering ...`);
-        GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
 
         let username = this.GetInput(this.m_RegistrationUsernameInput);
         if (username === undefined || username === null)
@@ -203,6 +201,7 @@ export class AuthenticationView
             throw new Error(`User manager is null`);
         }
 
+        GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
         await userManager.TryRegister(username, password);
         GlobalEvents.Dispatch(EventTypes.StopLoaderEvent);
     }

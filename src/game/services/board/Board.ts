@@ -204,4 +204,21 @@ export class Board implements IBoard {
     {
         AnimationsModule.Animation_FlipInAndClear(letterElement).then(() => {});
     }
+    
+    public GetAllGuesses(): string[]
+    {
+        let guesses: string[] = [];
+        for (let guessAttempt = 0; guessAttempt < this.maxGuesses; guessAttempt++)
+        {
+            let guess: string = "";
+            for (let letterIndex = 0; letterIndex < this.wordLength; letterIndex++)
+            {
+                const letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
+                let dataKey = letterElement.getAttribute("data-key");
+                guess += dataKey;
+            }
+        }
+        
+        return guesses;
+    }
 }

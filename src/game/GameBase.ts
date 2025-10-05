@@ -19,12 +19,13 @@ export abstract class GameBase implements IGame {
     protected m_WordService :IGameWordService = new PajglanjeWordService();
     protected m_CurrentGameState: EGameState = EGameState.InProgress;
 
-    public Init(): void {
+    public Init(): Promise<void> {
         this.m_Board.CreateBoardElement();
         this.m_Keyboard.Init();
         this.m_WordService.Init(this.m_DictionaryHolder);
 
         this.InitCallbacks();
+        return Promise.resolve();
     }
 
     protected InitCallbacks()

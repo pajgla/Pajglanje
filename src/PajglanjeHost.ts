@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
         await userManager.TryAutoLogin();
         
-        gameInstance.Init();
+        await gameInstance.Init();
         gameInstance.StartGame();
 
         GlobalEvents.Dispatch(EventTypes.StopLoaderEvent);

@@ -10,4 +10,5 @@ export interface IBoard {
     GetCurrentAttemptPosition(): number;
     GetIDForField(guessAttempt: number, letterIndex: number): string;
     ClearBoard(): void;
+    GetAllGuesses(): string[];
 }

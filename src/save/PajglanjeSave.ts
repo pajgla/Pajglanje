@@ -4,11 +4,39 @@ import { SerbianWordToCharArray } from "../helpers/WordHelpers";
 import type { OLD_PajglaSaveStorage, OLD_PajglaStatisticsSaveStorage, PajglaSaveStorage } from "./save_storage/PajglaSaveStorage";
 import { SaveBase } from "./SaveBase";
 import { ResolveGameState, ResolveOldHistogram } from "./SaveFileResolvers";
+import {GlobalEvents} from "../core/EventBus";
+import {EventTypes} from "../Events/EventTypes";
+import {UserManager} from "../managers/user/UserManager";
 
 export class PajglanjeSave extends SaveBase<PajglaSaveStorage> {
 
-    public override Init()
+    public override async Init()
     {
+        const userManager = UserManager.Get();
+        if (userManager === null)
+        {
+            throw new Error("User manager is null");
+        }
+        
+        if (!userManager.GetIsUserLoggedIn())
+        {
+            GlobalEvents.AddListener(EventTypes.OnAutologinFinished, this.OnAutologinFinished.bind(this));
+        }
+        else
+        {
+            const userID = userManager.GetUserID();
+            if (userID !== null)
+            {
+                const dataKey = `${userID}${GlobalGameSettings.K_PAJGLA_SAVEGAME_KEY}`;
+                const serverSaveData = await userManager.LoadData(dataKey);
+                if (serverSaveData !== "")
+                {
+                    //#TODO override local save
+                    console.log("Server save data found");
+                }
+            }
+        }
+        
         if (this.HasV1SaveData())
         {
             //Load old save
@@ -77,6 +105,14 @@ export class PajglanjeSave extends SaveBase<PajglaSaveStorage> {
             {
                 //Resolve save game
             }
+        }
+    }
+    
+    private OnAutologinFinished(success: boolean)
+    {
+        if (success)
+        {
+            console.log("Autologin finished");
         }
     }
 
