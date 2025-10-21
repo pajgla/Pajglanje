@@ -7,6 +7,7 @@ export default defineConfig({
       input: {
         pajglanje: 'index.html',
         brzalica: 'brzalica.html',
+        tragalica: 'tragalica.html',
         maintenance: 'maintenance.html'
       }
     }

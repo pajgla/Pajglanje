@@ -28,6 +28,22 @@ export class SideMenuView
         closeSideMenuButtonElement.addEventListener('click', event => {
             this.CloseSideMenu();
         });
+
+        this.AddSideMenuLink("/pajglanje.html", "Pajglanje");
+        this.AddSideMenuLink("/brzalica.html", "Brzalica");
+        this.AddSideMenuLink("/tragalica.html", "Tragalica");
+        console.log("Side menu view initialized");
+    }
+    
+    private AddSideMenuLink(link: string, display: string)
+    {
+        let sideMenuButtonElement = document.getElementById(GlobalViewSettings.K_SIDE_MENU_ELEMENT_ID);
+        if (!sideMenuButtonElement)
+        {
+            throw new Error(`Side menu button not found with ID ${GlobalViewSettings.K_SIDE_MENU_ELEMENT_ID}`);
+        }
+        
+        sideMenuButtonElement.innerHTML += `<a href="${link}">${display}</a>`;
     }
 
     private OpenSideMenu()
