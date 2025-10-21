@@ -14,13 +14,11 @@ import { PajglanjeWordService } from "./services/word_services/PajglanjeWordServ
 
 export abstract class GameBase implements IGame {
     protected m_Keyboard: IKeyboard = new Keyboard();
-    protected m_DictionaryHolder: IDictionaryHolder = new FiveWordLengthDictionaryHolder();
-    protected m_WordService :IGameWordService = new PajglanjeWordService();
+    
     protected m_CurrentGameState: EGameState = EGameState.InProgress;
 
     public Init(): void {
         this.m_Keyboard.Init();
-        this.m_WordService.Init(this.m_DictionaryHolder);
 
         this.InitCallbacks();
     }

@@ -19,6 +19,7 @@ export class TragalicaGame extends GameBase
         super.Init();
         
         this.m_MasterWordDisplay.Init(GlobalGameSettings.K_TRAGALICA_WORD_LENGTH);
+        this.m_MasterWordDisplay.SetMasterWord("PATKE");
         this.m_Board.CreateBoardElement();
     }
 

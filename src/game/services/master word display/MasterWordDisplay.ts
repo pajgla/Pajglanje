@@ -2,6 +2,9 @@ import type {IMasterWordDisplay} from "./IMasterWordDisplay";
 import {GlobalViewSettings} from "../../../siteView/GlobalViewSettings";
 
 export class MasterWordDisplay implements IMasterWordDisplay {
+    protected m_MasterWordSquareElements: HTMLElement[] = [];
+    protected m_IsInitialized: boolean = false;
+    
     Init(wordLength: number): void {
         let boardElement = document.getElementById(GlobalViewSettings.K_BOARD_ELEMENT_ID);
         if (!boardElement)
@@ -13,12 +16,42 @@ export class MasterWordDisplay implements IMasterWordDisplay {
         {
             let newSquare = this.CreateLetterSquareElement();
             boardElement.appendChild(newSquare);
+            this.m_MasterWordSquareElements.push(newSquare);
         }
+        
+        this.m_IsInitialized = true;
     }
 
     private CreateLetterSquareElement(): HTMLElement {
         let square: HTMLElement = document.createElement("div");
         square.classList.add("master-word-square");
         return square;
-    }    
+    }
+    
+    SetMasterWord(word: string) {
+        if (!this.m_IsInitialized)
+        {
+            throw new Error("Master word display is not initialized");
+        }
+        
+        if (this.m_MasterWordSquareElements.length === 0)
+        {
+            throw new Error("Master word square elements are not initialized");
+        }
+        
+        if (!word || word.length === 0)
+        {
+            throw new Error("Master word is empty");
+        }
+        
+        if (word.length !== this.m_MasterWordSquareElements.length)
+        {
+            throw new Error("Master word length does not match board length");
+        }
+        
+        for (let i = 0; i < word.length; i++)
+        {            
+            this.m_MasterWordSquareElements[i]!.textContent = word[i]!.toUpperCase();
+        }
+    }
 }
