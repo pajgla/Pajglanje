@@ -4,6 +4,7 @@ import {GlobalViewSettings} from "../../../siteView/GlobalViewSettings";
 export class MasterWordDisplay implements IMasterWordDisplay {
     protected m_MasterWordSquareElements: HTMLElement[] = [];
     protected m_IsInitialized: boolean = false;
+    protected m_MasterWord: string = "";
     
     Init(wordLength: number): void {
         let boardElement = document.getElementById(GlobalViewSettings.K_BOARD_ELEMENT_ID);
@@ -53,5 +54,11 @@ export class MasterWordDisplay implements IMasterWordDisplay {
         {            
             this.m_MasterWordSquareElements[i]!.textContent = word[i]!.toUpperCase();
         }
+        
+        this.m_MasterWord = word;
+    }
+    
+    GetMasterWord(): string {
+        return this.m_MasterWord;
     }
 }
