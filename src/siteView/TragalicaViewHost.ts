@@ -10,12 +10,12 @@ const statisticsWindowView = new PajglanjeStatisticsWindowView();
 const headerView = new PajglanjeHeaderView();
 const loaderView = new LoaderView();
 document.addEventListener("DOMContentLoaded", () => {
+    loaderView.Init();
     statisticsWindowView.Init();
     //userView.Init();
     sideMenuView.Init();
     helpWindowView.Init();
     headerView.Init();
-    loaderView.Init();
 
     //Site loaded
     loaderView.Stop();
