@@ -6,6 +6,9 @@ export class GlobalViewSettings
     {
         return message.replace(/\{(\w+)\}/g, (_, key) => values[key] ?? '');    
     }
+    
+    //Board
+    public static readonly K_BOARD_ELEMENT_ID = "board";
 
     //Word guessing
     public static readonly K_SHORT_WORD_INFO = "Uneta reč je prekratka";

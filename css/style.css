@@ -196,6 +196,32 @@ header {
     line-height: 1
 }
 
+.master-word-square
+{
+    border: 2px solid rgb(70 75 85 / 40%);
+    line-height: 1;
+    font-weight: 700;
+    color: #e8f0ff;
+    text-transform: uppercase;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1/1;
+    animation-duration: .5s;
+    box-sizing: border-box;
+    transition: all .3s ease;
+    text-align: center;
+    vertical-align: middle
+}
+
+.master-word-square:empty::before {
+    content: "  ";
+    visibility: hidden;
+    font-size: 2em;
+    font-weight: 700;
+    line-height: 1
+}
+
 #keyboard-container {
     height: 200px;
     max-width: 500px;

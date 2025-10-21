@@ -14,14 +14,18 @@ import { CopyToClipboard, LetterStateToShareSymbol } from '../helpers/ShareHelpe
 import { GameBase } from './GameBase';
 import $ from 'jquery'
 import 'jquery-modal'
+import type {IBoard} from "./services/board/IBoard";
+import {Board} from "./services/board/Board";
 
 export class PajglanjeGame extends GameBase {
+    protected m_Board: IBoard = new Board(GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH, GlobalGameSettings.K_PAJGLANJE_ATTEMPTS);
     private m_Save: PajglanjeSave = new PajglanjeSave();
     private m_StatisticsManager: PajglanjeStatisticsManager = new PajglanjeStatisticsManager();
 
     public override Init(): void {
         super.Init();
 
+        this.m_Board.CreateBoardElement();
         this.m_Save.Init();
     }
 
@@ -29,6 +33,14 @@ export class PajglanjeGame extends GameBase {
         super.InitCallbacks();
 
         GlobalEvents.AddListener(EventTypes.OnShareButtonClickedEvent, this.OnShareButtonClicked.bind(this));
+
+        GlobalEvents.AddListener(EventTypes.DeleteKeyPressedEvent, () => {
+            this.m_Board.RetractLetter();
+        });
+    }
+
+    protected OnKeyPressed(key: string) {
+        this.m_Board.FillNextLetter(key);
     }
 
     protected override ChangeGameState(newState: EGameState, fromSave: boolean = false)

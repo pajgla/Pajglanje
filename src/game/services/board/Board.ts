@@ -21,8 +21,8 @@ export class Board implements IBoard {
     }
 
     public CreateBoardElement(): void {
-        let boardelement: HTMLElement | null = document.getElementById("board");
-        if (!boardelement) {
+        let boardElement: HTMLElement | null = document.getElementById(GlobalViewSettings.K_BOARD_ELEMENT_ID);
+        if (!boardElement) {
             throw new Error("Board element not found");
         }
 
@@ -31,12 +31,12 @@ export class Board implements IBoard {
             for (let letterIndex = 0; letterIndex < this.wordLength; letterIndex++)
             {
                 let square: HTMLElement = this.CreateLetterSquareElement(guessAttempt, letterIndex);
-                boardelement.appendChild(square);
+                boardElement.appendChild(square);
             }
         }
 
         //Set board parent style
-        boardelement.style.setProperty("grid-template-columns", `repeat(${this.wordLength}, minmax(20px, 80px))`);
+        boardElement.style.setProperty("grid-template-columns", `repeat(${this.wordLength}, minmax(20px, 80px))`);
     }
 
     private CreateLetterSquareElement(guessAttempt: number, letterIndex: number): HTMLElement {

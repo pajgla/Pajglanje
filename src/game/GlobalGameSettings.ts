@@ -13,6 +13,13 @@ export class GlobalGameSettings {
     public static readonly K_BRZALICA_ATTEMPTS = 6;
     public static readonly K_NEXT_BRZALICA_IN_HOURS = 12; // 1-24
     public static readonly K_BRZALICA_DURATION = 900;
+    
+    //Tragalica settings
+    public static readonly K_TRAGALICA_GAME_NAME = "Tragalica";
+    public static readonly K_TRAGALICA_START_TIME: Date = new Date('2025-10-22T00:00:00');
+    public static readonly K_TRAGALICA_WORD_LENGTH = 5;
+    public static readonly K_TRAGALICA_ATTEMPTS = 5;
+    public static readonly K_NEXT_TRAGALICA_IN_HOURS = 24;
 
     //Save Game
     public static readonly K_PAJGLA_SAVEGAME_KEY = "pajgla_save_game";
