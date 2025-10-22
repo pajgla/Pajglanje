@@ -64,6 +64,7 @@ export function CheckWordAttempt(correctWord: string, attemptWord: string, dicti
 {
     const attemptWordLength = SerbianWordLength(attemptWord);
     const guessWordLength = SerbianWordLength(correctWord);
+    
     if (attemptWordLength > guessWordLength)
     {
         throw new Error(`Attempt word is longer than guess word. How did this happen? Attempt: ${attemptWord}, guess word ${this.m_GuessWord}`);
@@ -131,6 +132,5 @@ export function CheckWordAttempt(correctWord: string, attemptWord: string, dicti
     }
 
     result.letterStatuses = letterStatuses;
-    
     return result;
 }

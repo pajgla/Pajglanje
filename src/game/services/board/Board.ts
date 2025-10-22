@@ -43,6 +43,7 @@ export class Board implements IBoard {
         let square: HTMLElement = document.createElement("div");
         square.classList.add("square");
         square.classList.add("animate__animated");
+        square.classList.add("has-indicator");
         square.setAttribute("id", this.GetIDForField(guessAttempt, letterIndex));
         square.setAttribute("data-key", '');
         square.setAttribute("data-value", "");
@@ -204,5 +205,10 @@ export class Board implements IBoard {
     private AnimateLetter(letterElement: HTMLElement)
     {
         AnimationsModule.Animation_FlipInAndClear(letterElement).then(() => {});
+    }
+    
+    protected PaintLetterColorIndicator(guessAttempt: number, letterIndex: number, color: string): void {
+        let letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
+        letterElement.style.setProperty(`--indicator-color`, color);
     }
 }

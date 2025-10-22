@@ -185,7 +185,8 @@ header {
     box-sizing: border-box;
     transition: all .3s ease;
     text-align: center;
-    vertical-align: middle
+    vertical-align: middle;
+    position: relative;
 }
 
 .square:empty::before {
@@ -194,6 +195,27 @@ header {
     font-size: 2em;
     font-weight: 700;
     line-height: 1
+}
+
+.square::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background: var(--indicator-color, transparent);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.square.has-indicator::after {
+    opacity: 1;
+}
+
+.square.indicator-green::after {
+    
 }
 
 .master-word-square

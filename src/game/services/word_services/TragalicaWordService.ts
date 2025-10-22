@@ -6,7 +6,8 @@ import {UniqueRandom} from "../../../helpers/UniqueRandom";
 
 export class TragalicaWordService implements ITragalicaWordService
 {
-    private m_DictionaryHolder: IDictionaryHolder | null = null;
+    private m_DailyWordsDictionary :string[] = [];
+    private m_Dictionary: string[] = [];
     private m_HiddenWords: string[] = [];
     private m_Randomizer: UniqueRandom | null = null;
     private m_MasterWord: string = "";
@@ -16,13 +17,14 @@ export class TragalicaWordService implements ITragalicaWordService
         {
             throw new Error("Provided null dictionary holder for Tragalica Initialization");
         }
-        
-        this.m_DictionaryHolder = dictionaryHolder;
+
+        this.m_Dictionary = dictionaryHolder.GetGuessWordsDictionary().map((word :string) => WordHelpers.ToWorkingCase(word));
+        this.m_DailyWordsDictionary = dictionaryHolder.GetDailyWordsDictionary().map((word) => WordHelpers.ToWorkingCase(word));
 
         this.ChooseMasterWord(tragalicaTime);
         
         //We can use tragalica time as a seed and also as a used index, so we don't master for as a hidden word
-        const masterWordIndex = this.m_DictionaryHolder.GetGuessWordsDictionary().indexOf(this.m_MasterWord);
+        const masterWordIndex = this.m_Dictionary.indexOf(this.m_MasterWord);
         //Even if masterWordIndex is -1, we can still continue since we are 100% sure we won't have all green rows
         
         this.m_Randomizer = new UniqueRandom(tragalicaTime.toString(), [masterWordIndex]);
@@ -33,13 +35,8 @@ export class TragalicaWordService implements ITragalicaWordService
     }
 
     ChooseMasterWord(tragalicaTime: number): void
-    {
-        if (!this.m_DictionaryHolder)
-        {
-            throw new Error("Dictionary holder is not initialized");
-        }
-        
-        let dailyWordsArray = this.m_DictionaryHolder.GetDailyWordsDictionary();
+    {        
+        let dailyWordsArray = this.m_DailyWordsDictionary;
         if (tragalicaTime >= dailyWordsArray.length)
         {
             throw new Error("Tragalica time is out of bounds");
@@ -49,16 +46,12 @@ export class TragalicaWordService implements ITragalicaWordService
     }
     
     CheckWordAttempt(attemptWord: string, index: number): GuessAttemptData {
-        if (!this.m_DictionaryHolder)
-        {
-            throw new Error("Dictionary holder is not initialized");
-        }
         if (index >= this.m_HiddenWords.length)
         {
             throw new Error("Index is out of bounds");
         }
         
-        return WordHelpers.CheckWordAttempt(this.m_HiddenWords[index]!, attemptWord, this.m_DictionaryHolder.GetGuessWordsDictionary());
+        return WordHelpers.CheckWordAttempt(this.m_MasterWord, attemptWord, this.m_Dictionary);
     }
 
     ChooseHiddenWords(amount: number): void {
@@ -67,16 +60,11 @@ export class TragalicaWordService implements ITragalicaWordService
             throw new Error("Randomizer is not initialized");
         }
         
-        if (!this.m_DictionaryHolder)
-        {
-            throw new Error("Dictionary holder is not initialized");
-        }
-        
-        const maxIndex = this.m_DictionaryHolder.GetGuessWordsDictionary().length - 1;
+        const maxIndex = this.m_Dictionary.length - 1;
         for (let i = 0; i < amount; i++)
         {
             const randomIndex = this.m_Randomizer.GetUnique(maxIndex);
-            let chosenWord = this.m_DictionaryHolder.GetGuessWordsDictionary()[randomIndex]!;
+            let chosenWord = this.m_Dictionary[randomIndex]!;
             this.m_HiddenWords.push(chosenWord);
         }
     }

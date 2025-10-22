@@ -12,6 +12,8 @@ import {TragalicaWordService} from "./services/word_services/TragalicaWordServic
 import {GameTimeHelpers} from "../helpers/GameTimeHelpers";
 import type {IDictionaryHolder} from "./services/dictionaries/IDictionary";
 import {FiveWordLengthDictionaryHolder} from "./services/dictionaries/DictionaryHolder";
+import {ConvertLetterStatusToColor} from "../helpers/ColorFunctions";
+import {GuessAttemptStatus} from "./services/word_services/AttemptStatuses";
 
 export class TragalicaGame extends GameBase
 {
@@ -77,6 +79,21 @@ export class TragalicaGame extends GameBase
     }
 
     StartGame(): void {
+        this.PaintBoardIndicators();
     }
     
+    private PaintBoardIndicators()
+    {
+        for (let i = 0; i < GlobalGameSettings.K_TRAGALICA_HIDDEN_WORDS; ++i)
+        {
+            let word = this.m_WordService.GetHiddenWord(i);
+            let guessData = this.m_WordService.CheckWordAttempt(word, i);
+            console.log(GuessAttemptStatus[guessData.guessAttemptStatus]);
+            for (let letterIndex = 0; letterIndex < GlobalGameSettings.K_TRAGALICA_WORD_LENGTH; ++letterIndex)
+            {
+                
+                this.m_Board.PaintLetterColorIndicator(i, letterIndex, ConvertLetterStatusToColor(guessData.letterStatuses[letterIndex]!.status));
+            }
+        }
+    }
 }
