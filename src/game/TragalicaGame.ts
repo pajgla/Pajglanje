@@ -25,6 +25,7 @@ export class TragalicaGame extends GameBase
     protected m_MasterWordDisplay: IMasterWordDisplay = new MasterWordDisplay();
     protected m_WordService: ITragalicaWordService = new TragalicaWordService();
     protected m_DictionaryHolder: IDictionaryHolder = new FiveWordLengthDictionaryHolder();
+    protected m_Score: number = 0;
     
     public override Init(): void {
         super.Init();
@@ -109,6 +110,21 @@ export class TragalicaGame extends GameBase
             this.m_Keyboard.SetEnabled(false);
             this.m_Keyboard.ChangeLockState(true);
         }
+        
+        //Calculate score
+        let score = 0;
+        const hiddenWordAttemptData = this.m_WordService.CheckWordAttempt(this.m_WordService.GetHiddenWord(attemptIndex), attemptIndex);
+        for (let i = 0; i < GlobalGameSettings.K_TRAGALICA_WORD_LENGTH; ++i)
+        {
+            const hiddenAttempt = hiddenWordAttemptData.letterStatuses[i]!.status;
+            const userAttempt = attemptData.letterStatuses[i]!.status;
+            if (hiddenAttempt === userAttempt)
+            {
+                this.m_Score += 10;
+            }
+        }
+        
+        console.log(`Score: ${this.m_Score}`);
     }
 
     StartGame(): void {
