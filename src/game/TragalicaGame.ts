@@ -98,7 +98,17 @@ export class TragalicaGame extends GameBase
         const letterStatuses = attemptData.letterStatuses;
         this.m_Board.ColorAttemptWord(letterStatuses, true).then(() => {
             this.m_Board.NextGuess();
+            this.m_Keyboard.SetEnabled(true);
         });
+        
+        //#TODO Save to savegame
+        if (this.m_Board.GetCurrentAttemptPosition() == GlobalGameSettings.K_TRAGALICA_HIDDEN_WORDS - 1)
+        {
+            //We used last try
+            this.ChangeGameState(EGameState.Lost, false);
+            this.m_Keyboard.SetEnabled(false);
+            this.m_Keyboard.ChangeLockState(true);
+        }
     }
 
     StartGame(): void {

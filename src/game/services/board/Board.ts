@@ -209,7 +209,7 @@ export class Board implements IBoard {
         AnimationsModule.Animation_FlipInAndClear(letterElement).then(() => {});
     }
     
-    protected PaintLetterColorIndicator(guessAttempt: number, letterIndex: number, color: string): void {
+    public PaintLetterColorIndicator(guessAttempt: number, letterIndex: number, color: string): void {
         let letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
         letterElement.style.setProperty(`--indicator-color`, color);
     }
