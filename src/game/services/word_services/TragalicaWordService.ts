@@ -23,11 +23,8 @@ export class TragalicaWordService implements ITragalicaWordService
 
         this.ChooseMasterWord(tragalicaTime);
         
-        //We can use tragalica time as a seed and also as a used index, so we don't master for as a hidden word
-        const masterWordIndex = this.m_Dictionary.indexOf(this.m_MasterWord);
-        //Even if masterWordIndex is -1, we can still continue since we are 100% sure we won't have all green rows
-        
-        this.m_Randomizer = new UniqueRandom(tragalicaTime.toString(), [masterWordIndex]);
+        //We can use tragalica time as a seed and also as a used index, so we don't the master word for as a hidden word
+        this.m_Randomizer = new UniqueRandom(tragalicaTime.toString(), [tragalicaTime]);
         
         this.ChooseHiddenWords(hiddenWords);
         
@@ -60,11 +57,11 @@ export class TragalicaWordService implements ITragalicaWordService
             throw new Error("Randomizer is not initialized");
         }
         
-        const maxIndex = this.m_Dictionary.length - 1;
+        const maxIndex = this.m_DailyWordsDictionary.length - 1;
         for (let i = 0; i < amount; i++)
         {
             const randomIndex = this.m_Randomizer.GetUnique(maxIndex);
-            let chosenWord = this.m_Dictionary[randomIndex]!;
+            let chosenWord = this.m_DailyWordsDictionary[randomIndex]!;
             this.m_HiddenWords.push(chosenWord);
         }
     }

@@ -13,7 +13,9 @@ import {GameTimeHelpers} from "../helpers/GameTimeHelpers";
 import type {IDictionaryHolder} from "./services/dictionaries/IDictionary";
 import {FiveWordLengthDictionaryHolder} from "./services/dictionaries/DictionaryHolder";
 import {ConvertLetterStatusToColor} from "../helpers/ColorFunctions";
-import {GuessAttemptStatus} from "./services/word_services/AttemptStatuses";
+import {GuessAttemptData, GuessAttemptStatus} from "./services/word_services/AttemptStatuses";
+import * as NotificationHelpers from "../helpers/NotificationHelpers";
+import {GlobalViewSettings} from "../siteView/GlobalViewSettings";
 
 export class TragalicaGame extends GameBase
 {
@@ -76,6 +78,27 @@ export class TragalicaGame extends GameBase
     }
 
     protected OnAttemptSubmitted(): void {
+        const attemptWord = this.m_Board.GetCurrentGuess();
+        const attemptIndex = this.m_Board.GetCurrentAttemptPosition();
+        const attemptData: GuessAttemptData = this.m_WordService.CheckWordAttempt(attemptWord, attemptIndex);
+
+        if (attemptData.guessAttemptStatus === GuessAttemptStatus.TooShort)
+        {
+            NotificationHelpers.ShowInfoNotification(GlobalViewSettings.K_SHORT_WORD_INFO);
+            return;
+        }
+
+        if (attemptData.guessAttemptStatus == GuessAttemptStatus.NotInDictionary)
+        {
+            NotificationHelpers.ShowErrorNotification(GlobalViewSettings.K_WORD_NOT_FOUND, 3000);
+            return;
+        }
+
+        this.m_Keyboard.SetEnabled(false);
+        const letterStatuses = attemptData.letterStatuses;
+        this.m_Board.ColorAttemptWord(letterStatuses, true).then(() => {
+            this.m_Board.NextGuess();
+        });
     }
 
     StartGame(): void {
@@ -88,7 +111,6 @@ export class TragalicaGame extends GameBase
         {
             let word = this.m_WordService.GetHiddenWord(i);
             let guessData = this.m_WordService.CheckWordAttempt(word, i);
-            console.log(GuessAttemptStatus[guessData.guessAttemptStatus]);
             for (let letterIndex = 0; letterIndex < GlobalGameSettings.K_TRAGALICA_WORD_LENGTH; ++letterIndex)
             {
                 

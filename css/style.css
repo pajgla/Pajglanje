@@ -202,21 +202,18 @@ header {
     position: absolute;
     top: 4px;
     right: 4px;
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     background: var(--indicator-color, transparent);
     border-radius: 2px;
+    border: 1px solid rgb(45 50 58);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
 .square.has-indicator::after {
     opacity: 1;
-}
-
-.square.indicator-green::after {
-    
-}
+} 
 
 .master-word-square
 {

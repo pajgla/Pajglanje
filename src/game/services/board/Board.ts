@@ -106,7 +106,9 @@ export class Board implements IBoard {
 
     public UpdateFieldColor(guessAttempt: number, letterIndex: number, letterStatus: ELetterStatus, animated: boolean = true): void {
         const letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
-        letterElement.style = GetStyleForLetterStatus(letterStatus);
+        const indicatorStyle = letterElement.style.getPropertyValue("--indicator-color");
+        letterElement.style.cssText = GetStyleForLetterStatus(letterStatus);
+        letterElement.style.setProperty("--indicator-color", indicatorStyle);
         letterElement.setAttribute('data-value', letterStatus.toString());
         if (animated) {
             this.AnimateLetter(letterElement);
