@@ -20,13 +20,14 @@ export class GlobalGameSettings {
     public static readonly K_TRAGALICA_WORD_LENGTH = 5;
     public static readonly K_TRAGALICA_HIDDEN_WORDS = 5;
     public static readonly K_NEXT_TRAGALICA_IN_HOURS = 24;
-    public static readonly K_TRAGALICA_NEGATIVE_SCORE_COLOR = '#f56b53';
+    public static readonly K_TRAGALICA_NEGATIVE_SCORE_COLOR = '#f07e69';
     public static readonly K_TRAGALICA_CORRECT_LETTER_SCORE = 10;
     public static readonly K_TRAGALICA_INCORRECT_LETTER_SCORE = -15;
 
     //Save Game
     public static readonly K_PAJGLA_SAVEGAME_KEY = "pajgla_save_game";
     public static readonly K_BRZALICA_SAVEGAME_KEY = "brzalica_save_game";
+    public static readonly K_TRAGALICA_SAVEGAME_KEY = "tragalica_save_game";
 
     //This is for the old save game version
     public static readonly K_OLD_PAJGLA_SAVEGAME_KEY = "pajgla_saved_game";
