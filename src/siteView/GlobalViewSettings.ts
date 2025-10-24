@@ -45,6 +45,7 @@ export class GlobalViewSettings
     //Other
     public static readonly K_TITLE_ELEMENT_ID = "centralHeaderSpace";
     public static readonly K_PAJGLA_TITLE = "PAJGLANJE";
+    public static readonly K_TRAGALICA_TITLE = "TRAGALICA";
 
     //Help window
     public static readonly K_HELP_WINDOW_BUTTON_ELEMENT_ID = "helpWindowImg";
