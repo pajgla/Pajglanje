@@ -185,7 +185,10 @@ export class Board implements IBoard {
                 throw new Error(`Letter element with ID ${id} not found`);
             }
 
-            letterElement.textContent = "";
+            let textNode = Array.from(letterElement.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+            if (textNode) {
+                textNode.textContent = "";
+            }
             letterElement.setAttribute("data-key", '');
             this.currentLetterPosition = [guessAttempt, letterIndex - 1];
             AnimationsModule.Animation_BounceAndClear(letterElement).then(() => {});

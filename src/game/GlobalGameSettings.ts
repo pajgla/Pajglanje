@@ -22,7 +22,7 @@ export class GlobalGameSettings {
     public static readonly K_NEXT_TRAGALICA_IN_HOURS = 24;
     public static readonly K_TRAGALICA_NEGATIVE_SCORE_COLOR = '#f56b53';
     public static readonly K_TRAGALICA_CORRECT_LETTER_SCORE = 10;
-    public static readonly K_TRAGALICA_INCORRECT_LETTER_SCORE = -5;
+    public static readonly K_TRAGALICA_INCORRECT_LETTER_SCORE = -15;
 
     //Save Game
     public static readonly K_PAJGLA_SAVEGAME_KEY = "pajgla_save_game";
