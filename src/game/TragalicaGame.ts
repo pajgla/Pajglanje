@@ -112,8 +112,11 @@ export class TragalicaGame extends GameBase
         }
         
         //Calculate score
-        let score = 0;
         const hiddenWordAttemptData = this.m_WordService.CheckWordAttempt(this.m_WordService.GetHiddenWord(attemptIndex), attemptIndex);
+        let scores: number[] = [];
+
+        const correctScore = GlobalGameSettings.K_TRAGALICA_CORRECT_LETTER_SCORE;
+        const incorrectScore = GlobalGameSettings.K_TRAGALICA_INCORRECT_LETTER_SCORE;
         for (let i = 0; i < GlobalGameSettings.K_TRAGALICA_WORD_LENGTH; ++i)
         {
             const hiddenAttempt = hiddenWordAttemptData.letterStatuses[i]!.status;
@@ -124,18 +127,13 @@ export class TragalicaGame extends GameBase
                 console.error(`Letter element not found`);
                 continue;
             }
-            
-            if (hiddenAttempt === userAttempt)
-            {
-                this.m_Score += 10;
-                letterElement.querySelector('.score-display')!.textContent = '+10';
-            }
-            else
-            {
-                this.m_Score -= 10;
-                letterElement.querySelector('.score-display')!.textContent = '-10';
-            }
+
+            const score = hiddenAttempt == userAttempt ? correctScore : incorrectScore;
+            scores.push(score);
+            this.m_Score += score;
         }
+        
+        this.m_Board.SetLetterScores(scores, true);
         
         console.log(`Score: ${this.m_Score}`);
     }

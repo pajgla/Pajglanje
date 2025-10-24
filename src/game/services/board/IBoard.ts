@@ -12,4 +12,5 @@ export interface IBoard {
     ClearBoard(): void;
     PaintLetterColorIndicator(guessAttempt: number, letterIndex: number, color: string): void;
     GetLetterHTMLElement(guessAttempt: number, letterIndex: number): HTMLElement;
+    SetLetterScores(scores: number[], delay: boolean): Promise<void>;
 }

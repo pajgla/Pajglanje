@@ -128,6 +128,24 @@ export class Board implements IBoard {
             this.AnimateLetter(letterElement);
         }
     }
+    
+    public UpdateScoreColor(guessAttempt: number, letterIndex: number, score: number): void
+    {
+        const letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
+        const scoreDisplay = letterElement.querySelector(".score-display") as HTMLElement;
+        if (!scoreDisplay) {
+            throw new Error("Score display not found");
+        }
+        
+        if (score >= 0)
+        {
+            //Nothing for now ..
+        }
+        else
+        {
+            scoreDisplay.style.color = GlobalGameSettings.K_TRAGALICA_NEGATIVE_SCORE_COLOR;
+        }
+    }
 
     public GetLetterHTMLElement(guessAttempt: number, letterIndex: number): HTMLElement
     {
@@ -213,6 +231,35 @@ export class Board implements IBoard {
                     this.UpdateFieldColor(guessAttempt, i, letterStatuses[i]!.status!, true);
                     
             }, flipDelay * i);            
+        }
+
+        await new Promise(resolve => setTimeout(resolve, totalDuration));
+    }
+    
+    public async SetLetterScores(scores: number[], delay: boolean = true): Promise<void>
+    {
+        if (scores.length != GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH)
+        {
+            throw new Error("Scores length is not correct");
+        }
+        
+        const flipDelay = delay ? GlobalViewSettings.K_LETTER_FLIP_DELAY : 0;
+        const totalDuration = GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH * flipDelay;
+        
+        const guessAttempt = this.currentLetterPosition[0];
+        for (let i = 0; i < GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH; ++i) {
+            let letterElement = this.GetLetterHTMLElement(guessAttempt, i);
+            let scoreDisplay = letterElement.querySelector(".score-display") as HTMLElement;
+            if (!scoreDisplay) {
+                throw new Error("Score display not found");
+            }
+
+            const sign = scores[i]! >= 0 ? "+" : "";
+            const score = scores[i]!;
+            setTimeout(async () => {
+                scoreDisplay.textContent = `${sign}${score}`;
+                this.UpdateScoreColor(guessAttempt, i, score, true);
+            }, flipDelay * i);
         }
 
         await new Promise(resolve => setTimeout(resolve, totalDuration));
