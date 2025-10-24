@@ -47,6 +47,12 @@ export class Board implements IBoard {
         square.setAttribute("id", this.GetIDForField(guessAttempt, letterIndex));
         square.setAttribute("data-key", '');
         square.setAttribute("data-value", "");
+        
+        //Add points display
+        let scoreDisplay: HTMLElement = document.createElement("span");
+        scoreDisplay.classList.add("score-display");
+        square.appendChild(scoreDisplay);
+        
         return square
     }
 
@@ -100,7 +106,15 @@ export class Board implements IBoard {
 
     public UpdateFieldLetter(guessAttempt: number, letterIndex: number, letter: string): void {
         let letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
-        letterElement.textContent = `${letter}`.toUpperCase();
+        let textNode = Array.from(letterElement.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+        if (textNode) {
+            textNode.textContent = `${letter}`.toUpperCase();
+        }
+        else
+        {
+            letterElement.insertBefore(document.createTextNode(`${letter}`.toUpperCase()), letterElement.firstChild);
+        }
+        
         letterElement.setAttribute("data-key", letter);
     }
 
@@ -115,7 +129,7 @@ export class Board implements IBoard {
         }
     }
 
-    private GetLetterHTMLElement(guessAttempt: number, letterIndex: number): HTMLElement
+    public GetLetterHTMLElement(guessAttempt: number, letterIndex: number): HTMLElement
     {
         const letterID = this.GetIDForField(guessAttempt, letterIndex);
         let letterHTMLElement = document.getElementById(letterID);

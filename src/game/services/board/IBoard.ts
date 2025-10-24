@@ -11,4 +11,5 @@ export interface IBoard {
     GetIDForField(guessAttempt: number, letterIndex: number): string;
     ClearBoard(): void;
     PaintLetterColorIndicator(guessAttempt: number, letterIndex: number, color: string): void;
+    GetLetterHTMLElement(guessAttempt: number, letterIndex: number): HTMLElement;
 }

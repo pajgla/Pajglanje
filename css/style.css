@@ -214,6 +214,26 @@ header {
     opacity: 1;
 } 
 
+.square .score-display {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.4em;
+    font-weight: bold;
+    color: #f4c430;
+    pointer-events: none;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8), 0 0 6px rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 1px 4px;
+    border-radius: 3px;
+    backdrop-filter: blur(2px);
+}
+
+.square .score-display:empty {
+    display: none;
+}
+
 .master-word-square
 {
     border: 2px solid rgb(60 110 20 / 40%);

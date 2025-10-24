@@ -118,9 +118,22 @@ export class TragalicaGame extends GameBase
         {
             const hiddenAttempt = hiddenWordAttemptData.letterStatuses[i]!.status;
             const userAttempt = attemptData.letterStatuses[i]!.status;
+            const letterElement = this.m_Board.GetLetterHTMLElement(attemptIndex, i);
+            if (!letterElement)
+            {
+                console.error(`Letter element not found`);
+                continue;
+            }
+            
             if (hiddenAttempt === userAttempt)
             {
                 this.m_Score += 10;
+                letterElement.querySelector('.score-display')!.textContent = '+10';
+            }
+            else
+            {
+                this.m_Score -= 10;
+                letterElement.querySelector('.score-display')!.textContent = '-10';
             }
         }
         
