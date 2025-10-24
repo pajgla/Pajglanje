@@ -19,6 +19,7 @@ import {GlobalViewSettings} from "../siteView/GlobalViewSettings";
 import {TragalicaSave} from "../save/TragalicaSave";
 import * as WordHelpers from '../helpers/WordHelpers';
 import type {TragalicaSaveStorage} from "../save/save_storage/TragalicaSaveStorage";
+import $ from "jquery";
 
 export class TragalicaGame extends GameBase
 {
@@ -81,6 +82,9 @@ export class TragalicaGame extends GameBase
                 this.ChangeSaveGameState(EGameState.Lost);
                 this.m_Keyboard.SetEnabled(false);
                 this.m_Keyboard.ChangeLockState(true);
+                GlobalEvents.Dispatch(EventTypes.CreateStatisticsFooterEvent);
+                GlobalEvents.Dispatch(EventTypes.StartNextGameTimerEvent);
+                NotificationHelpers.ShowCongratsNotification(`Tragalica zavrsena! Poeni: ${this.m_Score}`);
                 break;
             }
 
@@ -90,11 +94,33 @@ export class TragalicaGame extends GameBase
         }
     }
 
+    private OpenStatisticsWindow()
+    {
+        let statisticsLinkElement = document.getElementById(GlobalViewSettings.K_STATISTICS_POPUP_ELEMENT_ID);
+        if (!statisticsLinkElement)
+        {
+            console.error(`Cannot find statistics element with id ${statisticsLinkElement}`);
+        }
+        else
+        {
+            ($('#statisticsPopup') as any).modal({
+                fadeDuration: 100
+            });
+        }
+    }
+
     private ChangeSaveGameState(newState: EGameState): void {
         let saveData = this.m_SaveGame.GetSaveGame();
         saveData.gameState = newState;
         this.m_SaveGame.OverwriteCachedSave(saveData);
         this.m_SaveGame.TriggerSave(GlobalGameSettings.K_TRAGALICA_SAVEGAME_KEY);
+        
+        if (newState === EGameState.Won || newState === EGameState.Lost)
+        {
+            setTimeout(async () => {
+                this.OpenStatisticsWindow();
+            }, 500);
+        }
     }
 
     private CalculateAndApplyScore(attemptIndex: number, attemptData: GuessAttemptData, shouldAnimate: boolean): number {
