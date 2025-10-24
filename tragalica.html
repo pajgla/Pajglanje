@@ -272,64 +272,46 @@
         <!-- Help window -->
         <div id="helpWindow" class="modal">
             <h2>Pravila</h2>
-            <p>Pogodi zadatu reč u 6 pokušaja.</p><br />
-            <p>Nakon svakog pokušaja, boja polja svakog slova će se promeniti i prikazati koliko je tvoj odgovor bio blizu u odnosu na zadatu reč.</p><br />
-            <p>Reč koju pogađaš može da sadrži više istih slova (primer: ALATI - 2 slova A u istoj reči)</p><br />
+            <p>Pronađi reč koja će dati traženi obrazac boja u 5 pokušaja.</p><br />
+            <p>Svako polje na tabli ima <b>mali obojeni indikator</b> koji pokazuje kakav status slova treba da bude na tom mestu.</p><br />
+            <p>Tvoj cilj je da pronađeš reč koja će, kada je uneseš, obojiti red <b>identično</b> kao što su obojeni indikatori.</p><br />
+            <p><b>Bodovanje:</b></p>
+            <ul style="padding-left: 20px; text-align: left;">
+                <li style="font-size: 0.9em;">Svako <b>tačno</b> slovo donosi <b style="color: #50c878;">+10 poena</b></li>
+                <li style="font-size: 0.9em;">Svako <b>netačno</b> slovo oduzima <b style="color: #e74c3c;">-15 poena</b></li>
+            </ul>
+            <br />
             <div id="examples">
-                <br />
-                <p><b>Primeri:</b></p>
+                <p><b>Primer:</b></p>
                 <div class="example">
                     <div class="row">
+                        <p>Ako su obojeni indikatori ovako postavljeni:</p><br />
                         <div class="exampleSquare animate__animated">
-                            l
-                        </div>
-                        <div class="exampleSquare animate__animated">
-                            a
+                            <div class="example-square-indicator" style="background-color: #538d4e;"></div>
                         </div>
                         <div class="exampleSquare animate__animated">
-                            k
-                        </div>
-                        <div class="exampleSquare animate__animated paintCorrectExample">
-                            a
+                            <div class="example-square-indicator" style="background-color: #b59f3b;"></div>
                         </div>
                         <div class="exampleSquare animate__animated">
-                            t
-                        </div>
-                        <p>Samo jedno slovo <b>A</b> se nalazi u reči koju pogađaš i na <b>tačnom</b> je mestu.</p><br />
-
-                        <div class="exampleSquare animate__animated">
-                            p
-                        </div>
-                        <div class="exampleSquare animate__animated paintPresentExample">
-                            l
+                            <div class="example-square-indicator" style="background-color: #3a3a3c;"></div>
                         </div>
                         <div class="exampleSquare animate__animated">
-                            a
+                            <div class="example-square-indicator" style="background-color: #538d4e;"></div>
                         </div>
                         <div class="exampleSquare animate__animated">
-                            t
+                            <div class="example-square-indicator" style="background-color: #3a3a3c;"></div>
                         </div>
-                        <div class="exampleSquare animate__animated">
-                            a
-                        </div>
-                        <p>Slovo <b>L</b> se nalazi u reči koju pogađaš ali je na <b>pogrešnom</b> mestu.</p><br />
-
-                        <div class="exampleSquare animate__animated">
-                            v
-                        </div>
-                        <div class="exampleSquare animate__animated paintCorrectExample">
-                            a
-                        </div>
-                        <div class="exampleSquare animate__animated">
-                            š
-                        </div>
-                        <div class="exampleSquare animate__animated paintPresentExample">
-                            a
-                        </div>
-                        <div class="exampleSquare animate__animated">
-                            r
-                        </div>
-                        <p>Oba slova <b>A</b> se nalaze u reči koju pogađaš. Jedno je na dobrom mestu, drugo nije</p>
+                        <br /><br />
+                        <p>Trebaš da pronađeš reč gde će:</p>
+                        <ul style="padding-left: 20px; text-align: left;">
+                            <li style="font-size: 0.9em;">Prvo slovo biti <b>zeleno</b> (na tačnom mestu)</li>
+                            <li style="font-size: 0.9em;">Drugo slovo biti <b>žuto</b> (u reči ali na pogrešnom mestu)</li>
+                            <li style="font-size: 0.9em;">Treće slovo biti <b>sivo</b> (ne postoji u reči)</li>
+                            <li style="font-size: 0.9em;">Četvrto slovo biti <b>zeleno</b> (na tačnom mestu)</li>
+                            <li style="font-size: 0.9em;">Peto slovo biti <b>sivo</b> (ne postoji u reči)</li>
+                        </ul>
+                        <br />
+                        <p>Kada uneseš tačnu reč, bojeni indikatori i tvoja reč će se poklopiti!</p>
                     </div>
                 </div>
             </div>

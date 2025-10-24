@@ -3,6 +3,8 @@ import {HelpWindowView} from "./help_window/HelpWindowView";
 import {PajglanjeStatisticsWindowView} from "./statistics_window/PajglanjeStatisticsWindowView";
 import {PajglanjeHeaderView} from "./header/PajglanjeHeaderView";
 import {LoaderView} from "./loader/LoaderView";
+import $ from 'jquery'
+import 'jquery-modal'
 
 const sideMenuView = new SideMenuView();
 const helpWindowView = new HelpWindowView();

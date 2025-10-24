@@ -234,6 +234,16 @@ header {
     display: none;
 }
 
+.example-square-indicator
+{
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+}
+
 .master-word-square
 {
     border: 2px solid rgb(60 110 20 / 40%);
@@ -762,7 +772,8 @@ button#shareButton:hover {
     display: inline-block;
     user-select: none;
     margin-bottom: 20px;
-    vertical-align: middle
+    vertical-align: middle;
+    position: relative
 }
 
 #helpWindow,.toastify {
