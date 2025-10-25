@@ -73,6 +73,9 @@ export class GlobalViewSettings
     public static readonly K_TIME_OUT_MESSAGE = `Vreme je isteklo! Reč je bila: `;
     public static readonly K_BRZALICA_FAILED = `Neispajglano. Reč je bila: `;
     public static readonly K_BRZALICA_WORD_GUESSED_MESSAGE = `Bravo! Ukupno ispajglanih reči: {guessed_words}. Idemo dalje`;
+    
+    //Tragalica
+    public static readonly K_TRAGALICA_SCORE_NOTIFICATION = `Trenutni skor: {score}`;
 
     //Server messages
     public static readonly K_LOGIN_FAILED_MESSAGE = 'Došlo je do greške prilikom prijavljivanja';

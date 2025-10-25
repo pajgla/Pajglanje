@@ -169,6 +169,11 @@ export class TragalicaGame extends GameBase
         this.m_Board.ColorAttemptWord(letterStatuses, true).then(() => {
             this.m_Board.NextGuess();
             this.m_Keyboard.SetEnabled(true);
+            
+            if (this.m_Board.GetCurrentAttemptPosition() < GlobalGameSettings.K_TRAGALICA_HIDDEN_WORDS)
+            {
+                NotificationHelpers.ShowInfoNotification(GlobalViewSettings.formatMessage(GlobalViewSettings.K_TRAGALICA_SCORE_NOTIFICATION, {score: this.m_Score.toString()}), 2000);
+            }
         });
 
         // Calculate and apply score
