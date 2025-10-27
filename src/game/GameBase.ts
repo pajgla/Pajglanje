@@ -13,16 +13,12 @@ import type { IGameWordService } from "./services/word_services/IGameWordService
 import { PajglanjeWordService } from "./services/word_services/PajglanjeWordService";
 
 export abstract class GameBase implements IGame {
-    protected m_Board: IBoard = new Board(GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH, GlobalGameSettings.K_PAJGLANJE_ATTEMPTS);
     protected m_Keyboard: IKeyboard = new Keyboard();
-    protected m_DictionaryHolder: IDictionaryHolder = new FiveWordLengthDictionaryHolder();
-    protected m_WordService :IGameWordService = new PajglanjeWordService();
+    
     protected m_CurrentGameState: EGameState = EGameState.InProgress;
 
     public Init(): void {
-        this.m_Board.CreateBoardElement();
         this.m_Keyboard.Init();
-        this.m_WordService.Init(this.m_DictionaryHolder);
 
         this.InitCallbacks();
     }
@@ -36,14 +32,6 @@ export abstract class GameBase implements IGame {
         GlobalEvents.AddListener(EventTypes.ConfirmKeyPressedEvent, () => {
             this.OnAttemptSubmitted();
         });
-
-        GlobalEvents.AddListener(EventTypes.DeleteKeyPressedEvent, () => {
-            this.m_Board.RetractLetter();
-        });
-    }
-
-    protected OnKeyPressed(key: string) {
-        this.m_Board.FillNextLetter(key);
     }
 
     protected ChangePageTitle(gameName: string, gameTime: number)
@@ -53,6 +41,7 @@ export abstract class GameBase implements IGame {
     }
 
     protected abstract ChangeGameState(newState: EGameState, fromSave: boolean): void;
+    protected abstract OnKeyPressed(key: string): void;
     protected abstract OnAttemptSubmitted(): void;
     
 

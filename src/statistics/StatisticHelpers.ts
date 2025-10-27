@@ -42,3 +42,12 @@ export function GetEmptyBrzalicaStatsHolder(): BrzalicaStatsHolder
             histogram: Array(GlobalGameSettings.K_BRZALICA_ATTEMPTS).fill(0)
         };
 }
+
+export function GetEmptyTragalicaStatsHolder() {
+    return {
+        gamesPlayed: 0,
+        perfectGames: 0,
+        averageScore: 0,
+        totalScore: 0
+    }
+}

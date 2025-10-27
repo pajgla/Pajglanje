@@ -25,9 +25,31 @@ export class SideMenuView
             throw new Error(`Close side menu button not found with ID ${GlobalViewSettings.K_SIDE_MENU_CLOSE_BUTTON_ELEMENT_ID}`);
         }
 
+
+
+        this.AddSideMenuLink("/pajglanje.html", "Pajglanje");
+        this.AddSideMenuLink("/brzalica.html", "Brzalica");
+        this.AddSideMenuLink("/tragalica.html", "Tragalica");
+
         closeSideMenuButtonElement.addEventListener('click', event => {
+            console.log("Close side menu button clicked");
             this.CloseSideMenu();
         });
+        console.log("Side menu view initialized");
+    }
+    
+    private AddSideMenuLink(link: string, display: string)
+    {
+        let sideMenuButtonElement = document.getElementById(GlobalViewSettings.K_SIDE_MENU_ELEMENT_ID);
+        if (!sideMenuButtonElement)
+        {
+            throw new Error(`Side menu button not found with ID ${GlobalViewSettings.K_SIDE_MENU_ELEMENT_ID}`);
+        }
+        
+        const newLink = document.createElement('a');
+        newLink.href = link;
+        newLink.textContent = display;
+        sideMenuButtonElement.appendChild(newLink);
     }
 
     private OpenSideMenu()

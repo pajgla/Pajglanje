@@ -6,6 +6,9 @@ export class GlobalViewSettings
     {
         return message.replace(/\{(\w+)\}/g, (_, key) => values[key] ?? '');    
     }
+    
+    //Board
+    public static readonly K_BOARD_ELEMENT_ID = "board";
 
     //Word guessing
     public static readonly K_SHORT_WORD_INFO = "Uneta reč je prekratka";
@@ -38,10 +41,14 @@ export class GlobalViewSettings
     public static readonly K_TIMER_ELEMENT_ID = "nextPajglaTimer";
     public static readonly K_SHARE_BUTTON_ID = "shareButton";
     public static readonly K_SHARE_BUTTON_TEXT = "Podeli";
+    public static readonly K_PERFECT_GAMES_ELEMENT_ID = "perfectGamesStatistics";
+    public static readonly K_AVERAGE_SCORE_ELEMENT_ID = "avgScoreStatistics";
+    public static readonly K_TOTAL_SCORE_ELEMENT_ID = "totalPointsStatistics";
 
     //Other
     public static readonly K_TITLE_ELEMENT_ID = "centralHeaderSpace";
     public static readonly K_PAJGLA_TITLE = "PAJGLANJE";
+    public static readonly K_TRAGALICA_TITLE = "TRAGALICA";
 
     //Help window
     public static readonly K_HELP_WINDOW_BUTTON_ELEMENT_ID = "helpWindowImg";
@@ -58,6 +65,8 @@ export class GlobalViewSettings
     public static readonly K_CORRECT_TILE_SHARE_VISUAL = '🟩';
     public static readonly K_PRESENT_TILE_SHARE_VISUAL = '🟨';
     public static readonly K_ABSENT_TILE_SHARE_VISUAL = '⬛';
+    public static readonly K_POSITIVE_SCORE_SHARE_VISUAL = '🟩';
+    public static readonly K_NEGATIVE_SCORE_SHARE_VISUAL = '🟥';
     public static readonly K_COPY_SUCCESSFUL_MESSAGE = "Kopirano i spremno za slanje!";
 
     //Loader
@@ -69,6 +78,11 @@ export class GlobalViewSettings
     public static readonly K_TIME_OUT_MESSAGE = `Vreme je isteklo! Reč je bila: `;
     public static readonly K_BRZALICA_FAILED = `Neispajglano. Reč je bila: `;
     public static readonly K_BRZALICA_WORD_GUESSED_MESSAGE = `Bravo! Ukupno ispajglanih reči: {guessed_words}. Idemo dalje`;
+    
+    //Tragalica
+    public static readonly K_TRAGALICA_SCORE_NOTIFICATION = `Trenutni skor: {score}`;
+    public static readonly K_SCORE_ELEMENT_CLASS = `.score-display`;
+    public static readonly K_SCORE_ELEMENT_CLASS_NAME = `score-display`;
 
     //Server messages
     public static readonly K_LOGIN_FAILED_MESSAGE = 'Došlo je do greške prilikom prijavljivanja';

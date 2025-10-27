@@ -4,6 +4,7 @@ import * as WordHelpers from '../../../helpers/WordHelpers'
 import type { IDictionaryHolder } from "../dictionaries/IDictionary";
 import { ShowErrorNotification } from "../../../helpers/NotificationHelpers";
 import { GlobalGameSettings } from "../../GlobalGameSettings";
+import {CheckWordAttempt} from "../../../helpers/WordHelpers";
 
 export class PajglanjeWordService implements IGameWordService {
     private m_GuessWord: string = "";
@@ -61,78 +62,6 @@ export class PajglanjeWordService implements IGameWordService {
     }
 
     public CheckWordAttempt(attemptWord: string): GuessAttemptData {
-        const attemptWordLength = WordHelpers.SerbianWordLength(attemptWord);
-        const guessWordLength = WordHelpers.SerbianWordLength(this.GetGuessWord());
-        if (attemptWordLength > guessWordLength)
-        {
-            throw new Error(`Attempt word is longer than guess word. How did this happen? Attempt: ${attemptWord}, guess word ${this.m_GuessWord}`);
-        }
-        
-        let result: GuessAttemptData = new GuessAttemptData();
-        if (attemptWordLength < guessWordLength)
-        {
-            result.guessAttemptStatus = GuessAttemptStatus.TooShort;
-            return result;
-        }
-
-        attemptWord = WordHelpers.ToWorkingCase(attemptWord);
-        if (!this.m_Dictionary.includes(attemptWord)) {
-            result.guessAttemptStatus = GuessAttemptStatus.NotInDictionary;
-            return result;
-        }
-
-        const attemptWordCharArray = WordHelpers.SerbianWordToCharArray(attemptWord);
-        const correctWordCharArray = WordHelpers.SerbianWordToCharArray(WordHelpers.ToWorkingCase(this.GetGuessWord()));
-        let letterStatuses: LetterStatusWrapper[] = Array();
-        let remainingCharsFreq: Record<string, number> = {};
-
-        result.guessAttemptStatus = GuessAttemptStatus.Incorrect;
-
-        let allCorrect: boolean = true;
-        for (let i = 0; i < attemptWordCharArray.length; ++i)
-        {
-            const attemptChar = attemptWordCharArray[i];
-            const correctChar = correctWordCharArray[i];
-
-            if (!attemptChar || !correctChar)
-            {
-                throw new Error("One of the characters is null or undefined");
-            }
-
-            if (attemptChar == correctChar)
-            {
-                letterStatuses.push({char: attemptChar!, status: ELetterStatus.Correct});
-            }
-            else
-            {
-                letterStatuses.push({char: attemptChar!, status: ELetterStatus.Absent}); //Just for now
-                remainingCharsFreq[correctChar] = (remainingCharsFreq[correctChar] ?? 0) + 1; //count letters
-                allCorrect = false;
-            }
-        }
-
-        if (allCorrect)
-        {
-            result.letterStatuses = letterStatuses;
-            result.guessAttemptStatus = GuessAttemptStatus.Correct;
-            return result;
-        }
-
-        for (let i = 0; i < attemptWordCharArray.length; ++i)
-        {
-            if (letterStatuses[i]!.status === ELetterStatus.Absent)
-            {
-                const char = attemptWordCharArray[i];
-                if ((remainingCharsFreq[char!] ?? 0) > 0)
-                {
-                    letterStatuses[i]!.status = ELetterStatus.Present;
-                    remainingCharsFreq[char!]!--;
-                }
-            }
-        }
-
-        result.letterStatuses = letterStatuses;
-
-        return result;
+        return WordHelpers.CheckWordAttempt(this.GetGuessWord(), attemptWord, this.m_Dictionary);
     }
 }

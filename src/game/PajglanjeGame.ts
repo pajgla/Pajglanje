@@ -14,21 +14,40 @@ import { CopyToClipboard, LetterStateToShareSymbol } from '../helpers/ShareHelpe
 import { GameBase } from './GameBase';
 import $ from 'jquery'
 import 'jquery-modal'
+import type {IBoard} from "./services/board/IBoard";
+import {Board} from "./services/board/Board";
+import type {IDictionaryHolder} from "./services/dictionaries/IDictionary";
+import {FiveWordLengthDictionaryHolder} from "./services/dictionaries/DictionaryHolder";
+import type {IGameWordService} from "./services/word_services/IGameWordService";
+import {PajglanjeWordService} from "./services/word_services/PajglanjeWordService";
 
 export class PajglanjeGame extends GameBase {
+    protected m_Board: IBoard = new Board(GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH, GlobalGameSettings.K_PAJGLANJE_ATTEMPTS);
     private m_Save: PajglanjeSave = new PajglanjeSave();
     private m_StatisticsManager: PajglanjeStatisticsManager = new PajglanjeStatisticsManager();
+    protected m_DictionaryHolder: IDictionaryHolder = new FiveWordLengthDictionaryHolder();
+    protected m_WordService :IGameWordService = new PajglanjeWordService();
 
     public override Init(): void {
         super.Init();
 
+        this.m_Board.CreateBoardElement();
         this.m_Save.Init();
+        this.m_WordService.Init(this.m_DictionaryHolder);
     }
 
     protected override InitCallbacks(): void {
         super.InitCallbacks();
 
         GlobalEvents.AddListener(EventTypes.OnShareButtonClickedEvent, this.OnShareButtonClicked.bind(this));
+
+        GlobalEvents.AddListener(EventTypes.DeleteKeyPressedEvent, () => {
+            this.m_Board.RetractLetter();
+        });
+    }
+
+    protected OnKeyPressed(key: string) {
+        this.m_Board.FillNextLetter(key);
     }
 
     protected override ChangeGameState(newState: EGameState, fromSave: boolean = false)

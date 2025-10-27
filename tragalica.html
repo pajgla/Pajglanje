@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-595XEYLQ7Y"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-595XEYLQ7Y');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pajglanje</title>
+
+    <!-- SCRIPTS -->
+    <script type="module" src="src/siteView/TragalicaViewHost.ts"></script>
+    <script type="module" src="src/TragalicaHost.ts"></script>
+    <script type="module" src="js/popupAnimations.ts"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/toastify.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.css">
+
+    <!-- FAVICON -->
+    <link rel="icon" type="image/ico" href="favicon.ico" />
+</head>
+<body>
+<!-- LOADER -->
+<div id="loader"></div>
+
+<div id="container">
+    <div id="game">
+        <header>
+            <div id="leftHeaderSpace">
+                <a href="#" class="headerLink">
+                    <img id="openSideMenuButton" src="images/menuIcon.png" class="headerIcon invert" />
+                </a>
+                <a id="helpWindowLink" class="headerLink" href="#helpWindow" rel="modal:open">
+                    <img id="helpWindowImg" src="images/helpIcon.png" class="headerIcon invert" />
+                </a>
+            </div>
+            <div id="centralHeaderSpace">
+                TRAGALICA
+            </div>
+            <div id="rightHeaderSpace">
+                <a id="userPopupLink" class="headerLink" href="#userPopup">
+                    <img src="images/user.png" class="headerIcon invert"/>
+                </a>
+                <a id="statisticsPopupLink" class="headerLink" href="#statisticsPopup" rel="modal:open">
+                    <img src="images/statisticsIcon.png" class="headerIcon invert"/>
+                </a>
+            </div>
+        </header>
+
+        <div id="board-container">
+            <div id="board">
+                <!-- GAME BOARD WILL GENERATE HERE -->
+            </div>
+        </div>
+        <div id="keyboard-container">
+            <div id="keyboard-wrapper">
+                <div class="keyboard-row">
+                    <button class="unused" data-key="lj">lj</button>
+                    <button class="unused" data-key="nj">nj</button>
+                    <button class="unused" data-key="e">e</button>
+                    <button class="unused" data-key="r">r</button>
+                    <button class="unused" data-key="t">t</button>
+                    <button class="unused" data-key="z">z</button>
+                    <button class="unused" data-key="u">u</button>
+                    <button class="unused" data-key="i">i</button>
+                    <button class="unused" data-key="o">o</button>
+                    <button class="unused" data-key="p">p</button>
+                    <button class="unused" data-key="š">š</button>
+                </div>
+                <div class="keyboard-row">
+                    <div class="spacer-half"></div>
+                    <button class="unused" data-key="a">a</button>
+                    <button class="unused" data-key="s">s</button>
+                    <button class="unused" data-key="d">d</button>
+                    <button class="unused" data-key="f">f</button>
+                    <button class="unused" data-key="g">g</button>
+                    <button class="unused" data-key="h">h</button>
+                    <button class="unused" data-key="j">j</button>
+                    <button class="unused" data-key="k">k</button>
+                    <button class="unused" data-key="l">l</button>
+                    <button class="unused" data-key="č">č</button>
+                    <button class="unused" data-key="ć">ć</button>
+                    <div class="spacer-half"></div>
+                </div>
+                <div class="keyboard-row">
+                    <button class="BigKeyboardButton unused" data-key="enter" class="wide-button">Unesi</button>
+                    <button class="unused" data-key="dž">dž</button>
+                    <button class="unused" data-key="c">c</button>
+                    <button class="unused" data-key="v">v</button>
+                    <button class="unused" data-key="b">b</button>
+                    <button class="unused" data-key="n">n</button>
+                    <button class="unused" data-key="m">m</button>
+                    <button class="unused" data-key="đ">đ</button>
+                    <button class="unused" data-key="ž">ž</button>
+                    <button class="BigKeyboardButton unused" data-key="del" class="wide-button">
+                        <img src="images/delete_inverted.png" />
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="statisticsPopup" class="modal" style="padding: 15px 10px;">
+            <h1>Statistika</h1>
+            <div id="statistics">
+                <!-- Statistics -->
+                <div class="statistics-container">
+                    <div class="statistics" id="gamesPlayedStatistics">
+                        0
+                    </div>
+                    <div class="label">
+                        odigrano
+                    </div>
+                </div>
+                <div class="statistics-container">
+                    <div class="statistics" id="perfectGamesStatistics">
+                        0
+                    </div>
+                    <div class="label">
+                        savršeno odigranih
+                    </div>
+                </div>
+                <div class="statistics-container">
+                    <div class="statistics" id="avgScoreStatistics">
+                        0
+                    </div>
+                    <div class="label">
+                        prosečan skor
+                    </div>
+                </div>
+                <div class="statistics-container">
+                    <div class="statistics" id="totalPointsStatistics">
+                        0
+                    </div>
+                    <div class="label">
+                        ukupno poena
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics footer -->
+            <div id="footer">
+            </div>
+        </div>
+
+        <!-- User popup-->
+        <div class="popup-overlay" id="loginPopup">
+            <div class="popup">
+                <button class="close-btn" id="closePopup">
+                    &times;
+                </button>
+
+                <div class="form-container">
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%;">
+                        <b style="color: white; font-size: large;">USKORO!</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- USER LOGGED IN POPUP -->
+        <div class="popup-overlay" id="userProfilePopup">
+            <div class="popup">
+                <button class="close-btn" id="closePopup">
+                    &times;
+                </button>
+
+
+            </div>
+        </div>
+
+        <!-- Help window -->
+        <div id="helpWindow" class="modal">
+            <h2>Pravila</h2>
+            <p>Pronađi reč koja će dati traženi obrazac boja u odnosu na glavnu reč.</p><br />
+            <p>Svako polje na tabli ima <b>mali obojeni indikator</b> koji pokazuje kakav status slova treba da bude na tom mestu.</p><br />
+            <p>Tvoj cilj je da pronađeš reč koja će, kada je uneseš, obojiti red <b>identično</b> kao što su obojeni indikatori.</p><br />
+            <p><b>Bodovanje:</b></p>
+            <ul style="padding-left: 20px; text-align: left;">
+                <li style="font-size: 0.9em;">Svako <b>tačno</b> slovo donosi <b style="color: #50c878;">10 poena</b></li>
+                <li style="font-size: 0.9em;">Svako <b>netačno</b> slovo oduzima <b style="color: #e74c3c;">15 poena</b></li>
+            </ul>
+            <br />
+            <div id="examples">
+                <p><b>Primer:</b></p>
+                <div class="example">
+                    <div class="row">
+                        <p>Ako su obojeni indikatori ovako postavljeni:</p><br />
+                        <div class="exampleSquare animate__animated">
+                            <div class="example-square-indicator" style="background-color: #538d4e;"></div>
+                        </div>
+                        <div class="exampleSquare animate__animated">
+                            <div class="example-square-indicator" style="background-color: #b59f3b;"></div>
+                        </div>
+                        <div class="exampleSquare animate__animated">
+                            <div class="example-square-indicator" style="background-color: #3a3a3c;"></div>
+                        </div>
+                        <div class="exampleSquare animate__animated">
+                            <div class="example-square-indicator" style="background-color: #538d4e;"></div>
+                        </div>
+                        <div class="exampleSquare animate__animated">
+                            <div class="example-square-indicator" style="background-color: #3a3a3c;"></div>
+                        </div>
+                        <br /><br />
+                        <p>Trebaš da pronađeš reč gde će:</p>
+                        <ul style="padding-left: 20px; text-align: left;">
+                            <li style="font-size: 0.9em;">Prvo slovo biti <b>zeleno</b> (na tačnom mestu)</li>
+                            <li style="font-size: 0.9em;">Drugo slovo biti <b>žuto</b> (u reči ali na pogrešnom mestu)</li>
+                            <li style="font-size: 0.9em;">Treće slovo biti <b>sivo</b> (ne postoji u reči)</li>
+                            <li style="font-size: 0.9em;">Četvrto slovo biti <b>zeleno</b> (na tačnom mestu)</li>
+                            <li style="font-size: 0.9em;">Peto slovo biti <b>sivo</b> (ne postoji u reči)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SIDE MENU -->
+        <div id="sideMenu">
+            <a href="javascript:void(0)" id="closeSideMenuButton" class="closeButton">&times;</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

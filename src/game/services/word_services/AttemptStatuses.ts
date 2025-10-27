@@ -21,5 +21,6 @@ export interface LetterStatusWrapper
 
 export class GuessAttemptData {
     public guessAttemptStatus: GuessAttemptStatus = GuessAttemptStatus.Incorrect;
+    //#TODO !IMPORTANT! - This won't work for a game mode where we have different word length than pajglanje
     public letterStatuses: LetterStatusWrapper[] = Array(GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH);
 }

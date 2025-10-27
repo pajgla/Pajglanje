@@ -17,5 +17,8 @@ export enum EventTypes {
     OnBrzalicaWordGuessed = "onBrzalicaWordGuessed",
     OnBrzalicaGameOver = 'onBrzalicaTimeOut',
     PopulateBrzalicaStatisticsView = 'populateBrzalicaStatisticsView',
+    NewTragalicaGameStartedEvent = "newTragalicaGameStartedEvent",
+    OnTragalicaGameOver = 'onTragalicaGameOver',
+    PopulateTragalicaStatisticsView = 'populateTragalicaStatisticsView',
 }
 

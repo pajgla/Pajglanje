@@ -17,6 +17,18 @@ export function LetterStateToShareSymbol(letterState: ELetterStatus): string
     }
 }
 
+export function ScoreToShareSymbol(score: number): string
+{
+    if (score <= 0)
+    {
+        return GlobalViewSettings.K_NEGATIVE_SCORE_SHARE_VISUAL;
+    }
+    else
+    {
+        return GlobalViewSettings.K_POSITIVE_SCORE_SHARE_VISUAL;
+    }
+}
+
 export function CopyToClipboard(message: string)
 {
     navigator.clipboard.writeText(message).then(() => {

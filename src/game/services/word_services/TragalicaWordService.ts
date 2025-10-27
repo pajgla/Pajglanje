@@ -1,0 +1,79 @@
+import type {ITragalicaWordService} from "./ITragalicaWordService";
+import type {GuessAttemptData} from "./AttemptStatuses";
+import type {IDictionaryHolder} from "../dictionaries/IDictionary";
+import * as WordHelpers from "../../../helpers/WordHelpers";
+import {UniqueRandom} from "../../../helpers/UniqueRandom";
+
+export class TragalicaWordService implements ITragalicaWordService
+{
+    private m_DailyWordsDictionary :string[] = [];
+    private m_Dictionary: string[] = [];
+    private m_HiddenWords: string[] = [];
+    private m_Randomizer: UniqueRandom | null = null;
+    private m_MasterWord: string = "";
+    
+    Init(dictionaryHolder: IDictionaryHolder, tragalicaTime: number, hiddenWords: number): void {
+        if (!dictionaryHolder)
+        {
+            throw new Error("Provided null dictionary holder for Tragalica Initialization");
+        }
+
+        this.m_Dictionary = dictionaryHolder.GetGuessWordsDictionary().map((word :string) => WordHelpers.ToWorkingCase(word));
+        this.m_DailyWordsDictionary = dictionaryHolder.GetDailyWordsDictionary().map((word) => WordHelpers.ToWorkingCase(word));
+
+        this.ChooseMasterWord(tragalicaTime);
+        
+        //We can use tragalica time as a seed and also as a used index, so we don't the master word for as a hidden word
+        this.m_Randomizer = new UniqueRandom(tragalicaTime.toString(), [tragalicaTime]);
+        
+        this.ChooseHiddenWords(hiddenWords);
+    }
+
+    ChooseMasterWord(tragalicaTime: number): void
+    {        
+        let dailyWordsArray = this.m_DailyWordsDictionary;
+        if (tragalicaTime >= dailyWordsArray.length)
+        {
+            throw new Error("Tragalica time is out of bounds");
+        }
+        
+        this.m_MasterWord = dailyWordsArray[tragalicaTime]!;
+    }
+    
+    CheckWordAttempt(attemptWord: string, index: number): GuessAttemptData {
+        if (index >= this.m_HiddenWords.length)
+        {
+            throw new Error("Index is out of bounds");
+        }
+        
+        return WordHelpers.CheckWordAttempt(this.m_MasterWord, attemptWord, this.m_Dictionary);
+    }
+
+    ChooseHiddenWords(amount: number): void {
+        if (!this.m_Randomizer)
+        {
+            throw new Error("Randomizer is not initialized");
+        }
+        
+        const maxIndex = this.m_DailyWordsDictionary.length - 1;
+        for (let i = 0; i < amount; i++)
+        {
+            const randomIndex = this.m_Randomizer.GetUnique(maxIndex);
+            let chosenWord = this.m_DailyWordsDictionary[randomIndex]!;
+            this.m_HiddenWords.push(chosenWord);
+        }
+    }
+
+    GetHiddenWord(index: number): string {
+        if (index >= this.m_HiddenWords.length)
+        {
+            throw new Error("Index is out of bounds");
+        }
+        
+        return this.m_HiddenWords[index]!;
+    }
+    
+    GetMasterWord(): string {
+        return this.m_MasterWord;
+    }
+}

@@ -14,6 +14,12 @@ import * as WordHelpers from '../helpers/WordHelpers'
 import type { BrzalicaSaveStorage } from "../save/save_storage/BrzalicaSaveStorage";
 import { BrzalicaStatisticsManager } from "../statistics/brzalica/BrzalicaStatisticsManager";
 import { CopyToClipboard } from "../helpers/ShareHelpers";
+import type {IBoard} from "./services/board/IBoard";
+import {Board} from "./services/board/Board";
+import type {IDictionaryHolder} from "./services/dictionaries/IDictionary";
+import {FiveWordLengthDictionaryHolder} from "./services/dictionaries/DictionaryHolder";
+import type {IGameWordService} from "./services/word_services/IGameWordService";
+import {PajglanjeWordService} from "./services/word_services/PajglanjeWordService";
 
 export class BrzalicaGame extends GameBase {
     private m_Save: BrzalicaSave = new BrzalicaSave();
@@ -24,6 +30,9 @@ export class BrzalicaGame extends GameBase {
     private m_WordSolvingStartDate: Date = new Date();
     private m_Stats: BrzalicaStatisticsManager = new BrzalicaStatisticsManager();
     private m_GuessedWords: number = 0;
+    protected m_Board: IBoard = new Board(GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH, GlobalGameSettings.K_PAJGLANJE_ATTEMPTS);
+    protected m_DictionaryHolder: IDictionaryHolder = new FiveWordLengthDictionaryHolder();
+    protected m_WordService :IGameWordService = new PajglanjeWordService();
 
     constructor()
     {
@@ -35,12 +44,17 @@ export class BrzalicaGame extends GameBase {
         super.Init();
         this.m_Save.Init();
         this.m_Stats.Init();
+        this.m_Board.CreateBoardElement();
+        this.m_WordService.Init(this.m_DictionaryHolder);
     }
 
     protected override InitCallbacks(): void {
         super.InitCallbacks();
 
         GlobalEvents.AddListener(EventTypes.OnShareButtonClickedEvent, this.OnShareButtonClicked.bind(this));
+        GlobalEvents.AddListener(EventTypes.DeleteKeyPressedEvent, () => {
+            this.m_Board.RetractLetter();
+        });
     }
 
     private GetBrzalicaTime(): number

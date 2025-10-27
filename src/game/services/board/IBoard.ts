@@ -10,4 +10,7 @@ export interface IBoard {
     GetCurrentAttemptPosition(): number;
     GetIDForField(guessAttempt: number, letterIndex: number): string;
     ClearBoard(): void;
+    PaintLetterColorIndicator(guessAttempt: number, letterIndex: number, color: string): void;
+    GetLetterHTMLElement(guessAttempt: number, letterIndex: number): HTMLElement;
+    SetLetterScores(scores: number[], delay: boolean): Promise<void>;
 }
