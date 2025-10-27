@@ -219,7 +219,7 @@ export class PajglanjeGame extends GameBase {
         this.m_Keyboard.SetEnabled(false);
         this.m_Keyboard.ChangeLockState(true);
 
-        GlobalEvents.Dispatch(EventTypes.CreateStatisticsFooterEvent);
+        GlobalEvents.Dispatch(EventTypes.CreateStatisticsFooterEvent, GlobalViewSettings.K_PAJGLANJE_TIMER_TITLE);
     }
 
     private OpenStatisticsWindow()

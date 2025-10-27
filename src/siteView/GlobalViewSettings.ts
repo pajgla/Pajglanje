@@ -37,7 +37,9 @@ export class GlobalViewSettings
     public static readonly K_MIN_STATISTICS_GRAPH_WIDTH = 7;
     public static readonly K_CURRENT_GUESS_GRAPH_COLOR = "rgb(83, 141, 78)";
     public static readonly K_STATISTICS_FOOTER_ELEMENT_ID = "footer";
-    public static readonly K_TIMER_TITLE = "Sledeće pajglanje za";
+    public static readonly K_PAJGLANJE_TIMER_TITLE = "Sledeće pajglanje za";
+    public static readonly K_BRZALICA_TIMER_TITLE = `Sledeća brzalica za`;
+    public static readonly K_TRAGALICA_TIMER_TITLE = `Sledeća tragalica za`;
     public static readonly K_TIMER_ELEMENT_ID = "nextPajglaTimer";
     public static readonly K_SHARE_BUTTON_ID = "shareButton";
     public static readonly K_SHARE_BUTTON_TEXT = "Podeli";

@@ -67,7 +67,7 @@ export abstract class StatisticsWindowViewBase
         }, 100)
     }
 
-    protected CreateStatisticsFooter()
+    protected CreateStatisticsFooter(timerText: string)
     {
         let footerElement = document.getElementById(GlobalViewSettings.K_STATISTICS_FOOTER_ELEMENT_ID);
         if (!footerElement)
@@ -87,7 +87,7 @@ export abstract class StatisticsWindowViewBase
         footerElement.appendChild(coundownTimerElement);
 
         let timerTitleElement = document.createElement('h4');
-        timerTitleElement.textContent = GlobalViewSettings.K_TIMER_TITLE;
+        timerTitleElement.textContent = timerText;
         coundownTimerElement.appendChild(timerTitleElement);
 
         let nextPajglaTimerElement = document.createElement('div');

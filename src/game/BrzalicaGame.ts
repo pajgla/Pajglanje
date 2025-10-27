@@ -287,7 +287,7 @@ export class BrzalicaGame extends GameBase {
             this.OpenStatisticsWindow();
         }, statisticsWindowDelay);
 
-        GlobalEvents.Dispatch(EventTypes.CreateStatisticsFooterEvent);
+        GlobalEvents.Dispatch(EventTypes.CreateStatisticsFooterEvent, GlobalViewSettings.K_BRZALICA_TIMER_TITLE);
     }
 
     private OpenStatisticsWindow()

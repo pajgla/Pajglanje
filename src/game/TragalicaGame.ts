@@ -81,7 +81,7 @@ export class TragalicaGame extends GameBase
                 this.ChangeSaveGameState(EGameState.Won);
                 this.m_Keyboard.SetEnabled(false);
                 this.m_Keyboard.ChangeLockState(true);
-                GlobalEvents.Dispatch(EventTypes.CreateStatisticsFooterEvent);
+                GlobalEvents.Dispatch(EventTypes.CreateStatisticsFooterEvent, GlobalViewSettings.K_TRAGALICA_TIMER_TITLE);
                 GlobalEvents.Dispatch(EventTypes.StartNextGameTimerEvent);
                 NotificationHelpers.ShowCongratsNotification(`Tragalica zavrsena! Poeni: ${this.m_Score}`);
                 
