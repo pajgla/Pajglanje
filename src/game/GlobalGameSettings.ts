@@ -16,7 +16,7 @@ export class GlobalGameSettings {
     
     //Tragalica settings
     public static readonly K_TRAGALICA_GAME_NAME = "Tragalica";
-    public static readonly K_TRAGALICA_START_TIME: Date = new Date('2025-10-22T00:00:00');
+    public static readonly K_TRAGALICA_START_TIME: Date = new Date('2025-10-27T00:00:00');
     public static readonly K_TRAGALICA_WORD_LENGTH = 5;
     public static readonly K_TRAGALICA_HIDDEN_WORDS = 5;
     public static readonly K_NEXT_TRAGALICA_IN_HOURS = 24;
