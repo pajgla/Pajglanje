@@ -25,13 +25,16 @@ export class SideMenuView
             throw new Error(`Close side menu button not found with ID ${GlobalViewSettings.K_SIDE_MENU_CLOSE_BUTTON_ELEMENT_ID}`);
         }
 
-        closeSideMenuButtonElement.addEventListener('click', event => {
-            this.CloseSideMenu();
-        });
+
 
         this.AddSideMenuLink("/pajglanje.html", "Pajglanje");
         this.AddSideMenuLink("/brzalica.html", "Brzalica");
         this.AddSideMenuLink("/tragalica.html", "Tragalica");
+
+        closeSideMenuButtonElement.addEventListener('click', event => {
+            console.log("Close side menu button clicked");
+            this.CloseSideMenu();
+        });
         console.log("Side menu view initialized");
     }
     
@@ -43,7 +46,10 @@ export class SideMenuView
             throw new Error(`Side menu button not found with ID ${GlobalViewSettings.K_SIDE_MENU_ELEMENT_ID}`);
         }
         
-        sideMenuButtonElement.innerHTML += `<a href="${link}">${display}</a>`;
+        const newLink = document.createElement('a');
+        newLink.href = link;
+        newLink.textContent = display;
+        sideMenuButtonElement.appendChild(newLink);
     }
 
     private OpenSideMenu()
