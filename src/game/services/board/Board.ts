@@ -50,7 +50,7 @@ export class Board implements IBoard {
         
         //Add points display
         let scoreDisplay: HTMLElement = document.createElement("span");
-        scoreDisplay.classList.add("score-display");
+        scoreDisplay.classList.add(GlobalViewSettings.K_SCORE_ELEMENT_CLASS_NAME);
         square.appendChild(scoreDisplay);
         
         return square
@@ -132,7 +132,7 @@ export class Board implements IBoard {
     public UpdateScoreColor(guessAttempt: number, letterIndex: number, score: number): void
     {
         const letterElement = this.GetLetterHTMLElement(guessAttempt, letterIndex);
-        const scoreDisplay = letterElement.querySelector(".score-display") as HTMLElement;
+        const scoreDisplay = letterElement.querySelector(GlobalViewSettings.K_SCORE_ELEMENT_CLASS) as HTMLElement;
         if (!scoreDisplay) {
             throw new Error("Score display not found");
         }
@@ -252,7 +252,7 @@ export class Board implements IBoard {
         const guessAttempt = this.currentLetterPosition[0];
         for (let i = 0; i < GlobalGameSettings.K_PAJGLANJE_WORD_LENGTH; ++i) {
             let letterElement = this.GetLetterHTMLElement(guessAttempt, i);
-            let scoreDisplay = letterElement.querySelector(".score-display") as HTMLElement;
+            let scoreDisplay = letterElement.querySelector(GlobalViewSettings.K_SCORE_ELEMENT_CLASS) as HTMLElement;
             if (!scoreDisplay) {
                 throw new Error("Score display not found");
             }

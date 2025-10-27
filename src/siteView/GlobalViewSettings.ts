@@ -62,6 +62,8 @@ export class GlobalViewSettings
     public static readonly K_CORRECT_TILE_SHARE_VISUAL = '🟩';
     public static readonly K_PRESENT_TILE_SHARE_VISUAL = '🟨';
     public static readonly K_ABSENT_TILE_SHARE_VISUAL = '⬛';
+    public static readonly K_POSITIVE_SCORE_SHARE_VISUAL = '🟩';
+    public static readonly K_NEGATIVE_SCORE_SHARE_VISUAL = '🟥';
     public static readonly K_COPY_SUCCESSFUL_MESSAGE = "Kopirano i spremno za slanje!";
 
     //Loader
@@ -76,6 +78,8 @@ export class GlobalViewSettings
     
     //Tragalica
     public static readonly K_TRAGALICA_SCORE_NOTIFICATION = `Trenutni skor: {score}`;
+    public static readonly K_SCORE_ELEMENT_CLASS = `.score-display`;
+    public static readonly K_SCORE_ELEMENT_CLASS_NAME = `score-display`;
 
     //Server messages
     public static readonly K_LOGIN_FAILED_MESSAGE = 'Došlo je do greške prilikom prijavljivanja';

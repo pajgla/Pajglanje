@@ -20,6 +20,7 @@ import {TragalicaSave} from "../save/TragalicaSave";
 import * as WordHelpers from '../helpers/WordHelpers';
 import type {TragalicaSaveStorage} from "../save/save_storage/TragalicaSaveStorage";
 import $ from "jquery";
+import { CopyToClipboard, ScoreToShareSymbol } from "../helpers/ShareHelpers";
 
 export class TragalicaGame extends GameBase
 {
@@ -50,6 +51,8 @@ export class TragalicaGame extends GameBase
         GlobalEvents.AddListener(EventTypes.DeleteKeyPressedEvent, () => {
             this.m_Board.RetractLetter();
         });
+
+        GlobalEvents.AddListener(EventTypes.OnShareButtonClickedEvent, this.OnShareButtonClicked.bind(this));
     }
 
     private GetTragalicaTime(): number
@@ -261,5 +264,50 @@ export class TragalicaGame extends GameBase
                 this.m_Board.PaintLetterColorIndicator(i, letterIndex, ConvertLetterStatusToColor(guessData.letterStatuses[letterIndex]!.status));
             }
         }
+    }
+
+    private OnShareButtonClicked()
+    {
+        const maxScore = GlobalGameSettings.K_TRAGALICA_CORRECT_LETTER_SCORE * GlobalGameSettings.K_TRAGALICA_WORD_LENGTH * GlobalGameSettings.K_TRAGALICA_HIDDEN_WORDS;
+        const tragalicaTime = this.GetTragalicaTime();
+        let stringToCopy = `${GlobalViewSettings.K_TRAGALICA_TITLE} #${tragalicaTime}\nhttps://pajglanje.com/tragalica.html\n\n`;
+        stringToCopy += `Ključna reč: ${this.m_WordService.GetMasterWord()}\n`;
+        stringToCopy += `Poeni: ${this.m_Score}/${maxScore}\n\n`
+        for (let i = 0; i < this.m_Board.GetCurrentAttemptPosition(); ++i)
+        {
+            let row = [];
+
+            for (let j = 0; j < GlobalGameSettings.K_TRAGALICA_WORD_LENGTH; ++j)
+            {
+                const id = this.m_Board.GetIDForField(i, j);
+                const squareElement = document.getElementById(id);
+                if (!squareElement)
+                {
+                    NotificationHelpers.ShowErrorNotification(`Došlo je do greške prilikom kopiranja rezultata`, 5000);
+                    throw new Error(`Board square element not found with ID ${id}`);
+                }
+
+                const scoreElement = squareElement.querySelector(GlobalViewSettings.K_SCORE_ELEMENT_CLASS);
+                if (scoreElement === null)
+                {
+                    NotificationHelpers.ShowErrorNotification(`Došlo je do greške prilikom kopiranja rezultata`, 5000);
+                    throw new Error(`Score element not found for a letter at ${i}/${j}`);
+                }
+
+                const score = scoreElement.textContent;
+                const numericalScore = parseInt(score);
+
+                if (isNaN(numericalScore))
+                {
+                    NotificationHelpers.ShowErrorNotification(`Došlo je do greške prilikom kopiranja rezultata`, 5000);
+                    throw new Error(`Score element doesn't contain correct numerical value`);
+                }
+
+                row.push(ScoreToShareSymbol(numericalScore));
+            }
+            stringToCopy += row.join('') + "\n";
+        }
+
+        CopyToClipboard(stringToCopy);
     }
 }
