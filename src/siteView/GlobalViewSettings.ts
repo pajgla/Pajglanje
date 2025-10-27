@@ -41,6 +41,9 @@ export class GlobalViewSettings
     public static readonly K_TIMER_ELEMENT_ID = "nextPajglaTimer";
     public static readonly K_SHARE_BUTTON_ID = "shareButton";
     public static readonly K_SHARE_BUTTON_TEXT = "Podeli";
+    public static readonly K_PERFECT_GAMES_ELEMENT_ID = "perfectGamesStatistics";
+    public static readonly K_AVERAGE_SCORE_ELEMENT_ID = "avgScoreStatistics";
+    public static readonly K_TOTAL_SCORE_ELEMENT_ID = "totalPointsStatistics";
 
     //Other
     public static readonly K_TITLE_ELEMENT_ID = "centralHeaderSpace";

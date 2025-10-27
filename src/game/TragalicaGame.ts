@@ -21,6 +21,7 @@ import * as WordHelpers from '../helpers/WordHelpers';
 import type {TragalicaSaveStorage} from "../save/save_storage/TragalicaSaveStorage";
 import $ from "jquery";
 import { CopyToClipboard, ScoreToShareSymbol } from "../helpers/ShareHelpers";
+import {TragalicaStatisticsManager} from "../statistics/tragalica/TragalicaStatisticsManager";
 
 export class TragalicaGame extends GameBase
 {
@@ -31,6 +32,7 @@ export class TragalicaGame extends GameBase
     protected m_WordService: ITragalicaWordService = new TragalicaWordService();
     protected m_DictionaryHolder: IDictionaryHolder = new FiveWordLengthDictionaryHolder();
     protected m_SaveGame: TragalicaSave = new TragalicaSave();
+    protected m_StatisticsManager = new TragalicaStatisticsManager();
     
     protected m_Score: number = 0;
     
@@ -42,6 +44,7 @@ export class TragalicaGame extends GameBase
         this.m_MasterWordDisplay.SetMasterWord(this.m_WordService.GetMasterWord());
         this.m_Board.CreateBoardElement();
         this.m_SaveGame.Init();
+        this.m_StatisticsManager.Init();
     }
     
 
@@ -74,20 +77,19 @@ export class TragalicaGame extends GameBase
         switch (newState)
         {
             case EGameState.Won: {
-                //Handle win state
-                this.ChangeSaveGameState(EGameState.Won);
-                this.m_Keyboard.SetEnabled(false);
-                this.m_Keyboard.ChangeLockState(true);
-                break;
-            }
-            case EGameState.Lost: {
                 // Handle lose state
-                this.ChangeSaveGameState(EGameState.Lost);
+                this.ChangeSaveGameState(EGameState.Won);
                 this.m_Keyboard.SetEnabled(false);
                 this.m_Keyboard.ChangeLockState(true);
                 GlobalEvents.Dispatch(EventTypes.CreateStatisticsFooterEvent);
                 GlobalEvents.Dispatch(EventTypes.StartNextGameTimerEvent);
                 NotificationHelpers.ShowCongratsNotification(`Tragalica zavrsena! Poeni: ${this.m_Score}`);
+                
+                if (!fromSave)
+                {
+                    GlobalEvents.Dispatch(EventTypes.OnTragalicaGameOver, this.m_Score);
+                }
+                
                 break;
             }
 
@@ -95,6 +97,8 @@ export class TragalicaGame extends GameBase
                 throw new Error(`Unhandled game state type`);
             }
         }
+        
+        this.m_SaveGame.TriggerSave();
     }
 
     private OpenStatisticsWindow()
@@ -122,7 +126,7 @@ export class TragalicaGame extends GameBase
         {
             setTimeout(async () => {
                 this.OpenStatisticsWindow();
-            }, 500);
+            }, 900);
         }
     }
 
@@ -186,7 +190,7 @@ export class TragalicaGame extends GameBase
         // Save attempt word and score
         let saveData = this.m_SaveGame.GetSaveGame();
         saveData.wordSave.guesses.push(WordHelpers.SerbianWordToCharArray(attemptWord));
-        saveData.wordSave.score = this.m_Score;
+        saveData.score = this.m_Score;
         this.m_SaveGame.OverwriteCachedSave(saveData);
         this.m_SaveGame.TriggerSave(GlobalGameSettings.K_TRAGALICA_SAVEGAME_KEY);
 
@@ -196,7 +200,7 @@ export class TragalicaGame extends GameBase
         if (this.m_Board.GetCurrentAttemptPosition() == GlobalGameSettings.K_TRAGALICA_HIDDEN_WORDS - 1)
         {
             //We used last try
-            this.ChangeGameState(EGameState.Lost, false);
+            this.ChangeGameState(EGameState.Won, false);
         }
     }
 
@@ -209,7 +213,7 @@ export class TragalicaGame extends GameBase
         {
             // New game - reset save data
             saveData.wordSave.guesses = [] as string[][];
-            saveData.wordSave.score = 0;
+            saveData.score = 0;
             saveData.lastTragalicaTime = tragalicaTime;
             saveData.gameState = EGameState.InProgress;
             this.m_SaveGame.OverwriteCachedSave(saveData);
@@ -220,7 +224,7 @@ export class TragalicaGame extends GameBase
         {
             // Load existing game
             let guesses = saveData.wordSave.guesses;
-            this.m_Score = saveData.wordSave.score || 0;
+            this.m_Score = saveData.score || 0;
 
             for (let guessIndex = 0; guessIndex < guesses.length; guessIndex++)
             {
@@ -248,7 +252,7 @@ export class TragalicaGame extends GameBase
         }
 
         this.PaintBoardIndicators();
-
+        this.m_StatisticsManager.LoadDataFromSave(saveData);
         GlobalEvents.Dispatch(EventTypes.NewTragalicaGameStartedEvent, tragalicaTime);
     }
     

@@ -27,8 +27,6 @@ export class TragalicaWordService implements ITragalicaWordService
         this.m_Randomizer = new UniqueRandom(tragalicaTime.toString(), [tragalicaTime]);
         
         this.ChooseHiddenWords(hiddenWords);
-        
-        console.log(`Tragalica Word Service Initialized with master word: ${this.m_MasterWord} and hidden words: ${this.m_HiddenWords.join(",")}`)
     }
 
     ChooseMasterWord(tragalicaTime: number): void
