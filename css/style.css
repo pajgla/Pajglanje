@@ -259,7 +259,8 @@ header {
     box-sizing: border-box;
     transition: all .3s ease;
     text-align: center;
-    vertical-align: middle
+    vertical-align: middle;
+    background: rgba(70, 133, 64, 1);
 }
 
 .master-word-square:empty::before {
