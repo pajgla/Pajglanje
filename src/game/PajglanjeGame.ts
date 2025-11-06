@@ -164,10 +164,11 @@ export class PajglanjeGame extends GameBase {
         }
         
         const guesses = this.m_Board.GetAllGuesses();
+        console.log("Guesses: ---------------------------------------------------- " + guesses);
         let serverGuesses = "";
         for (const guess of guesses)
         {
-            serverGuesses += guesses + '+';
+            serverGuesses += guess + '+';
         }
         
         if (serverGuesses.length < 0)
@@ -180,6 +181,8 @@ export class PajglanjeGame extends GameBase {
         {
             serverGuesses = serverGuesses.slice(0, -1);
         }
+        
+        console.log("Saving to server: " + serverGuesses);
         
         userManager.SaveGuess(serverGuesses, this.GetPajglaTime());
     }

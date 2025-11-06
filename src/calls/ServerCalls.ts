@@ -84,7 +84,9 @@ async function makeServerCall<TResponse>(
         }
 
         const data: TResponse = await response.json();
-        console.log(data);
+        
+        console.log(`Server call for ${endpoint} returned: ${JSON.stringify(data)}`)
+        
         return data;
     } catch (err) {
         console.error(`${errorMessage}: ${err} // for enpoint: ${endpoint}`);
@@ -165,7 +167,6 @@ export async function SaveGame(
 
 export async function LoadGame(dataKey: string): Promise<DataLoadResponse> {
     const postData: DataLoadRequest = { key: dataKey };
-    console.log(JSON.stringify(postData));
 
     return makeServerCall<DataLoadResponse>(
         '/game/get_data',

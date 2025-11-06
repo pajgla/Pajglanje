@@ -46,6 +46,8 @@ export class UserManager
 
                 this.SaveUserLoginData(username, result.user_id, result.token);
                 this.m_IsUserLoggedIn = true;
+                
+                window.location.reload();
             }
             else
             {
@@ -60,9 +62,6 @@ export class UserManager
             NotificationHelpers.ShowErrorNotification(GlobalViewSettings.K_LOGIN_FAILED_MESSAGE, 5000);
             isLoggedIn = false;
         }
-
-        //Reload page on success
-        window.location.reload();
 
         return isLoggedIn;
     }
@@ -148,7 +147,6 @@ export class UserManager
 
         const token = this.m_UserSaveData.token;
         const result = await ServerCalls.CheckToken(this.m_UserSaveData.userID, token, 32);
-        console.log(`Autologin: ${result.success}`);
 
         if (result.success)
         {
@@ -163,20 +161,29 @@ export class UserManager
     {
         if (!this.GetIsUserLoggedIn())
         {
-            console.error("User is not logged in");
+            console.error("User is not logged in but we tried starting a game");
+            return;
         }
+
+        console.log("OK logged in")
         
         const userID = this.GetUserID();
         if (userID === null)
         {
             console.error("User ID is null");
+            return;
         }
+
+        console.log("OK userid")
         
         const loginToken = this.GetLoginToken();
         if (loginToken === null)
         {
             console.error("Login token is null");
+            return;
         }
+        
+        console.log("OK")
         
         const response = await ServerCalls.StartGame(userID!, new Date().getTime(), loginToken!, gameTime);
         if (!response.success)
@@ -186,7 +193,7 @@ export class UserManager
             //Reload the page and log the user out
             
             setTimeout(() => {
-                this.Logout();
+                //this.Logout();
             }, 5000);
         }
         
@@ -232,7 +239,7 @@ export class UserManager
         const response = await ServerCalls.SaveGame(userID, timeStamp, token, gameTime, guesses, hashedCheck);
         if (!response.success)
         {
-            //this.LogoutWithFatalErrorAndTimeout("Došlo je do greške sa serverom prilikom čuvanja podataka");
+            this.LogoutWithFatalErrorAndTimeout("Došlo je do greške sa serverom prilikom čuvanja podataka");
         }
         
         return response.success;
@@ -258,6 +265,7 @@ export class UserManager
     
     private LogoutWithFatalErrorAndTimeout(message: string)
     {
+        
         GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
         NotificationHelpers.ShowErrorNotification(message, 5000);
         setTimeout(() => {
@@ -270,6 +278,7 @@ export class UserManager
 
     public GetIsUserLoggedIn(): boolean
     {
+        console.log(`Is user logged in: ${this.m_IsUserLoggedIn}, user data: ${this.m_UserSaveData}`);
         return this.m_IsUserLoggedIn && this.m_UserSaveData != null;
     }
 

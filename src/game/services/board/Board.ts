@@ -218,6 +218,11 @@ export class Board implements IBoard {
                 let dataKey = letterElement.getAttribute("data-key");
                 guess += dataKey;
             }
+            
+            if (guess.trim() !== "")
+            {
+                guesses.push(guess.trim());
+            }
         }
         
         return guesses;
