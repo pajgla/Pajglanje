@@ -186,11 +186,29 @@ export class PajglanjeGame extends GameBase {
         
         userManager.SaveGuess(serverGuesses, this.GetPajglaTime());
     }
+    
+    private async LoadGuessesFromServer()
+    {
+        const userManager = UserManager.Get();
+        if (userManager === null || userManager === undefined)
+        {
+            console.error("UserManager is not initialized");
+            return;
+        }
+        
+        if (!userManager.GetIsUserLoggedIn())
+        {
+            return;
+        }
+        
+        const guesses = await userManager.LoadGuesses(this.GetPajglaTime());
+        console.log(`------------------------------------ ${guesses} ------------------------------------`);
+    }
 
     private GetPajglaTime(): number
     {
         let pajglaStartTime = GlobalGameSettings.K_PAJGLANJE_START_TIME;
-        return GameTimeHelpers.GetGameTime(pajglaStartTime, GlobalGameSettings.K_NEXT_PAJGLA_IN_HOURS);
+        return GameTimeHelpers.GetGameTime(pajglaStartTime, GlobalGameSettings.K_NEXT_PAJGLA_IN_HOURS) + 1;
     }
 
     public StartGame(): void {
@@ -199,7 +217,7 @@ export class PajglanjeGame extends GameBase {
         this.ChangePageTitle(GlobalGameSettings.K_PAJGLANJE_GAME_NAME, pajglaTime);
 
         this.m_WordService.ChooseGuessWord(pajglaTime);
-
+        this.LoadGuessesFromServer();
         let saveData: PajglaSaveStorage = this.m_Save.GetSaveGame();
         if (saveData.lastPajglaTime !== pajglaTime)
         {

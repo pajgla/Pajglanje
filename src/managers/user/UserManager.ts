@@ -245,22 +245,53 @@ export class UserManager
         return response.success;
     }
     
-    public async LoadData(key: string): Promise<string>
+    public async LoadGuesses(gameTime: number)
     {
         if (!this.GetIsUserLoggedIn())
         {
-            console.error("Tried to load data but the user is not logged in");
+            console.error("User is not logged in but we tried loading guesses from server");
             return "";
         }
         
-        const response = await ServerCalls.LoadGame(key);
+        const userID = this.GetUserID();
+        if (userID === null)
+        {
+            console.error("User ID is null");
+            return "";
+        }
+
+        const token = this.GetLoginToken();
+        if (token === null)
+        {
+            console.error("Login token is null");
+            return;
+        }
+        
+        const response = await ServerCalls.LoadGame(userID, token, gameTime);
         if (!response.success)
         {
-            console.error("Failed to load data");
-            return "";
+            this.LogoutWithFatalErrorAndTimeout(`Došlo je do greške prilikom učitavanja podataka sa servera`);
         }
         
-        return response.value;
+        return response.guesses;
+    }
+    
+    public async LoadData(key: string): Promise<string>
+    {
+        // if (!this.GetIsUserLoggedIn())
+        // {
+        //     console.error("Tried to load data but the user is not logged in");
+        //     return "";
+        // }
+        //
+        // const response = await ServerCalls.LoadGame(key);
+        // if (!response.success)
+        // {
+        //     console.error("Failed to load data");
+        //     return "";
+        // }
+        //
+        // return response.value;
     }
     
     private LogoutWithFatalErrorAndTimeout(message: string)
@@ -268,9 +299,9 @@ export class UserManager
         
         GlobalEvents.Dispatch(EventTypes.StartLoaderEvent);
         NotificationHelpers.ShowErrorNotification(message, 5000);
-        setTimeout(() => {
-            this.Logout();
-        }, 5000);
+        // setTimeout(() => {
+        //     this.Logout();
+        // }, 5000);
     }
     
     public async SaveData(key: string, value: string)

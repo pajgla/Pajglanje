@@ -50,6 +50,17 @@ interface SaveGameResponse {
     success: boolean;
 }
 
+interface LoadGameRequest {
+    user_id: number;
+    token: string;
+    session: number;
+}
+
+interface LoadGameResponse {
+    success: boolean;
+    guesses: string;
+}
+
 interface DataLoadRequest {
     key: string;
 }
@@ -165,13 +176,13 @@ export async function SaveGame(
     )
 }
 
-export async function LoadGame(dataKey: string): Promise<DataLoadResponse> {
-    const postData: DataLoadRequest = { key: dataKey };
+export async function LoadGame(userID: number, token: string, session: number): Promise<LoadGameResponse> {
+    const postData: LoadGameRequest = { user_id: userID, token: token, session: session };
 
-    return makeServerCall<DataLoadResponse>(
-        '/game/get_data',
+    return makeServerCall<LoadGameResponse>(
+        '/game/load',
         postData,
         'An error occurred while loading game data',
-        { success: false, value: "" }
+        { success: false, guesses: "" }
     );
 }
