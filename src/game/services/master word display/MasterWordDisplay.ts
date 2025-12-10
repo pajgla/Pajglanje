@@ -1,5 +1,6 @@
 import type {IMasterWordDisplay} from "./IMasterWordDisplay";
 import {GlobalViewSettings} from "../../../siteView/GlobalViewSettings";
+import * as WordHelpers from "../../../helpers/WordHelpers";
 
 export class MasterWordDisplay implements IMasterWordDisplay {
     protected m_MasterWordSquareElements: HTMLElement[] = [];
@@ -45,14 +46,15 @@ export class MasterWordDisplay implements IMasterWordDisplay {
             throw new Error("Master word is empty");
         }
         
-        if (word.length !== this.m_MasterWordSquareElements.length)
+        if (WordHelpers.SerbianWordLength(word) !== this.m_MasterWordSquareElements.length)
         {
-            throw new Error("Master word length does not match board length");
+            throw new Error(`Master word length does not match board length`);
         }
         
-        for (let i = 0; i < word.length; i++)
+        let splitWord = WordHelpers.SerbianWordToCharArray(word);
+        for (let i = 0; i < WordHelpers.SerbianWordLength(word); i++)
         {            
-            this.m_MasterWordSquareElements[i]!.textContent = word[i]!.toUpperCase();
+            this.m_MasterWordSquareElements[i]!.textContent = splitWord[i]!.toUpperCase();
         }
         
         this.m_MasterWord = word;
